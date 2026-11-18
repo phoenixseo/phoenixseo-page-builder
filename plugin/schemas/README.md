@@ -1,90 +1,90 @@
-# Beispiel-Komponenten
+# Example components
 
-Zehn Komponenten, die mitgeliefert werden, um zu zeigen, was dieser Weg kann.
-Jede deckt eine andere Fähigkeit ab; zusammen sind sie ein Lehrgang durch das
-Format.
+Ten components that ship with the plugin to show what this approach can do.
+Each one covers a different capability; together they are a course through the
+format.
 
-| Typ | Zeigt |
+| Type | Shows |
 |---|---|
-| `hero` | Das Minimum: nur `definition.json`, kein eigener Code. |
-| `faq` | Repeater mit zwei Unterspalten, Ausgabe über das generische Markup. |
-| `feature-grid` | Ein `select`-Feld als Symbolauswahl, das erst die Ansicht übersetzt. |
-| `testimonials` | Zitat-Semantik und ein horizontaler Schwung ohne JavaScript. |
-| `pricing-table` | Repeater in einem Repeater, Plus hervorgehobener Tarif. |
-| `stats` | Eine Definitionsliste statt lose Zahlen. |
-| `cta-band` | Theming über ein `select`-Feld und CSS-Variablen. |
-| `vinyl` | Zwei Werte, die niemand eingibt: Tracknummer aus der Reihenfolge, Gesamtspielzeit gerechnet — und nur bei vollständigen Längen. |
-| `movie` | `<dl>` für die Fakten, `<meter>` für die Bewertung, `:has()` für das Poster: ein Markup für beide Fälle. |
-| `series` | `<details>` pro Staffel statt 200 Zeilen, Nummern aus verschachtelten `<ol>`, Pluralisierung über `_n()`. |
+| `hero` | The minimum: only `definition.json`, no custom code. |
+| `faq` | A repeater with two subfields, output through the generic markup. |
+| `feature-grid` | A `select` field used as an icon choice, translated only in the view. |
+| `testimonials` | Quotation semantics and a horizontal flourish without JavaScript. |
+| `pricing-table` | A repeater inside a repeater, plus one highlighted tier. |
+| `stats` | A definition list instead of loose numbers. |
+| `cta-band` | Theming through a `select` field and CSS variables. |
+| `vinyl` | Two values nobody types: the track number from the row order, the total running time computed — and only when every duration is complete. |
+| `movie` | `<dl>` for the facts, `<meter>` for the rating, `:has()` for the poster: one markup for both cases. |
+| `series` | `<details>` per season instead of 200 lines, numbers from nested `<ol>`, pluralisation through `_n()`. |
 
-## Drei Dateien, ein Ordner
+## Three files, one directory
 
 ```
-schemas/<typ>/
-    definition.json    Pflicht — Felder, Titel, Symbol
-    render.php         optional — Markup
-    component.css      optional — Gestaltung
+schemas/<type>/
+    definition.json    required — fields, title, icon
+    render.php         optional — markup
+    component.css      optional — presentation
 ```
 
-Der Ordnername **ist** der Typ: er steht im Feldgruppen-Key
-(`group_sdcpb_component_<typ>`), im Blocknamen (`sdcpb/<typ>`) und im Pfad. Deshalb
-nur Kleinbuchstaben, Ziffern und **Bindestriche** — ein Unterstrich ist als
-Komponententyp gültig, aber kein Blockname, und WordPress lehnt
-`sdcpb/feature_grid` ab. Ein Bindestrich ist an allen drei Stellen erlaubt:
+The directory name **is** the type: it appears in the field group key
+(`group_sdcpb_component_<type>`), in the block name (`sdcpb/<type>`) and in the
+path. Hence lowercase letters, digits and **hyphens** only — an underscore is a
+valid component type but not a valid block name, and WordPress rejects
+`sdcpb/feature_grid`. A hyphen works in all three places:
 `feature-grid`, `group_sdcpb_component_feature-grid`, `sdcpb/feature-grid`.
 
-`render.php` bekommt drei lokale Variablen: `$type`, `$data` (Rohwerte) und
-`$component` (der Eintrag aus dem Seitendokument). Es gibt sein Markup selbst
-aus, inklusive umschließendem Element.
+`render.php` receives three local variables: `$type`, `$data` (raw values) and
+`$component` (the entry from the page document). It prints its own markup,
+including the wrapping element.
 
-Diese Dateien liegen im Plugin und werden bei jedem Update ersetzt. Wer eine
-davon anpassen will, kopiert sie nach `wp-content/sdc-components/<typ>/` — dort
-gewinnt sie gegen die Plugin-Version, und dort ist sie im Backend bearbeitbar.
+These files live inside the plugin and are replaced with every update. To change
+one of them, copy it to `wp-content/sdc-components/<type>/` — there it takes
+precedence over the plugin version, and there it is editable in wp-admin.
 
-## Die Helfer in `render.php`
+## The helpers in `render.php`
 
-Alle geben aus und alle maskieren. `sdcpb_value()` ist der Weg an die Rohwerte
-vorbei.
+All of them print, and all of them escape. `sdcpb_value()` is the way past the
+escaping to the raw value.
 
-| Helfer | Zweck |
+| Helper | Purpose |
 |---|---|
-| `sdcpb_text( 'feld' )` | Wert als Text |
-| `sdcpb_html( 'feld' )` | Wert als HTML (`wp_kses_post`) |
-| `sdcpb_attr( 'feld' )`, `sdcpb_url( 'feld' )` | Wert in einem Attribut |
-| `sdcpb_has( 'feld' )` | Hat das Feld einen Wert? `'0'` zählt als Wert. |
-| `sdcpb_link( 'feld', 'klasse' )` | `<a>` aus einem Link-Feld |
-| `sdcpb_image( 'feld', 'gross' )` | `<img>` samt `alt`, `width`, `height` |
-| `sdcpb_image_style( 'feld' )` | `style="--sdc-image:url(…)"` für Hintergründe |
-| `sdcpb_each( 'liste', function ( $row ) { … } )` | Zeilen eines Repeaters |
-| `sdcpb_fields()` | Das generische Markup, wenn nur der Rahmen eigen sein soll |
+| `sdcpb_text( 'field' )` | value as text |
+| `sdcpb_html( 'field' )` | value as HTML (`wp_kses_post`) |
+| `sdcpb_attr( 'field' )`, `sdcpb_url( 'field' )` | value inside an attribute |
+| `sdcpb_has( 'field' )` | does the field hold a value? `'0'` counts as a value. |
+| `sdcpb_link( 'field', 'class' )` | `<a>` from a link field |
+| `sdcpb_image( 'field', 'large' )` | `<img>` including `alt`, `width`, `height` |
+| `sdcpb_image_style( 'field' )` | `style="--sdc-image:url(…)"` for backgrounds |
+| `sdcpb_each( 'list', function ( $row ) { … } )` | the rows of a repeater |
+| `sdcpb_fields()` | the generic markup, when only the frame is meant to be custom |
 
-Innerhalb von `sdcpb_each()` liest jeder Helfer die Komponente, nicht die Zeile.
-Die Zeile muss als letztes Argument mit: `sdcpb_text( 'name', $row )`.
+Inside `sdcpb_each()` every helper reads the component, not the row. The row has
+to come along as the last argument: `sdcpb_text( 'name', $row )`.
 
-## Wann `definition.json` reicht
+## When `definition.json` is enough
 
-Ohne `render.php` gibt das Plugin die Felder generisch aus: jedes Feld als
-beschrifteter Block, Listen als Zeilen. Das ist brauchbar für FAQ, Adressen und
-Tabellen — überall dort, wo die Reihenfolge der Felder schon die Aussage ist.
+Without a `render.php` the plugin prints the fields generically: each field as a
+labelled block, lists as rows. That is usable for FAQs, addresses and tables —
+anywhere the order of the fields already is the statement.
 
-Eigenes Markup lohnt sich, sobald eine dieser Bedingungen zutrifft:
+Custom markup pays off as soon as one of these holds:
 
-- Das Element hat eine Bedeutung, die Felder nicht ausdrücken können
+- The element carries a meaning that fields cannot express
   (`<blockquote>`, `<dl>`, `<figure>`).
-- Ein Feldwert ist ein Schlüssel, der erst übersetzt werden muss (Symbolname,
-  Farbton).
-- Die Anzahl der Einträge entscheidet über das Layout (ein Tarif oder fünf).
-- Eine Regel gilt über mehrere Zeilen hinweg (genau ein hervorgehobener Tarif).
+- A field value is a key that has to be translated first (icon name, colour
+  tone).
+- The number of entries decides the layout (one tier or five).
+- A rule spans several rows (exactly one highlighted tier).
 
-## Gestaltung
+## Presentation
 
-`component.css` wird automatisch geladen, sobald die Komponente auf der Seite
-steht — nichts zu registrieren. Es wird in den `<head>` eingebettet, nicht als
-eigene Datei verlinkt. Wer getrennte Dateien will, hängt
-`sdcpb_inline_component_styles` auf `false`.
+`component.css` is loaded automatically as soon as the component appears on the
+page — nothing to register. It is inlined into the `<head>`, not linked as a
+separate file. To get separate files, set `sdcpb_inline_component_styles` to
+`false`.
 
-Die Beispiele arbeiten mit CSS-Variablen und `color-mix()`, damit sie in jedem
-Theme lesbar bleiben und sich mit einer Zeile überschreiben lassen:
+The examples work with CSS variables and `color-mix()` so they stay readable in
+any theme and can be overridden with a single line:
 
 ```css
 .sdc-feature-grid { --sdc-fg-min: 18rem; }

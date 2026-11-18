@@ -1,136 +1,136 @@
 # SDC Page Builder
 
-Ein komponentenbasierter Page-Builder für WordPress, der **Advanced Custom Fields** und **Secure Custom Fields** als Feld-Lieferanten nutzt — und Seiten in einem einzigen JSON-Dokument speichert.
+A component-based page builder for WordPress that uses **Advanced Custom Fields** and **Secure Custom Fields** as its field providers — and stores pages as a single JSON document.
 
-**Status: 0.2.1.** Editor, Speicherung, Frontend-Ausgabe, Revisionen und Import/Export stehen und sind gemessen: 367 Tests / 2118 Assertions auf WordPress 7.1.4 **und** auf der erklärten Mindestversion 6.4.14, gegen ACF **und** SCF, PHPCS ohne Befund, Plugin Check am gebauten Paket ohne Befund, readme.txt formal konform, drei Screenshots im Paket. Offen ist die Freigabe im WordPress.org-Review.
+**Status: 0.2.1.** Editor, storage, frontend output, revisions and import/export are in place and measured: 367 tests / 2118 assertions on WordPress 7.1.4 **and** on the declared minimum 6.4.14, against ACF **and** SCF, PHPCS clean, Plugin Check clean on the built package, readme.txt formally valid, three screenshots in the package. What remains is approval in the WordPress.org review.
 
-## Drei der zehn Beispiel-Komponenten
+## Three of the ten example components
 
-Alle drei Bilder sind die Ausgabe des Plugins auf der Demo-Seite mit den mitgelieferten Beispielen — kein Mockup, kein Theme dazwischen. Aufgenommen bei 1280 px Breite, zweifache Pixeldichte.
+All three images are the plugin's own output on a demo page using the shipped examples — no mockup, no theme in between. Captured at 1280 px width, at twice the pixel density.
 
-**`vinyl`** — die Tracknummer kommt aus der Zeilenreihenfolge, die Gesamtspielzeit wird aus den Einzeldauern addiert. Beides sind keine Felder.
+**`vinyl`** — the track number comes from the row order and the total running time is added up from the individual durations. Neither is a field.
 
-![Komponente vinyl: Plattencover, Trackliste mit gerechneten Tracknummern und aufaddierter Gesamtspielzeit](plugin/screenshot-1.png)
+![Component vinyl: a record sleeve, a track list with computed track numbers and a summed running time](plugin/screenshot-1.png)
 
-**`movie`** — Fakten als Definitionsliste, die Bewertung als `<meter>`, die Laufzeit aus einer Minutenzahl geschrieben.
+**`movie`** — facts as a definition list, the rating as a `<meter>`, the running time written from a number of minutes.
 
-![Komponente movie: Filmplakat, Fakten als Definitionsliste, Bewertung als meter-Element](plugin/screenshot-2.png)
+![Component movie: a poster, facts as a definition list, the rating as a meter element](plugin/screenshot-2.png)
 
-**`series`** — jede Staffel ein `<details>`-Element, per Tastatur bedienbar und ohne eine Zeile JavaScript.
+**`series`** — every season is a `<details>` element, operable from the keyboard and without a line of JavaScript.
 
-![Komponente series: Serienplakat, jede Staffel ein details-Element, ohne JavaScript aufklappbar](plugin/screenshot-3.png)
+![Component series: a series poster, every season a details element, expandable without JavaScript](plugin/screenshot-3.png)
 
-## Warum es das gibt
+## Why this exists
 
-Ein CMS trennt Inhalt von Darstellung. Die gängigen Page Builder tun das Gegenteil: sie legen den Inhalt zusammen mit dem Markup ab — als Block-Attribut, als HTML, als serialisierten Baum. Wer danach eine Komponente ändert, muss jede Seite einzeln nachziehen. Der Inhalt sitzt im Code fest, und genau dort hört ein CMS auf, ein CMS zu sein.
+A CMS separates content from presentation. The common page builders do the opposite: they store the content together with the markup — as a block attribute, as HTML, as a serialized tree. Whoever changes a component afterwards has to follow up on every page individually. The content sits fixed in the code, and that is exactly where a CMS stops being a CMS.
 
-Dieser Builder dreht das zurück. Eine Komponente ist ein Ordner: Felddefinition, Markup, Styles. Eine Seite speichert **nur**, welche Komponenten in welcher Reihenfolge vorkommen und welche Werte in ihren Feldern stehen — nichts davon, wie sie aussieht.
+This builder turns that back around. A component is a directory: field definition, markup, styles. A page stores **only** which components appear in which order and which values their fields hold — none of how it looks.
 
-Daraus folgen die drei Eigenschaften, um die es geht:
+Three properties follow from that:
 
-- **Eine Änderung wirkt überall.** Wer `render.php` einer Komponente anfasst, ändert jede Instanz auf jeder Seite. Keine Migration, kein Suchen-und-Ersetzen, kein „das betrifft nur die neuen Seiten".
-- **Eine Komponente ist ein Ordner.** Definieren heißt: Ordner anlegen, JSON hinein. Kein Plugin, keine PHP-Klasse, kein neuer Feldtyp. Derselbe Ordner lässt sich in ein anderes Theme kopieren und funktioniert dort — er bringt seine Definition mit.
-- **Verwalten statt zusammenklicken.** Die Komponenten sind ein Katalog, sortiert und zählbar, nicht ein Haufen Layouts in einer Datenbank. Was da ist, steht im Dateisystem und ist versionierbar.
+- **One change reaches everywhere.** Whoever touches a component's `render.php` changes every instance on every page. No migration, no search-and-replace, no "this only affects the new pages".
+- **A component is a directory.** Defining one means: create a directory, put JSON in it. No plugin, no PHP class, no new field type. The same directory can be copied into another theme and works there — it brings its definition along.
+- **Administer instead of assembling.** The components are a catalog, sorted and countable, not a heap of layouts in a database. What exists sits in the filesystem and can be versioned.
 
-Träger sind ACF und SCF — sie liefern die Feldtypen und die Admin-Oberfläche zum Ausfüllen. Gespeichert und gerendert wird selbst.
+The carriers are ACF and SCF — they provide the field types and the admin UI for filling them in. Storage and rendering are the plugin's own.
 
-### Was das technisch nach sich zieht
+### What that means technically
 
-Weil nur Werte gespeichert werden, ist das Dokument klein: 30 Komponenten sind **ein** Meta-Eintrag mit 12.583 Bytes statt 1.933 Zeilen mit zwei Zeilen pro Subfeld. Beim Speichern sind das **4 Queries / 8 ms** gegen 1.807 Queries / 733 ms.
+Because only values are stored, the document is small: 30 components are **one** meta entry of 12,583 bytes instead of 1,933 rows at two rows per subfield. Saving costs **4 queries / 8 ms** against 1,807 queries / 733 ms.
 
-Und weil das Dokument als JSON über REST geht statt als Formular, greift `max_input_vars` nicht. Dieselben 30 Komponenten erzeugen im ACF-Formular **1.373 Felder**; PHP nimmt bei `max_input_vars = 1000` nur die ersten 1.001 an und verwirft den Rest ohne Fehlermeldung — die Seite meldet „gespeichert" und hat ein Viertel ihres Inhalts verloren. Das ist der Grund für den eigenen Speicherweg, nicht der Grund für dieses Plugin.
+And because the document travels as JSON over REST instead of as a form, `max_input_vars` does not apply. Those same 30 components produce **1,373 fields** in an ACF form; at `max_input_vars = 1000` PHP accepts only the first 1,001 and drops the rest without an error — the page reports "saved" and has lost a quarter of its content. That is the reason for the separate save path, not the reason for this plugin.
 
-## Was gemessen ist
+## What is measured
 
-| Prüfung | Ergebnis |
+| Check | Result |
 |---|---|
-| 30 Komponenten speichern | **7,9 ms / 4 Queries** |
-| Meta-Zeilen für die ganze Seite | **1** (12.583 Bytes) |
-| Roundtrip (Lesen = Geschriebenes) | exakt, Umlaute intakt, IDs stabil |
-| Revisionen | Dokument wird versioniert, Undo/Restore möglich |
-| Unbekannter Komponententyp | wird abgewiesen, nicht still verworfen |
-| Plattform | WordPress + SCF 6.9.7, PHP 8.3 |
+| Saving 30 components | **7.9 ms / 4 queries** |
+| Meta rows for the whole page | **1** (12,583 bytes) |
+| Roundtrip (reading back = what was written) | exact, umlauts intact, IDs stable |
+| Revisions | document is versioned, undo/restore possible |
+| Unknown component type | rejected, not silently dropped |
+| Platform | WordPress + SCF 6.9.7, PHP 8.3 |
 
-Reproduzierbar: `wp eval-file plugin/tests/m1-verify.php 30`
+Reproducible: `wp eval-file plugin/tests/m1-verify.php 30`
 
-## Was Single Directory Components sind
+## What Single Directory Components are
 
-Eine Komponente will man anfassen können, ohne sie zu suchen. **Single Directory Components** (SDC, „Komponente in einem Verzeichnis") heißt genau das: Definition, Markup, Styles, Skripte und Doku eines Bausteins liegen in **einem Ordner**. Nicht verstreut über `templates/`, `css/` und `js/`.
+You want to be able to pick up a component without hunting for it. **Single Directory Components** (SDC, "a component in one directory") means exactly that: definition, markup, styles, scripts and docs for one building block live in **one directory**. Not spread across `templates/`, `css/` and `js/`.
 
-Der Name stammt aus Drupal. Dort war SDC ab Version 10.1 ein experimentelles Modul und gehört seit 10.3 zum Core. Die Konvention sieht so aus:
+The name comes from Drupal. There, SDC was an experimental module from version 10.1 and has been part of core since 10.3. The convention looks like this:
 
 ```
 my_theme/components/card/
-├── card.component.yml    Metadaten: Props und Slots
+├── card.component.yml    Metadata: props and slots
 ├── card.twig             Markup
-├── card.css              Styles, beim Rendern automatisch geladen
-└── card.js               Verhalten, ebenfalls automatisch geladen
+├── card.css              Styles, loaded automatically when rendering
+└── card.js               Behaviour, also loaded automatically
 ```
 
-Drupal prüft jedes Blattverzeichnis unter `components/` auf eine `.component.yml`. Fehlt sie, wird der Ordner ignoriert. Deshalb darf man `atoms/`, `molecules/` und `organisms/` dazwischenlegen, ohne die Erkennung zu stören — gezählt wird das Blatt. Die `.component.yml` beschreibt die **Props** (Werte, die die Komponente erwartet) und die **Slots** (Inhalte, die man hineinsteckt).
+Drupal checks every leaf directory under `components/` for a `.component.yml`. If it is missing, the directory is ignored. That is why you can put `atoms/`, `molecules/` and `organisms/` in between without disturbing discovery — the leaf is what counts. The `.component.yml` describes the **props** (values the component expects) and the **slots** (content you put inside it).
 
-Der Gewinn ist nicht das Dateiformat, sondern die Frage „wo gehört das hin?". Sie hat genau eine Antwort. Und Wegwerfen ist ein `rm -r`.
+The gain is not the file format but the question "where does this belong?". It has exactly one answer. And throwing something away is an `rm -r`.
 
-### Woher die Idee kommt
+### Where the idea comes from
 
-Brad Frost hat das Muster in *Atomic Design* beschrieben (2016, kostenlos online unter [atomicdesign.bradfrost.com](https://atomicdesign.bradfrost.com/)): Oberflächen bestehen aus Bausteinen, die sich zu größeren Bausteinen zusammensetzen — Atome, Moleküle, Organismen, Templates, Seiten. Sein Werkzeug dafür war [Pattern Lab](https://patternlab.io/), ein statischer Generator, der Muster aus Ordnern einliest, ineinander verschachtelt und als Pattern Library ausgibt.
+Brad Frost described the pattern in *Atomic Design* (2016, free online at [atomicdesign.bradfrost.com](https://atomicdesign.bradfrost.com/)): interfaces consist of building blocks that assemble into larger building blocks — atoms, molecules, organisms, templates, pages. His tool for it was [Pattern Lab](https://patternlab.io/), a static generator that reads patterns from directories, nests them inside each other and outputs them as a pattern library.
 
-Zwei Gedanken daraus tragen bis heute:
+Two thoughts from it still carry:
 
-- **Verschachteln statt kopieren.** Wer die Karte ändert, ändert alle Karten. Frost vergleicht das mit russischen Puppen.
-- **Herkunft mitdenken.** Pattern Lab zeigt zu jedem Muster, woraus es besteht und wo es verwendet wird. Das ist die Grundlage für die Frage „was bricht, wenn ich das ändere?".
+- **Nest instead of copy.** Whoever changes the card changes all cards. Frost compares this to Russian dolls.
+- **Think about provenance.** Pattern Lab shows for every pattern what it consists of and where it is used. That is the basis for the question "what breaks if I change this?".
 
-Der Begriff SDC ist Drupals Name für diese Disziplin, nicht Frosts. Die Idee dahinter ist seine.
+SDC is Drupal's name for the discipline, not Frost's. The idea behind it is his.
 
-### Was man damit anstellen kann
+### What you can do with it
 
-- **Ein Baustein, viele Seiten.** Der Typ wird einmal definiert. Jede Seite speichert nur ihre Werte und eine `_id` — nicht eine Kopie des Markups.
-- **Mehrere Exemplare pro Seite.** Zwei FAQ-Blöcke sind zwei Einträge desselben Typs, jeder mit eigenem Präfix. Sie kollidieren nicht.
-- **Markup gehört dem Theme.** Ein `render.php` ändert das Aussehen einer Komponente, ohne das Plugin anzufassen — und ohne dass das nächste Plugin-Update die Änderung überschreibt.
-- **Weiterentwickeln ohne Altlasten.** Das Dokument trägt `schema: "teaser@1"`. Kommen Felder dazu, bleibt der alte Inhalt lesbar.
-- **Umziehen.** Ein Ordner kopieren bringt die Komponente in ein anderes Projekt. Inhalte gehen als JSON-Export mit.
-- **Bedingt eingreifen.** Ein Filter kann eine Komponente umschreiben oder weglassen — etwa für Besucher ohne Anmeldung.
-- **Design-System ohne Zusatzwerkzeug.** Eine Seite, die jede Komponente einmal zeigt, ist die Pattern Library. Dafür braucht es kein Storybook und keinen zweiten Build.
-- **Außerhalb des Builders weiterverwenden.** `Sdcpb_Frontend::component_fields_html( $type, $data )` liefert dasselbe Feldmarkup in einem normalen Theme-Template. Die Felddefinition gilt also an beiden Stellen.
+- **One building block, many pages.** The type is defined once. Each page stores only its values and an `_id` — not a copy of the markup.
+- **Several instances per page.** Two FAQ blocks are two entries of the same type, each with its own prefix. They do not collide.
+- **Markup belongs to the theme.** A `render.php` changes how a component looks without touching the plugin — and without the next plugin update overwriting the change.
+- **Evolve without legacy debt.** The document carries `schema: "teaser@1"`. When fields are added, old content stays readable.
+- **Move house.** Copying one directory brings the component into another project. Content travels along as a JSON export.
+- **Intervene conditionally.** A filter can rewrite a component or leave it out — for visitors who are not logged in, for instance.
+- **A design system without an extra tool.** A page that shows every component once *is* the pattern library. That needs no Storybook and no second build.
+- **Reuse outside the builder.** `Sdcpb_Frontend::component_fields_html( $type, $data )` returns the same field markup inside an ordinary theme template. The field definition therefore holds in both places.
 
-### Und im SDC Page Builder
+### And in the SDC Page Builder
 
 | Drupal SDC | SDC Page Builder |
 |---|---|
 | `components/<name>/` | `sdc-components/<name>/` |
-| `<name>.component.yml` — Props und Slots | `definition.json` — ACF-Feldgruppe, Felder sind die Props |
+| `<name>.component.yml` — props and slots | `definition.json` — ACF field group, fields are the props |
 | `<name>.twig` | `render.php` |
-| `<name>.css`, `<name>.js`, automatisch geladen | nicht automatisch — das Theme lädt seine Assets wie gewohnt |
-| Props kommen beim Rendern als Argumente | `$data` im Template, die gespeicherten Werte |
-| Slots für verschachtelte Inhalte | keine — Komponenten sind Geschwister in einer Liste |
+| `<name>.css`, `<name>.js`, loaded automatically | not automatic — the theme loads its assets as it always does |
+| Props arrive as arguments when rendering | `$data` in the template, the stored values |
+| Slots for nested content | none — components are siblings in a list |
 
-Zwei Unterschiede sollte man kennen, bevor man SDC-Erwartungen überträgt:
+Two differences are worth knowing before you transfer SDC expectations:
 
-**Keine Slots.** Eine Komponente nimmt keine anderen Komponenten als Inhalt auf. Verschachtelung entsteht über die Reihenfolge auf der Seite, nicht über Parameter. Wer tiefer verschachteln will, baut den Container als eigenen Typ mit eigenen Feldern.
+**No slots.** A component does not take other components as its content. Nesting arises through the order on the page, not through parameters. Whoever wants deeper nesting builds the container as its own type with its own fields.
 
-**Keine automatischen Assets.** `render.php` liefert Markup, sonst nichts. CSS und JS kommen aus der normalen Asset-Kette des Themes. Das ist Absicht: ein Plugin, das ungefragt Stylesheets einbindet, kollidiert mit jedem Build-Setup.
+**No automatic assets.** `render.php` returns markup and nothing else. CSS and JS come from the theme's normal asset chain. That is deliberate: a plugin that pulls in stylesheets unasked collides with every build setup.
 
-### Beispiel: eine Teaser-Komponente
+### Example: a teaser component
 
-Zwei Dateien in einem Ordner, mehr braucht es nicht.
+Two files in one directory, that is all it takes.
 
 ```
-wp-content/themes/<dein-theme>/sdc-components/teaser/
+wp-content/themes/<your-theme>/sdc-components/teaser/
 ├── definition.json
 └── render.php
 ```
 
-**1. Die Felder** — `definition.json`:
+**1. The fields** — `definition.json`:
 
 ```json
 {
   "key": "group_sdcpb_component_teaser",
   "title": "Teaser",
-  "sdcpb_description": "Karte mit Überschrift, Text und Link.",
+  "sdcpb_description": "Card with heading, text and link.",
   "sdcpb_icon": "screenoptions",
   "sdcpb_version": 1,
   "fields": [
-    { "key": "field_sdc_teaser_heading", "label": "Überschrift", "name": "heading", "type": "text", "required": 1 },
+    { "key": "field_sdc_teaser_heading", "label": "Heading", "name": "heading", "type": "text", "required": 1 },
     { "key": "field_sdc_teaser_text", "label": "Text", "name": "text", "type": "textarea", "required": 0, "rows": 3 },
     { "key": "field_sdc_teaser_link", "label": "Link", "name": "link", "type": "link", "required": 0, "return_format": "array" }
   ],
@@ -147,9 +147,9 @@ wp-content/themes/<dein-theme>/sdc-components/teaser/
 }
 ```
 
-Drei Dinge sind daran wichtig: Der Key im JSON beginnt mit `group_sdcpb_component_`, der Rest ist der Typ (`teaser`). Der Dateiname sagt nichts über den Typ — er ist in jedem Komponenten-Ordner `definition.json`, weil der Key ihn bestimmt. Jedes Feld hat einen eigenen Key und einen `name`, unter dem der Wert im Dokument landet. Und die Location-Regel `sdcpb_component == 1` hält die Gruppe von den normalen Metaboxen fern.
+Three things matter here. The key in the JSON starts with `group_sdcpb_component_`; the rest is the type (`teaser`). The file name says nothing about the type — it is `definition.json` in every component directory, because the key determines it. Each field has its own key and a `name` under which the value lands in the document. And the location rule `sdcpb_component == 1` keeps the group away from the normal metaboxes.
 
-**2. Das Markup** — `render.php`:
+**2. The markup** — `render.php`:
 
 ```php
 <?php
@@ -170,27 +170,27 @@ $link = isset( $data['link'] ) && is_array( $data['link'] ) ? $data['link'] : ar
 </article>
 ```
 
-**3. Benutzen.** Seite öffnen, im Builder „Teaser" wählen, Felder füllen, speichern. Im Frontend steht `<article class="teaser">`; von der Komponente selbst ist im HTML nichts zu sehen, was an den Builder erinnert.
+**3. Use it.** Open a page, pick "Teaser" in the builder, fill in the fields, save. The frontend shows `<article class="teaser">`; nothing in that HTML hints at the builder.
 
-**4. Stylen.** `render.php` liefert nur Markup. Das CSS gehört ins Theme — `wp_enqueue_style()` in `functions.php`, ein Stylesheet pro Komponente, oder was dein Build ohnehin macht.
+**4. Style it.** `render.php` returns markup only. The CSS belongs to the theme — `wp_enqueue_style()` in `functions.php`, one stylesheet per component, or whatever your build already does.
 
-Wer die Felder nachträglich ändert, ändert den Typ für **alle** Seiten, die ihn benutzen. Neue Felder sind unkritisch. Ein Feld umbenennen heißt: alte Werte liegen unter dem alten Namen. Deshalb ist `sdcpb_version` im JSON und `schema` im Dokument — die Migration hängt an der Version, nicht am Zufall.
+Changing the fields afterwards changes the type for **all** pages that use it. New fields are harmless. Renaming a field means old values sit under the old name. That is why `sdcpb_version` is in the JSON and `schema` in the document — the migration hangs on the version, not on luck.
 
-## Aufbau
+## Layout
 
 ```
 plugin/
-├── sdc-page-builder.php              Bootstrap, GPL-Header, Admin-Hinweis ohne Wirt
+├── sdc-page-builder.php              Bootstrap, GPL header, admin notice when no host is active
 ├── includes/
-│   ├── class-sdc-field-adapter.php   einzige Stelle mit acf_*-Aufrufen
-│   ├── class-sdc-store.php           _sdcpb_data: ein Key, ein Write, Revisionen
-│   ├── class-sdc-schema.php          Komponenten = Feldgruppen mit group_sdcpb_component_*
+│   ├── class-sdc-field-adapter.php   the only place with acf_* calls
+│   ├── class-sdc-store.php           _sdcpb_data: one key, one write, revisions
+│   ├── class-sdc-schema.php          components = field groups with group_sdcpb_component_*
 │   └── class-sdc-rest.php            sdc-pb/v1/pages/{id}, sdc-pb/v1/components
-├── schemas/                          mitgelieferte Beispiel-Komponenten (hero/, faq/)
-└── tests/m1-verify.php               20 Prüfungen, end-to-end
+├── schemas/                          shipped example components (ten, one directory each)
+└── tests/m1-verify.php               20 checks, end to end
 ```
 
-**Datenmodell:** ein Meta-Key pro Seite.
+**Data model:** one meta key per page.
 
 ```json
 {
@@ -201,47 +201,47 @@ plugin/
 }
 ```
 
-`_id` gibt jeder Komponente eine stabile Identität für Sortieren und Undo. `schema` erlaubt Versionierung: alte Daten bleiben lesbar, migriert wird beim Lesen.
+`_id` gives every component a stable identity for sorting and undo. `schema` allows versioning: old data stays readable, migration happens on read.
 
-**Komponenten definieren:** eine Feldgruppe als JSON mit Key-Präfix `group_sdcpb_component_`. Der Rest des Keys ist der Typ (`group_sdcpb_component_faq` → `faq`). Eine Location-Regel auf `sdcpb_component == 1` sorgt dafür, dass der Wirt die Gruppe nie als normale Metabox rendert.
+**Defining components:** a field group as JSON with the key prefix `group_sdcpb_component_`. The rest of the key is the type (`group_sdcpb_component_faq` → `faq`). A location rule on `sdcpb_component == 1` makes sure the host never renders the group as a normal metabox.
 
-## Eigene Komponenten anlegen
+## Creating your own components
 
-Ein Komponententyp ist ein Verzeichnis — JSON für die Felder, optional `render.php` für das Markup:
+A component type is a directory — JSON for the fields, optionally `render.php` for the markup:
 
 ```
-wp-content/themes/<dein-theme>/sdc-components/
+wp-content/themes/<your-theme>/sdc-components/
 └── hero/
-    ├── definition.json    Feldgruppe (Pflicht)
-    └── render.php         Markup (optional)
+    ├── definition.json    field group (required)
+    └── render.php         markup (optional)
 ```
 
-Gesucht wird in dieser Reihenfolge, der erste Treffer gewinnt:
+Lookup happens in this order, first hit wins:
 
-1. `get_stylesheet_directory()/sdc-components/` — Child-Theme
-2. `get_template_directory()/sdc-components/` — Parent-Theme
-3. `WP_CONTENT_DIR/sdc-components/` — überlebt einen Theme-Wechsel
+1. `get_stylesheet_directory()/sdc-components/` — child theme
+2. `get_template_directory()/sdc-components/` — parent theme
+3. `WP_CONTENT_DIR/sdc-components/` — survives a theme switch
 
-Andere Orte per Filter:
+Other locations via filter:
 
 ```php
 add_filter( 'sdcpb_component_dirs', function ( $dirs ) {
-    $dirs[] = __DIR__ . '/meine-komponenten';
+    $dirs[] = __DIR__ . '/my-components';
     return $dirs;
 } );
 ```
 
-**Nicht** in `plugin/schemas/` schreiben: dort liegen nur die mitgelieferten Beispiele (`hero`, `faq`), und das Verzeichnis gehört dem Plugin — eigene Dateien sind beim nächsten Update weg.
+Do **not** write into `plugin/schemas/`: that is where the shipped examples live, and the directory belongs to the plugin — your own files are gone with the next update.
 
 ### `render.php`
 
-Die Datei läuft im Scope der Renderer-Methode und sieht drei Variablen:
+The file runs in the scope of the renderer method and sees three variables:
 
-| Variable | Inhalt |
+| Variable | Contents |
 |---|---|
-| `$type` | Komponententyp, z. B. `hero` |
-| `$data` | gespeicherte Werte dieses Exemplars, roh aus dem Dokument |
-| `$component` | kompletter Dokumenteintrag (`_id`, `type`, `schema`, `data`) |
+| `$type` | component type, e.g. `hero` |
+| `$data` | stored values of this instance, raw from the document |
+| `$component` | the complete document entry (`_id`, `type`, `schema`, `data`) |
 
 ```php
 <article class="hero">
@@ -251,71 +251,71 @@ Die Datei läuft im Scope der Renderer-Methode und sieht drei Variablen:
 </article>
 ```
 
-Zwei Dinge sind bewusst so: `$data` kommt **unescaped** an (Escaping ist Aufgabe des Templates — es ist Theme-Code, gleiche Vertrauensgrenze wie ein Template-Part), und `Sdcpb_Frontend::component_fields_html()` liefert das Standard-Markup der Felder, wenn nur der Rahmen eigen sein soll. Ohne `render.php` rendert das Plugin generisch (`div.sdc-component--<typ>` mit `sdc-field--<name>`-Spans).
+Two things are deliberate: `$data` arrives **unescaped** (escaping is the template's job — this is theme code, the same trust boundary as a template part), and `Sdcpb_Frontend::component_fields_html()` returns the default markup of the fields when only the frame is meant to be custom. Without a `render.php` the plugin renders generically (`div.sdc-component--<type>` with `sdc-field--<name>` spans).
 
-### Letzter Eingriff: der Filter
+### Last word: the filter
 
 ```php
 add_filter( 'sdcpb_component_html', function ( $html, $type, $data, $component ) {
     if ( 'hero' === $type && empty( $data['heading'] ) ) {
-        return ''; // Komponente weglassen
+        return ''; // leave the component out
     }
     return $html;
 }, 10, 4 );
 ```
 
-Der Filter läuft **nach** dem Template und hat das letzte Wort; ein leerer Rückgabewert entfernt die Komponente von der Seite.
+The filter runs **after** the template and has the last word; an empty return value removes the component from the page.
 
-### Ein Verzeichnis pro Komponente — warum
+### One directory per component — why
 
-ACF liest Local JSON nur eine Ebene tief (`scan_files()` überspringt Unterverzeichnisse). Das Plugin meldet deshalb jedes Unterverzeichnis von `sdc-components/` einzeln als Ladepfad an — dadurch funktioniert „ein Ordner pro Komponente" mit unverändertem ACF-Loader. Weil jede Komponente ihren Ordner für sich hat, heißt die Definitionsdatei überall gleich: `definition.json`. Der Name sagt nichts über den Typ; den bestimmt der Gruppen-Key im JSON.
+ACF reads Local JSON only one level deep (`scan_files()` skips subdirectories). The plugin therefore registers each subdirectory of `sdc-components/` as a load path individually — which is what makes "one directory per component" work with an unchanged ACF loader. Because every component has its directory to itself, the definition file is named the same everywhere: `definition.json`. The name says nothing about the type; the group key inside the JSON does.
 
-Gespeichert wird aus dem Admin in den Ordner der Komponente zurück, nicht nach `acf-json/` — zwei Dateien mit demselben Key wären zwei Definitionen derselben Komponente.
+Saving from the admin writes back into the component's directory, not into `acf-json/` — two files with the same key would be two definitions of the same component.
 
-## Komponenten im Backend verwalten
+## Managing components in wp-admin
 
-Alles oben Beschriebene geht auch ohne FTP: im Backend gibt es ein eigenes Menü **SDC**. Es zeigt den Katalog aller gefundenen Komponenten — Typ, Name, Felder, wo die Datei liegt (Plugin, Theme oder `wp-content`) und auf wie vielen Seiten die Komponente steht.
+Everything described above also works without FTP: wp-admin has its own menu, **SDC**. It shows the catalog of all discovered components — type, name, fields, where the file lives (plugin, theme or `wp-content`) and on how many pages the component appears.
 
-Fünf Aktionen, alle auf denselben Dateien:
+Five actions, all on the same files:
 
-| Aktion | Ergebnis |
+| Action | Result |
 |---|---|
-| **Anlegen** | neuer Ordner mit `definition.json` |
-| **Bearbeiten** | ändert Name, Beschreibung, Icon und Feldliste einer bestehenden Komponente |
-| **Duplizieren** | Kopie mit neuem Typ und neuen Feld-Keys |
-| **Löschen** | entfernt Ordner samt `render.php` |
-| **Im-/Export** | `definition.json` herunterladen bzw. hochladen |
+| **Create** | a new directory with `definition.json` |
+| **Edit** | changes name, description, icon and field list of an existing component |
+| **Duplicate** | a copy with a new type and new field keys |
+| **Delete** | removes the directory including `render.php` |
+| **Import/Export** | download or upload `definition.json` |
 
-**Anlegen** fragt Typ, Namen, Beschreibung, Icon und die Felder. Die Felder werden als JSON-Liste eingefügt, nicht in einem Formularnachbau zusammengeklickt:
+**Create** asks for type, name, description, icon and the fields. The fields are pasted in as a JSON list, not clicked together in a form rebuild:
 
 ```json
 [
-  { "name": "heading", "type": "text", "label": "Überschrift", "required": 1 },
-  { "name": "items",   "type": "group", "label": "Einträge", "sub_fields": [
+  { "name": "heading", "type": "text", "label": "Heading", "required": 1 },
+  { "name": "items",   "type": "group", "label": "Entries", "sub_fields": [
       { "name": "text", "type": "textarea", "label": "Text" }
   ] }
 ]
 ```
 
-Was daraus wird, entscheidet das Plugin: die Feld-Keys werden auf `field_sdc_<typ>_<name>` gesetzt. Zwei Komponenten können damit nicht denselben Key belegen, auch wenn beide ein Feld `text` haben — sonst würde die zweite Komponente das Feld der ersten überschreiben. Feldnamen werden auf `a-z0-9_` reduziert, unbekannte Feldtypen abgewiesen, unbekannte Eigenschaften nicht übernommen.
+What becomes of it is the plugin's decision: field keys are set to `field_sdc_<type>_<name>`. Two components therefore cannot occupy the same key even when both have a field called `text` — otherwise the second component would overwrite the first one's field. Field names are reduced to `a-z0-9_`, unknown field types are rejected, unknown properties are not carried over.
 
-**Duplizieren** legt die Kopie immer unter `wp-content/sdc-components/` an und schreibt den Gruppen-Key um. Das ist der Weg, eine mitgelieferte oder Theme-Komponente zu bearbeiten, ohne das Theme anzufassen: duplizieren, umbauen, Original im Theme bleibt als Vorlage.
+**Duplicate** always places the copy under `wp-content/sdc-components/` and rewrites the group key. That is the way to edit a shipped or theme component without touching the theme: duplicate, rebuild, leave the original in the theme as a template.
 
-**Bearbeiten** öffnet dieselbe Maske wie das Anlegen, vorbelegt aus der Datei. Der Typ ist nur lesbar und Feld-Keys erscheinen nicht im Formular: ein Key ist der Schlüssel, unter dem eine Seite ihre Werte ablegt. Ein gespeicherter Key bleibt deshalb, wie er in der Datei steht — auch wenn er von Hand vergeben wurde und nicht dem Muster `field_sdc_<typ>_<name>` folgt. Nur ein Feld, das die Datei noch nicht kennt, bekommt einen neuen Key. Gespeichert wird ausschließlich, was das Formular kennt: `title`, `sdcpb_description`, `sdcpb_icon` und `fields`. `menu_order`, `location` und eigene Eigenschaften der Datei bleiben, wie sie sind, weil die Datei die Grundlage ist und nicht das Formular. Verschwindet ein Feldname aus der Liste, verlangt das Formular eine Bestätigung und nennt die betroffenen Felder; ohne Häkchen bleibt die Datei byte-identisch.
+**Edit** opens the same mask as Create, pre-filled from the file. The type is read-only and field keys do not appear in the form: a key is the key under which a page stores its values. A stored key therefore stays as it stands in the file — even when it was assigned by hand and does not follow the `field_sdc_<type>_<name>` pattern. Only a field the file does not yet know gets a new key. Only what the form knows is saved: `title`, `sdcpb_description`, `sdcpb_icon` and `fields`. `menu_order`, `location` and the file's own properties stay as they are, because the file is the basis and not the form. If a field name disappears from the list, the form asks for confirmation and names the affected fields; without the checkmark the file stays byte-identical.
 
-**Löschen** geht nur für Dateien in `wp-content/sdc-components/`. Steht die Komponente noch auf Seiten, verlangt das Formular ein Häkchen — der Inhalt der Seiten bleibt in beiden Fällen erhalten, es verschwindet nur die Definition.
+**Delete** only works for files in `wp-content/sdc-components/`. If the component still appears on pages, the form asks for a checkmark — the pages' content survives either way, only the definition disappears.
 
-**Import** überschreibt nichts: existiert der Typ schon, wird abgelehnt. Die hochgeladene Datei wird als JSON gelesen und gegen dieselben Regeln geprüft wie das Formular.
+**Import** overwrites nothing: if the type already exists, it is rejected. The uploaded file is read as JSON and checked against the same rules as the form.
 
-Die Grenze: das Backend schreibt ausschließlich nach `wp-content/sdc-components/`. Theme- und Plugin-Ordner bleiben unverändert — dort ist der nächste Deploy die Wahrheit, und eine zweite Kopie in der Datenbank wäre eine zweite Quelle für denselben Gruppen-Key. `render.php` lässt sich hier deshalb auch nicht bearbeiten: Markup ist Theme-Code und gehört in die Versionsverwaltung, nicht in ein Textfeld.
+The boundary: the admin writes exclusively to `wp-content/sdc-components/`. Theme and plugin directories stay untouched — the next deploy is the truth there, and a second copy in the database would be a second source for the same group key. That is also why `render.php` cannot be edited here: markup is theme code and belongs in version control, not in a text field.
 
-## Voraussetzungen
+## Requirements
 
 - WordPress 6.4+
 - PHP 7.4+
-- **Advanced Custom Fields** (free) **oder** Secure Custom Fields — je eines, nicht beide
+- **Advanced Custom Fields** (free) **or** Secure Custom Fields — one of them, not both
 
-Ohne Wirt aktiviert sich das Plugin nicht und zeigt einen Hinweis statt eines Fatal Errors.
+Without a host the plugin does not activate and shows a notice instead of a fatal error.
 
 ## Installation
 
@@ -325,12 +325,12 @@ ln -s "$PWD/sdc-page-builder/plugin" wp-content/plugins/sdc-page-builder
 wp plugin activate sdc-page-builder
 ```
 
-## Was noch fehlt
+## What is still missing
 
-Das Plugin ist funktional vollständig: Editor mit Vorschau, Speicherung, Revisionsverlauf, Import/Export, Frontend-Ausgabe und Theme-Templates. Offen ist die Freigabe im WordPress.org-Review (Zweit-Review vor dem ersten Upload).
+The plugin is functionally complete: editor with preview, storage, revision history, import/export, frontend output and theme templates. What is open is approval in the WordPress.org review (second review before the first upload).
 
-## Lizenz
+## License
 
-GPL-2.0-or-later. Siehe [LICENSE](LICENSE).
+GPL-2.0-or-later. See [LICENSE](LICENSE).
 
-Dieses Projekt ist unabhängig. Es steht in keiner Verbindung zu WP Engine oder Automattic und wird von beiden nicht unterstützt oder gesponsert. „Advanced Custom Fields" und „ACF" sind Marken von WP Engine; „Secure Custom Fields" ist ein Projekt von WordPress.org. Die Namen werden hier nur beschreibend verwendet, um die Kompatibilität zu benennen.
+This project is independent. It is not affiliated with, endorsed or sponsored by WP Engine or Automattic. "Advanced Custom Fields" and "ACF" are trademarks of WP Engine; "Secure Custom Fields" is a WordPress.org project. The names are used here descriptively only, to name the compatibility.
