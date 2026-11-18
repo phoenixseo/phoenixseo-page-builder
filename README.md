@@ -2,7 +2,7 @@
 
 Ein komponentenbasierter Page-Builder für WordPress, der **Advanced Custom Fields** und **Secure Custom Fields** als Feld-Lieferanten nutzt — und Seiten in einem einzigen JSON-Dokument speichert.
 
-**Status: 0.2.1.** Editor, Speicherung, Frontend-Ausgabe, Revisionen und Import/Export stehen und sind gemessen: 367 Tests / 2118 Assertions auf WordPress 7.1.4 **und** auf der erklärten Mindestversion 6.4.14, gegen ACF **und** SCF, PHPCS ohne Befund, Plugin Check am gebauten Paket ohne Befund, readme.txt formal konform. Offen sind Screenshots und die Freigabe im WordPress.org-Review.
+**Status: 0.2.1.** Editor, Speicherung, Frontend-Ausgabe, Revisionen und Import/Export stehen und sind gemessen: 367 Tests / 2118 Assertions auf WordPress 7.1.4 **und** auf der erklärten Mindestversion 6.4.14, gegen ACF **und** SCF, PHPCS ohne Befund, Plugin Check am gebauten Paket ohne Befund, readme.txt formal konform, drei Screenshots im Paket. Offen ist die Freigabe im WordPress.org-Review.
 
 ## Warum es das gibt
 
@@ -311,7 +311,7 @@ wp plugin activate sdc-page-builder
 
 ## Was noch fehlt
 
-Das Plugin ist funktional vollständig: Editor, REST-Speicherung, Revisionsverlauf, Import/Export, Frontend-Ausgabe und Theme-Templates. Offen ist die Freigabe für WordPress.org (Screenshots, Zweit-Review) sowie Live-Vorschau und Undo im Editor.
+Das Plugin ist funktional vollständig: Editor mit Vorschau, Speicherung, Revisionsverlauf, Import/Export, Frontend-Ausgabe und Theme-Templates. Offen ist die Freigabe im WordPress.org-Review (Zweit-Review vor dem ersten Upload).
 
 ## Lizenz
 
