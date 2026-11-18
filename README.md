@@ -4,6 +4,22 @@ Ein komponentenbasierter Page-Builder für WordPress, der **Advanced Custom Fiel
 
 **Status: 0.2.1.** Editor, Speicherung, Frontend-Ausgabe, Revisionen und Import/Export stehen und sind gemessen: 367 Tests / 2118 Assertions auf WordPress 7.1.4 **und** auf der erklärten Mindestversion 6.4.14, gegen ACF **und** SCF, PHPCS ohne Befund, Plugin Check am gebauten Paket ohne Befund, readme.txt formal konform, drei Screenshots im Paket. Offen ist die Freigabe im WordPress.org-Review.
 
+## Drei der zehn Beispiel-Komponenten
+
+Alle drei Bilder sind die Ausgabe des Plugins auf der Demo-Seite mit den mitgelieferten Beispielen — kein Mockup, kein Theme dazwischen. Aufgenommen bei 1280 px Breite, zweifache Pixeldichte.
+
+**`vinyl`** — die Tracknummer kommt aus der Zeilenreihenfolge, die Gesamtspielzeit wird aus den Einzeldauern addiert. Beides sind keine Felder.
+
+![Komponente vinyl: Plattencover, Trackliste mit gerechneten Tracknummern und aufaddierter Gesamtspielzeit](plugin/screenshot-1.png)
+
+**`movie`** — Fakten als Definitionsliste, die Bewertung als `<meter>`, die Laufzeit aus einer Minutenzahl geschrieben.
+
+![Komponente movie: Filmplakat, Fakten als Definitionsliste, Bewertung als meter-Element](plugin/screenshot-2.png)
+
+**`series`** — jede Staffel ein `<details>`-Element, per Tastatur bedienbar und ohne eine Zeile JavaScript.
+
+![Komponente series: Serienplakat, jede Staffel ein details-Element, ohne JavaScript aufklappbar](plugin/screenshot-3.png)
+
 ## Warum es das gibt
 
 Ein CMS trennt Inhalt von Darstellung. Die gängigen Page Builder tun das Gegenteil: sie legen den Inhalt zusammen mit dem Markup ab — als Block-Attribut, als HTML, als serialisierten Baum. Wer danach eine Komponente ändert, muss jede Seite einzeln nachziehen. Der Inhalt sitzt im Code fest, und genau dort hört ein CMS auf, ein CMS zu sein.
