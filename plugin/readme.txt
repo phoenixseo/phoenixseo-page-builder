@@ -108,19 +108,12 @@ A block can outlive the plugin version that registered it. The editor marks it a
 
 == Screenshots ==
 
-= None yet =
+1. A record component: the track number comes from the row order and the total running time is added up from the durations — neither is a field.
+2. A film component: facts as a definition list, the rating as a `<meter>`, the running time written from a number of minutes.
+3. A series component: every season is a `<details>` element, folded away by default and usable from the keyboard without JavaScript.
 
-This release ships no screenshots. The plugin is complete and in submission
-review; screenshots of the inserter, the canvas, the block sidebar and the
-component catalogue will be added in the next release.
-
-<!--
-	The section stays with this note instead of being removed: a heading that
-	lists no numbered item describes what the plugin offers instead of promising
-	a file that is not there. The captions that were here before (inserter,
-	canvas, sidebar, catalogue) are the intended shots and belong back here once
-	the four PNGs exist — see assets/README.md.
--->
+All three are the shipped examples, rendered by the plugin's own frontend
+output — no mockup, no theme involved. The content is sample data.
 
 == Changelog ==
 
@@ -138,6 +131,12 @@ component catalogue will be added in the next release.
 * Fixed: a forced component import reads its flag through `sanitize_key()`.
 * Removed: `load_plugin_textdomain()`. wordpress.org loads the text domain
   itself, so the call only loaded the same catalogue a second time.
+* New: ten example components ship with the plugin — a record, a film and a
+  series that show what a component can do, plus seven general-purpose ones
+  (hero, feature grid, statistics, pricing table, testimonials, CTA band, FAQ).
+  They are examples, referred to by the same directory mechanism any own
+  component uses.
+* New: three screenshots of the rendered examples.
 
 = 0.2.0 =
 * New: the component screen carries a credit line with the author's site and a

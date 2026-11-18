@@ -91,17 +91,28 @@ else
 	fail "description too long ($desc chars)"
 fi
 
-# A numbered caption promises a file. If the section lists any, a screenshot
-# must actually ship next to the plugin — otherwise the list is a false claim.
+# A numbered caption promises a file. If the section lists any, every one of
+# them must ship next to the plugin — checking only the highest number would let
+# a gap through (captions 1 and 3 with screenshot-3.png present and 1, 2 gone).
 shots="$(sed -n '/^== Screenshots ==/,/^== Changelog ==/p' "$README" | grep -cE '^[0-9]+\. ' || true)"
 if [ "$shots" -eq 0 ]; then
 	pass "screenshots: section lists no captions (and ships no files)"
 elif [ "$shots" -gt 10 ]; then
 	fail "screenshot count out of range: $shots (max 10)"
-elif [ ! -f "$ROOT/plugin/screenshot-${shots}.png" ]; then
-	fail "$shots screenshot captions listed, but plugin/screenshot-${shots}.png is missing"
 else
-	pass "screenshots listed: $shots (1-10), screenshot-${shots}.png present"
+	missing=""
+	n=1
+	while [ "$n" -le "$shots" ]; do
+		if [ ! -f "$ROOT/plugin/screenshot-${n}.png" ]; then
+			missing="$missing screenshot-${n}.png"
+		fi
+		n=$((n + 1))
+	done
+	if [ -n "$missing" ]; then
+		fail "$shots screenshot captions listed, missing:$missing"
+	else
+		pass "screenshots listed: $shots (1-10), all files present"
+	fi
 fi
 
 # Tags: max 5, lowercase, comma separated.

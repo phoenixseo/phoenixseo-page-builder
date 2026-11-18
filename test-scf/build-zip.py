@@ -77,6 +77,29 @@ def collect(anchored, bare):
     return sorted(entries)
 
 
+def count_captions(readme_path):
+    """Number the `1. `-style captions inside the Screenshots section.
+
+    wp.org maps `screenshot-<n>.png` to the n-th list item, so the count is what
+    has to agree, not the wording. A missing section means zero captions.
+    """
+    try:
+        with open(readme_path, encoding="utf-8") as handle:
+            lines = handle.read().splitlines()
+    except OSError:
+        return 0
+    inside = False
+    count = 0
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("==") and stripped.endswith("=="):
+            inside = stripped == "== Screenshots =="
+            continue
+        if inside and stripped and stripped[0].isdigit() and ". " in stripped[:4]:
+            count += 1
+    return count
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", default=os.path.join(ROOT, "sdc-page-builder.zip"))
@@ -104,9 +127,16 @@ def main():
     for rel in entries:
         print(rel)
 
-    # Verify the four prohibitions and the two required files from the card.
+    # Verify the prohibitions and the required files.
+    #
+    # `screenshot-*` used to be forbidden here: the readme claimed four shots
+    # that did not exist, and a package shipping a caption for a missing file is
+    # a review finding. Now the shots exist, so the rule flips instead of being
+    # dropped — wp.org reads them from the package root, and a caption without
+    # its file is still a finding. The number of files must match the captions
+    # in readme.txt, in both directions.
     forbidden = [("node_modules", "node_modules/"), ("vendor", "/vendor/"),
-                 ("tests", "/tests/"), ("screenshot", "/screenshot-")]
+                 ("tests", "/tests/")]
     problems = []
     for label, needle in forbidden:
         if label == "tests":
@@ -116,13 +146,39 @@ def main():
         print(f"check {label}: {len(hits)} hit(s)")
         if hits:
             problems.append(f"{label}: {hits[:3]}")
-    # The two required files, looked up by their path inside the package.
+    # The required files, looked up by their path inside the package.
     for required in ("LICENSE", "readme.txt", "sdc-page-builder.php"):
         rel = f"plugin/{required}"
         present = rel in entries
         print(f"check {rel}: {'yes' if present else 'MISSING'}")
         if not present:
             problems.append(f"missing {rel}")
+
+    # Screenshots: number them from 1 without gaps, and make the count agree
+    # with the captions listed in readme.txt.
+    shots = sorted(
+        (e for e in entries if e.startswith("plugin/screenshot-")),
+        key=lambda e: int(e[len("plugin/screenshot-"):-len(".png")] or 0)
+        if e[len("plugin/screenshot-"):-len(".png")].isdigit() else 999,
+    )
+    numbers = []
+    for entry in shots:
+        stem = entry[len("plugin/screenshot-"):-len(".png")]
+        if not stem.isdigit():
+            problems.append(f"screenshot not named screenshot-<n>.png: {entry}")
+            continue
+        numbers.append(int(stem))
+    print(f"check screenshots: {len(shots)} file(s) {numbers}")
+    if numbers and numbers != list(range(1, len(numbers) + 1)):
+        problems.append(f"screenshot numbering has a gap: {numbers}")
+
+    captions = count_captions(os.path.join(PLUGIN, "readme.txt"))
+    print(f"check captions: {captions} in readme.txt, {len(numbers)} file(s)")
+    if captions != len(numbers):
+        problems.append(
+            f"{captions} caption(s) in readme.txt but {len(numbers)} screenshot file(s)"
+        )
+
 
     # The archive layout is the plugin's install path: one top-level directory,
     # named after the slug, holding the main file.
