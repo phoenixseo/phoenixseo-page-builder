@@ -6,7 +6,7 @@
  */
 
 /**
- * Covers `Sdc_Style_Editor` and the stylesheet methods it stands on: what the
+ * Covers `Sdcpb_Style_Editor` and the stylesheet methods it stands on: what the
  * panel shows, what a save writes, and what it refuses.
  *
  * The failure this suite guards against is the quiet one. A stylesheet is
@@ -14,7 +14,7 @@
  * unclosed comment does not break this component — it breaks the page, and
  * the page is where nobody looks for the cause.
  */
-class StyleEditorTest extends Sdc_TestCase {
+class StyleEditorTest extends Sdcpb_TestCase {
 
 	/**
 	 * Scratch root for the current test.
@@ -37,7 +37,7 @@ class StyleEditorTest extends Sdc_TestCase {
 		parent::set_up();
 
 		$this->root = untrailingslashit( get_temp_dir() ) . '/sdc-se-' . wp_generate_password( 8, false );
-		$this->dir  = $this->root . '/' . Sdc_Schema::USER_DIR;
+		$this->dir  = $this->root . '/' . Sdcpb_Schema::USER_DIR;
 
 		$this->assertTrue( wp_mkdir_p( $this->dir ) );
 
@@ -54,9 +54,9 @@ class StyleEditorTest extends Sdc_TestCase {
 	public function tear_down() {
 		$_POST = array();
 
-		remove_all_filters( 'sdc_pb_write_dir' );
-		remove_all_filters( 'sdc_pb_component_dirs' );
-		remove_all_filters( 'sdc_pb_can_edit_style' );
+		remove_all_filters( 'sdcpb_write_dir' );
+		remove_all_filters( 'sdcpb_component_dirs' );
+		remove_all_filters( 'sdcpb_can_edit_style' );
 
 		$this->remove_tree( $this->root );
 
@@ -75,8 +75,8 @@ class StyleEditorTest extends Sdc_TestCase {
 	public function test_the_panel_shows_a_textarea() {
 		$html = $this->panel( 'hero', '.sdc-component--hero { color: red; }' );
 
-		$this->assertStringContainsString( 'name="sdc_css_body"', $html );
-		$this->assertStringContainsString( 'id="sdc_css_body"', $html );
+		$this->assertStringContainsString( 'name="sdcpb_css_body"', $html );
+		$this->assertStringContainsString( 'id="sdcpb_css_body"', $html );
 		$this->assertStringContainsString( 'sdc-component--hero', $html );
 	}
 
@@ -109,7 +109,7 @@ class StyleEditorTest extends Sdc_TestCase {
 
 		$this->assertStringContainsString( '.from-theme', $html );
 		$this->assertStringContainsString( 'readonly', $html );
-		$this->assertStringNotContainsString( 'name="sdc_css_body"', $html );
+		$this->assertStringNotContainsString( 'name="sdcpb_css_body"', $html );
 	}
 
 	/*
@@ -122,9 +122,9 @@ class StyleEditorTest extends Sdc_TestCase {
 	 * A posted stylesheet ends up in the component's own directory.
 	 */
 	public function test_save_writes_the_file() {
-		$_POST = array( 'sdc_css_body' => '.sdc-component--hero { color: red; }' );
+		$_POST = array( 'sdcpb_css_body' => '.sdc-component--hero { color: red; }' );
 
-		$this->assertTrue( Sdc_Style_Editor::save( $this->dir, 'hero' ) );
+		$this->assertTrue( Sdcpb_Style_Editor::save( $this->dir, 'hero' ) );
 
 		$file = $this->file( 'hero' );
 
@@ -138,9 +138,9 @@ class StyleEditorTest extends Sdc_TestCase {
 	public function test_an_empty_stylesheet_removes_the_file() {
 		$this->write_style_file( 'hero', '.sdc-component--hero { color: red; }' );
 
-		$_POST = array( 'sdc_css_body' => '   ' );
+		$_POST = array( 'sdcpb_css_body' => '   ' );
 
-		$this->assertTrue( Sdc_Style_Editor::save( $this->dir, 'hero' ) );
+		$this->assertTrue( Sdcpb_Style_Editor::save( $this->dir, 'hero' ) );
 		$this->assertFileDoesNotExist( $this->file( 'hero' ) );
 	}
 
@@ -154,9 +154,9 @@ class StyleEditorTest extends Sdc_TestCase {
 	public function test_a_form_without_the_field_leaves_the_file_alone() {
 		$this->write_style_file( 'hero', '.sdc-component--hero { color: red; }' );
 
-		$_POST = array( 'sdc_label' => 'Held' );
+		$_POST = array( 'sdcpb_label' => 'Held' );
 
-		$this->assertTrue( Sdc_Style_Editor::save( $this->dir, 'hero' ) );
+		$this->assertTrue( Sdcpb_Style_Editor::save( $this->dir, 'hero' ) );
 		$this->assertFileExists( $this->file( 'hero' ) );
 	}
 
@@ -164,12 +164,12 @@ class StyleEditorTest extends Sdc_TestCase {
 	 * A rejected stylesheet is not written.
 	 */
 	public function test_a_broken_stylesheet_is_refused() {
-		$_POST = array( 'sdc_css_body' => '.sdc-component--hero { color: red;' );
+		$_POST = array( 'sdcpb_css_body' => '.sdc-component--hero { color: red;' );
 
-		$result = Sdc_Style_Editor::save( $this->dir, 'hero' );
+		$result = Sdcpb_Style_Editor::save( $this->dir, 'hero' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_style_braces', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_style_braces', $result->get_error_code() );
 		$this->assertFileDoesNotExist( $this->file( 'hero' ) );
 	}
 
@@ -181,9 +181,9 @@ class StyleEditorTest extends Sdc_TestCase {
 	 * and a diff a day long is how a person stops trusting the screen.
 	 */
 	public function test_the_stylesheet_is_normalized() {
-		$_POST = array( 'sdc_css_body' => "\xEF\xBB\xBF.a {\r\n\tcolor: red;\r\n}" );
+		$_POST = array( 'sdcpb_css_body' => "\xEF\xBB\xBF.a {\r\n\tcolor: red;\r\n}" );
 
-		$this->assertTrue( Sdc_Style_Editor::save( $this->dir, 'hero' ) );
+		$this->assertTrue( Sdcpb_Style_Editor::save( $this->dir, 'hero' ) );
 
 		$stored = (string) file_get_contents( $this->file( 'hero' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Test assertion.
 
@@ -202,9 +202,9 @@ class StyleEditorTest extends Sdc_TestCase {
 	 * The scaffold button fills the box with the component's own selector.
 	 */
 	public function test_the_scaffold_starts_with_the_component_selector() {
-		$_POST = array( 'sdc_css_scaffold' => '1' );
+		$_POST = array( 'sdcpb_css_scaffold' => '1' );
 
-		$this->assertTrue( Sdc_Style_Editor::save( $this->dir, 'hero' ) );
+		$this->assertTrue( Sdcpb_Style_Editor::save( $this->dir, 'hero' ) );
 
 		$stored = (string) file_get_contents( $this->file( 'hero' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Test assertion.
 
@@ -212,7 +212,7 @@ class StyleEditorTest extends Sdc_TestCase {
 
 		// The scaffold is a comment plus an empty rule: it has to survive its
 		// own lint, or the button produces a file the form then refuses.
-		$this->assertTrue( Sdc_View::lint_style( $stored ) );
+		$this->assertTrue( Sdcpb_View::lint_style( $stored ) );
 	}
 
 	/*
@@ -225,9 +225,9 @@ class StyleEditorTest extends Sdc_TestCase {
 	 * A site can forbid styles while allowing views.
 	 */
 	public function test_the_filter_can_forbid_editing() {
-		add_filter( 'sdc_pb_can_edit_style', '__return_false' );
+		add_filter( 'sdcpb_can_edit_style', '__return_false' );
 
-		$this->assertFalse( Sdc_View::can_edit_style( 'hero' ) );
+		$this->assertFalse( Sdcpb_View::can_edit_style( 'hero' ) );
 		$this->assertSame( '', $this->panel( 'hero' ) );
 	}
 
@@ -237,14 +237,14 @@ class StyleEditorTest extends Sdc_TestCase {
 	 * file-system failure.
 	 */
 	public function test_a_forbidden_edit_is_not_written() {
-		add_filter( 'sdc_pb_can_edit_style', '__return_false' );
+		add_filter( 'sdcpb_can_edit_style', '__return_false' );
 
-		$_POST = array( 'sdc_css_body' => '.a { color: red; }' );
+		$_POST = array( 'sdcpb_css_body' => '.a { color: red; }' );
 
-		$result = Sdc_Style_Editor::save( $this->dir, 'hero' );
+		$result = Sdcpb_Style_Editor::save( $this->dir, 'hero' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_style_forbidden', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_style_forbidden', $result->get_error_code() );
 	}
 
 	/*
@@ -279,12 +279,12 @@ class StyleEditorTest extends Sdc_TestCase {
 			$this->assertStringContainsString( 'data-sdc-panel="' . $id . '"', $html );
 		}
 
-		$this->assertStringContainsString( 'name="sdc_fields"', $html );
-		$this->assertStringContainsString( 'name="sdc_view_body"', $html );
-		$this->assertStringContainsString( 'name="sdc_css_body"', $html );
+		$this->assertStringContainsString( 'name="sdcpb_fields"', $html );
+		$this->assertStringContainsString( 'name="sdcpb_view_body"', $html );
+		$this->assertStringContainsString( 'name="sdcpb_css_body"', $html );
 
 		// All three before the end of the form: the save button posts them.
-		$this->assertLessThan( strpos( $html, '</form>' ), strpos( $html, 'sdc_css_body' ) );
+		$this->assertLessThan( strpos( $html, '</form>' ), strpos( $html, 'sdcpb_css_body' ) );
 	}
 
 	/**
@@ -301,7 +301,7 @@ class StyleEditorTest extends Sdc_TestCase {
 		$panel = strpos( $html, 'data-sdc-panel="styles"' );
 
 		$this->assertNotFalse( $panel );
-		$this->assertGreaterThan( $panel, strpos( $html, 'name="sdc_css_body"' ) );
+		$this->assertGreaterThan( $panel, strpos( $html, 'name="sdcpb_css_body"' ) );
 	}
 
 	/**
@@ -317,12 +317,12 @@ class StyleEditorTest extends Sdc_TestCase {
 		$this->reload_schema();
 
 		$_POST = array(
-			'sdc_type'     => $type,
-			'sdc_label'    => 'Held',
+			'sdcpb_type'     => $type,
+			'sdcpb_label'    => 'Held',
 			// The stored field, unchanged: an empty list here would stop the
 			// save at the "fields removed" guard before the stylesheet is
 			// ever looked at, and the test would prove nothing.
-			'sdc_fields'   => (string) wp_json_encode(
+			'sdcpb_fields'   => (string) wp_json_encode(
 				array(
 					array(
 						'name'  => 'heading',
@@ -331,13 +331,13 @@ class StyleEditorTest extends Sdc_TestCase {
 					),
 				)
 			),
-			'sdc_css_body' => '.a { color: red;',
+			'sdcpb_css_body' => '.a { color: red;',
 		);
 
 		$result = $this->invoke( 'update' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'styles', $result->get_error_data()['sdc_tab'] );
+		$this->assertSame( 'styles', $result->get_error_data()['sdcpb_tab'] );
 	}
 
 	/*
@@ -353,7 +353,7 @@ class StyleEditorTest extends Sdc_TestCase {
 	 * @return string HTML.
 	 */
 	private function edit_form( $type ) {
-		$method = new ReflectionMethod( 'Sdc_Admin', 'render_edit_form' );
+		$method = new ReflectionMethod( 'Sdcpb_Admin', 'render_edit_form' );
 		$method->setAccessible( true );
 
 		ob_start();
@@ -363,14 +363,14 @@ class StyleEditorTest extends Sdc_TestCase {
 	}
 
 	/**
-	 * Call a private static method of Sdc_Admin.
+	 * Call a private static method of Sdcpb_Admin.
 	 *
 	 * @param string $method Method name.
 	 * @param mixed  ...$args Arguments.
 	 * @return mixed
 	 */
 	private function invoke( $method, ...$args ) {
-		$reflection = new ReflectionMethod( 'Sdc_Admin', $method );
+		$reflection = new ReflectionMethod( 'Sdcpb_Admin', $method );
 		$reflection->setAccessible( true );
 
 		return $reflection->invoke( null, ...$args );
@@ -401,7 +401,7 @@ class StyleEditorTest extends Sdc_TestCase {
 				$dir . '/definition.json',
 				(string) wp_json_encode(
 					array(
-						'key'    => Sdc_Schema::KEY_PREFIX . $type,
+						'key'    => Sdcpb_Schema::KEY_PREFIX . $type,
 						'title'  => 'Held',
 						'fields' => array(
 							array(
@@ -421,7 +421,7 @@ class StyleEditorTest extends Sdc_TestCase {
 	 * Make the schema loader see what is on disk now.
 	 */
 	private function reload_schema() {
-		Sdc_Schema::flush();
+		Sdcpb_Schema::flush();
 
 		if ( function_exists( 'acf_get_store' ) ) {
 			foreach ( array( 'field-groups', 'fields' ) as $store ) {
@@ -435,7 +435,7 @@ class StyleEditorTest extends Sdc_TestCase {
 		// The hook name comes from the host and cannot be renamed.
 		do_action( 'acf/include_fields' ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Hook defined by ACF/SCF.
 
-		Sdc_Schema::flush();
+		Sdcpb_Schema::flush();
 	}
 
 	/**
@@ -443,7 +443,7 @@ class StyleEditorTest extends Sdc_TestCase {
 	 *
 	 * Two separate hooks, not one list: a test that models a theme-shipped
 	 * stylesheet puts the theme first in the lookup order while the writable
-	 * slot stays where it is. Hooking `sdc_pb_write_dir` to the first entry
+	 * slot stays where it is. Hooking `sdcpb_write_dir` to the first entry
 	 * would make the panel believe it owns the theme's file.
 	 *
 	 * @param string[] $dirs  Directories, in lookup order.
@@ -453,14 +453,14 @@ class StyleEditorTest extends Sdc_TestCase {
 		$write = '' === $write ? (string) end( $dirs ) : $write;
 
 		add_filter(
-			'sdc_pb_write_dir',
+			'sdcpb_write_dir',
 			static function () use ( $write ) {
 				return $write;
 			}
 		);
 
 		add_filter(
-			'sdc_pb_component_dirs',
+			'sdcpb_component_dirs',
 			static function () use ( $dirs ) {
 				return $dirs;
 			}
@@ -476,7 +476,7 @@ class StyleEditorTest extends Sdc_TestCase {
 	 */
 	private function panel( $type, $css = null ) {
 		ob_start();
-		Sdc_Style_Editor::render( $type, $css );
+		Sdcpb_Style_Editor::render( $type, $css );
 		return (string) ob_get_clean();
 	}
 
@@ -487,7 +487,7 @@ class StyleEditorTest extends Sdc_TestCase {
 	 * @return string
 	 */
 	private function file( $type ) {
-		return $this->dir . '/' . $type . '/' . Sdc_View::STYLE;
+		return $this->dir . '/' . $type . '/' . Sdcpb_View::STYLE;
 	}
 
 	/**
@@ -498,7 +498,7 @@ class StyleEditorTest extends Sdc_TestCase {
 	 */
 	private function write_style_file( $type, $css ) {
 		$this->assertTrue( wp_mkdir_p( dirname( $this->file( $type ) ) ) );
-		$this->assertNotFalse( file_put_contents( $this->file( $type ), Sdc_View::normalize_style( $css ) ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Test fixture.
+		$this->assertNotFalse( file_put_contents( $this->file( $type ), Sdcpb_View::normalize_style( $css ) ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Test fixture.
 	}
 
 	/**

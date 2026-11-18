@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Registers `sdc-pb/v1`.
  */
-class Sdc_Rest {
+class Sdcpb_Rest {
 
 	const NAMESPACE_V1 = 'sdc-pb/v1';
 
@@ -100,10 +100,10 @@ class Sdc_Rest {
 		$post_id = (int) $request['id'];
 
 		if ( ! get_post( $post_id ) ) {
-			return new WP_Error( 'sdc_not_found', __( 'Seite nicht gefunden.', 'sdc-page-builder' ), array( 'status' => 404 ) );
+			return new WP_Error( 'sdcpb_not_found', __( 'Seite nicht gefunden.', 'sdc-page-builder' ), array( 'status' => 404 ) );
 		}
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return new WP_Error( 'sdc_forbidden', __( 'Keine Berechtigung für diese Seite.', 'sdc-page-builder' ), array( 'status' => 403 ) );
+			return new WP_Error( 'sdcpb_forbidden', __( 'Keine Berechtigung für diese Seite.', 'sdc-page-builder' ), array( 'status' => 403 ) );
 		}
 		return true;
 	}
@@ -120,7 +120,7 @@ class Sdc_Rest {
 	 */
 	public static function get_page( $request ) {
 		$post_id  = (int) $request['id'];
-		$document = Sdc_Store::get_data( $post_id );
+		$document = Sdcpb_Store::get_data( $post_id );
 
 		return new WP_REST_Response(
 			array(
@@ -143,20 +143,20 @@ class Sdc_Rest {
 		$input   = $request->get_param( 'components' );
 
 		if ( ! is_array( $input ) ) {
-			return new WP_Error( 'sdc_invalid', __( 'components muss ein Array sein.', 'sdc-page-builder' ), array( 'status' => 400 ) );
+			return new WP_Error( 'sdcpb_invalid', __( 'components muss ein Array sein.', 'sdc-page-builder' ), array( 'status' => 400 ) );
 		}
 
 		// Unknown component types are rejected: silently dropping them would
 		// look like a successful save while destroying content.
-		$known = array_keys( Sdc_Schema::components() );
+		$known = array_keys( Sdcpb_Schema::components() );
 		foreach ( $input as $component ) {
 			$type = is_array( $component ) && isset( $component['type'] ) ? (string) $component['type'] : '';
 			if ( '' === $type ) {
-				return new WP_Error( 'sdc_invalid_component', __( 'Komponente ohne Typ.', 'sdc-page-builder' ), array( 'status' => 400 ) );
+				return new WP_Error( 'sdcpb_invalid_component', __( 'Komponente ohne Typ.', 'sdc-page-builder' ), array( 'status' => 400 ) );
 			}
 			if ( ! in_array( $type, $known, true ) ) {
 				return new WP_Error(
-					'sdc_unknown_component',
+					'sdcpb_unknown_component',
 					/* translators: %s: component type */
 					sprintf( __( 'Unbekannter Komponententyp: %s', 'sdc-page-builder' ), $type ),
 					array( 'status' => 400 )
@@ -170,7 +170,7 @@ class Sdc_Rest {
 		$content_errors = array();
 		foreach ( $input as $index => $component ) {
 			$type   = (string) $component['type'];
-			$fields = Sdc_Schema::fields( $type );
+			$fields = Sdcpb_Schema::fields( $type );
 			$data   = isset( $component['data'] ) && is_array( $component['data'] ) ? $component['data'] : array();
 
 			foreach ( $fields as $field ) {
@@ -192,7 +192,7 @@ class Sdc_Rest {
 
 		if ( $content_errors ) {
 			return new WP_Error(
-				'sdc_invalid_document',
+				'sdcpb_invalid_document',
 				__( 'Das Dokument wurde abgelehnt. Gespeichert wurde nichts.', 'sdc-page-builder' ),
 				array(
 					'status' => 422,
@@ -201,7 +201,7 @@ class Sdc_Rest {
 			);
 		}
 
-		$saved = Sdc_Store::save_data( $post_id, array( 'components' => $input ) );
+		$saved = Sdcpb_Store::save_data( $post_id, array( 'components' => $input ) );
 
 		return new WP_REST_Response(
 			array(
@@ -221,21 +221,21 @@ class Sdc_Rest {
 	 */
 	public static function get_components() {
 		$out = array();
-		foreach ( Sdc_Schema::components() as $type => $component ) {
+		foreach ( Sdcpb_Schema::components() as $type => $component ) {
 			$out[] = array(
 				'type'        => $type,
 				'label'       => $component['label'],
 				'description' => $component['description'],
 				'icon'        => $component['icon'],
-				'schema'      => Sdc_Schema::version_string( $type ),
+				'schema'      => Sdcpb_Schema::version_string( $type ),
 				'fields'      => $component['fields'],
 			);
 		}
 
 		return new WP_REST_Response(
 			array(
-				'host'       => Sdc_Field_Adapter::host(),
-				'version'    => SDC_PB_VERSION,
+				'host'       => Sdcpb_Field_Adapter::host(),
+				'version'    => SDCPB_VERSION,
 				'components' => $out,
 			),
 			200
@@ -255,8 +255,8 @@ class Sdc_Rest {
 				'_id'     => $component['_id'],
 				'type'    => $component['type'],
 				'schema'  => $component['schema'],
-				'label'   => Sdc_Schema::get( $component['type'] )['label'] ?? $component['type'],
-				'current' => Sdc_Schema::version_string( $component['type'] ),
+				'label'   => Sdcpb_Schema::get( $component['type'] )['label'] ?? $component['type'],
+				'current' => Sdcpb_Schema::version_string( $component['type'] ),
 			);
 		}
 		return $out;

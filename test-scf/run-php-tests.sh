@@ -52,15 +52,17 @@ fi
 # of requiring the caller to export it.
 DB_PASSWORD="$(docker exec "$CLI" printenv WORDPRESS_DB_PASSWORD)"
 
-if ! docker exec "$CLI" test -x "$DEV/plugin/vendor/bin/phpunit"; then
-	echo "No test tooling in $CLI:$DEV/plugin — run test-scf/setup-php-tests.sh first." >&2
+if ! docker exec "$CLI" test -x "$DEV/vendor/bin/phpunit"; then
+	echo "No test tooling in $CLI:$DEV — run test-scf/setup-php-tests.sh first." >&2
 	exit 2
 fi
 
 # Mirror the repository tree; vendor/, wordpress/ and node_modules/ live in the
-# container and must survive.
+# container and must survive. $DEV/plugin does not exist on the first run after
+# a fresh setup — create it instead of failing the cd.
 docker exec "$CLI" sh -lc "
 	set -e
+	mkdir -p $DEV/plugin
 	cd $DEV/plugin
 	find . -mindepth 1 -maxdepth 1 \
 		! -name vendor ! -name wordpress ! -name node_modules \

@@ -3,11 +3,11 @@
  * Uninstall routine.
  *
  * Deactivating the plugin must never cost content: the components live in the
- * `_sdc_data` post meta of pages a user wrote, and the pages stay published
+ * `_sdcpb_data` post meta of pages a user wrote, and the pages stay published
  * after deactivation. So nothing is deleted unless the site owner has opted in
  * by defining the constant in wp-config.php:
  *
- *     define( 'SDC_PB_DELETE_DATA_ON_UNINSTALL', true );
+ *     define( 'SDCPB_DELETE_DATA_ON_UNINSTALL', true );
  *
  * Without that constant, uninstalling removes no content at all.
  *
@@ -17,7 +17,7 @@
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 /**
- * Delete every `_sdc_data` row, including the copies on revisions.
+ * Delete every `_sdcpb_data` row, including the copies on revisions.
  *
  * Measured, and the reason this is one statement rather than a sweep:
  *
@@ -41,17 +41,17 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
  *
  * @return int|false Number of rows deleted, false on database error.
  */
-function sdc_pb_uninstall_purge() {
+function sdcpb_uninstall_purge() {
 	global $wpdb;
 
 	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- one-off uninstall, no cache to prime.
-	return delete_post_meta_by_key( '_sdc_data' );
+	return delete_post_meta_by_key( '_sdcpb_data' );
 }
 
 // The plugin stores no options — everything is post meta on the pages a user
 // wrote. So there is nothing of ours to remove unconditionally.
-if ( ! defined( 'SDC_PB_DELETE_DATA_ON_UNINSTALL' ) || ! SDC_PB_DELETE_DATA_ON_UNINSTALL ) {
+if ( ! defined( 'SDCPB_DELETE_DATA_ON_UNINSTALL' ) || ! SDCPB_DELETE_DATA_ON_UNINSTALL ) {
 	return;
 }
 
-sdc_pb_uninstall_purge();
+sdcpb_uninstall_purge();

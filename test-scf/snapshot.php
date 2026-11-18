@@ -21,7 +21,7 @@ foreach ( $rows as $r ) {
 		$filled++;
 	}
 	// Zeilenindizes aus Schlüsseln wie _sdc_builder_0_zeilen_3_feld_1
-	if ( preg_match( '/^_?sdc_builder_(\d+)_zeilen_(\d+)_/', $r['meta_key'], $m ) ) {
+	if ( preg_match( '/^_?sdcpb_builder_(\d+)_zeilen_(\d+)_/', $r['meta_key'], $m ) ) {
 		$indices[ $m[1] ][ $m[2] ] = true;
 	}
 }

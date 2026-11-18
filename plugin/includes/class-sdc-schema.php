@@ -3,12 +3,12 @@
  * Schema loader: components are ACF/SCF field groups stored as Local JSON.
  *
  * A component is a field group whose key carries the prefix
- * `group_sdc_component_`. The rest of the key is the component type:
+ * `group_sdcpb_component_`. The rest of the key is the component type:
  *
- *   group_sdc_component_faq  ->  type "faq"
+ *   group_sdcpb_component_faq  ->  type "faq"
  *
  * Field groups are marked with a location rule that no admin screen matches
- * (`sdc_component == 1`), so the host never renders them as a normal metabox —
+ * (`sdcpb_component == 1`), so the host never renders them as a normal metabox —
  * the builder renders them itself.
  *
  * @package SdcPageBuilder
@@ -19,12 +19,12 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Finds and describes the available components.
  */
-class Sdc_Schema {
+class Sdcpb_Schema {
 
 	/**
 	 * Prefix that marks a field group as a builder component.
 	 */
-	const KEY_PREFIX = 'group_sdc_component_';
+	const KEY_PREFIX = 'group_sdcpb_component_';
 
 	/**
 	 * Folder a site owner uses for their own components.
@@ -57,7 +57,7 @@ class Sdc_Schema {
 	 * @return string Absolute path with trailing slash.
 	 */
 	public static function dir() {
-		return SDC_PB_DIR . 'schemas/';
+		return SDCPB_DIR . 'schemas/';
 	}
 
 	/**
@@ -99,7 +99,7 @@ class Sdc_Schema {
 		 *
 		 * @param string[] $dirs Absolute paths.
 		 */
-		$dirs = (array) apply_filters( 'sdc_pb_component_dirs', self::default_user_dirs() );
+		$dirs = (array) apply_filters( 'sdcpb_component_dirs', self::default_user_dirs() );
 
 		$found = array();
 		foreach ( $dirs as $dir ) {
@@ -165,11 +165,32 @@ class Sdc_Schema {
 	}
 
 	/**
-	 * Theme render template for a component type, if the site ships one.
+	 * Every directory searched for a component, lowest priority first.
 	 *
-	 * Convention: `sdc-components/<type>/render.php`, next to the JSON that
+	 * The same set `json_paths()` walks, in the opposite order: a lookup takes
+	 * the first hit, so the plugin comes last and a component of the same type
+	 * in the theme or in `wp-content/` overrides the one that ships with the
+	 * plugin. That is the same priority the JSON loader ends up with, where the
+	 * later path overwrites the key — one rule for every location, so a
+	 * definition, its view and its stylesheet never come from different places
+	 * without somebody asking for it.
+	 *
+	 * @return string[] Absolute paths, no trailing slash.
+	 */
+	public static function lookup_dirs() {
+		$dirs   = self::user_dirs();
+		$dirs[] = untrailingslashit( self::dir() );
+
+		return array_values( array_unique( $dirs ) );
+	}
+
+	/**
+	 * Render template for a component type, if the site or the plugin ships one.
+	 *
+	 * Convention: `<component dir>/<type>/render.php`, next to the JSON that
 	 * defines the component. The first match wins, so a child theme overrides
-	 * the parent theme and both override `wp-content/sdc-components/`.
+	 * the parent theme, both override `wp-content/sdc-components/`, and the
+	 * plugin's shipped examples are the last resort.
 	 *
 	 * @param string $type Component type.
 	 * @return string Absolute path, or an empty string when there is none.
@@ -184,7 +205,7 @@ class Sdc_Schema {
 			return '';
 		}
 
-		foreach ( self::user_dirs() as $dir ) {
+		foreach ( self::lookup_dirs() as $dir ) {
 			foreach ( array( $dir . '/' . $type . '/render.php', $dir . '/' . $type . '.php' ) as $file ) {
 				if ( is_readable( $file ) ) {
 					return $file;
@@ -234,7 +255,7 @@ class Sdc_Schema {
 	 * host needs the file to write an edit back to, and its own save path
 	 * (`acf-json/`) is the wrong place for it.
 	 *
-	 * @param string $key Field group key, e.g. `group_sdc_component_hero`.
+	 * @param string $key Field group key, e.g. `group_sdcpb_component_hero`.
 	 * @return string Absolute path, or an empty string when nothing matches.
 	 */
 	public static function file_for_key( $key ) {
@@ -300,7 +321,7 @@ class Sdc_Schema {
 	 * File name a component's field group is saved under.
 	 *
 	 * The host names JSON files after the group key, which would rename
-	 * `definition.json` to `group_sdc_component_hero.json` on the first save
+	 * `definition.json` to `group_sdcpb_component_hero.json` on the first save
 	 * from the admin. A component that was loaded from a file keeps that
 	 * file's name; anything else is left to the host.
 	 *
@@ -333,7 +354,7 @@ class Sdc_Schema {
 
 		$components = array();
 
-		foreach ( Sdc_Field_Adapter::get_field_groups() as $group ) {
+		foreach ( Sdcpb_Field_Adapter::get_field_groups() as $group ) {
 			if ( empty( $group['key'] ) || 0 !== strpos( $group['key'], self::KEY_PREFIX ) ) {
 				continue;
 			}
@@ -382,17 +403,17 @@ class Sdc_Schema {
 	 */
 	private static function describe( $type, array $group ) {
 		$fields = array();
-		foreach ( Sdc_Field_Adapter::get_fields( $group ) as $field ) {
-			$fields[] = Sdc_Field_Adapter::normalize_field( $field );
+		foreach ( Sdcpb_Field_Adapter::get_fields( $group ) as $field ) {
+			$fields[] = Sdcpb_Field_Adapter::normalize_field( $field );
 		}
 
 		return array(
 			'type'        => $type,
 			'key'         => (string) $group['key'],
 			'label'       => isset( $group['title'] ) ? (string) $group['title'] : $type,
-			'description' => isset( $group['sdc_description'] ) ? (string) $group['sdc_description'] : '',
-			'icon'        => isset( $group['sdc_icon'] ) ? (string) $group['sdc_icon'] : '',
-			'version'     => isset( $group['sdc_version'] ) ? (int) $group['sdc_version'] : 1,
+			'description' => isset( $group['sdcpb_description'] ) ? (string) $group['sdcpb_description'] : '',
+			'icon'        => isset( $group['sdcpb_icon'] ) ? (string) $group['sdcpb_icon'] : '',
+			'version'     => isset( $group['sdcpb_version'] ) ? (int) $group['sdcpb_version'] : 1,
 			'fields'      => $fields,
 		);
 	}

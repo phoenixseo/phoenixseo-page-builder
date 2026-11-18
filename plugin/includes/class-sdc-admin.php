@@ -27,7 +27,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * The component management screen.
  */
-class Sdc_Admin {
+class Sdcpb_Admin {
 
 	/**
 	 * Menu slug, also the page query arg.
@@ -87,22 +87,22 @@ class Sdc_Admin {
 	/**
 	 * Nonce action for every form on the screen.
 	 */
-	const NONCE_ACTION = 'sdc_pb_components';
+	const NONCE_ACTION = 'sdcpb_components';
 
 	/**
 	 * Nonce field name.
 	 */
-	const NONCE_FIELD = 'sdc_pb_nonce';
+	const NONCE_FIELD = 'sdcpb_nonce';
 
 	/**
 	 * `admin-post.php` action that carries every task.
 	 */
-	const HOOK = 'sdc_pb_component';
+	const HOOK = 'sdcpb_component';
 
 	/**
 	 * Transient holding the per-type instance counts.
 	 */
-	const INSTANCE_TRANSIENT = 'sdc_pb_instance_counts';
+	const INSTANCE_TRANSIENT = 'sdcpb_instance_counts';
 
 	/**
 	 * Transient holding the number of pages with a component the page lost.
@@ -113,7 +113,7 @@ class Sdc_Admin {
 	 * window is short because a repaired page must stop being reported
 	 * without anyone clearing a cache by hand.
 	 */
-	const BROKEN_TRANSIENT = 'sdc_pb_broken_pages';
+	const BROKEN_TRANSIENT = 'sdcpb_broken_pages';
 
 	/**
 	 * Upper bound for an imported definition file.
@@ -196,7 +196,7 @@ class Sdc_Admin {
 	 * page with five lost components is one repair run either way.
 	 *
 	 * "No view" is asked the same way the renderer asks it — through
-	 * `Sdc_Frontend::has_view()` — so the notice cannot report a page that
+	 * `Sdcpb_Frontend::has_view()` — so the notice cannot report a page that
 	 * renders fine, nor stay silent about one that does not.
 	 *
 	 * @return int Count of affected pages, 0 when none.
@@ -210,12 +210,12 @@ class Sdc_Admin {
 		$count = 0;
 		$posts = get_posts(
 			array(
-				'post_type'        => Sdc_Editor::post_types(),
+				'post_type'        => Sdcpb_Editor::post_types(),
 				'post_status'      => array( 'publish', 'draft', 'pending', 'future', 'private' ),
 				'numberposts'      => -1,
 				'fields'           => 'ids',
 				'suppress_filters' => false,
-				'meta_key'         => Sdc_Store::META_KEY, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Only pages carrying a document can be affected.
+				'meta_key'         => Sdcpb_Store::META_KEY, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- Only pages carrying a document can be affected.
 			)
 		);
 
@@ -240,7 +240,7 @@ class Sdc_Admin {
 	 * @return bool
 	 */
 	private static function post_has_missing_view( $post_id ) {
-		$data = Sdc_Store::get_data( $post_id );
+		$data = Sdcpb_Store::get_data( $post_id );
 		if ( ! is_array( $data ) || empty( $data['components'] ) || ! is_array( $data['components'] ) ) {
 			return false;
 		}
@@ -250,7 +250,7 @@ class Sdc_Admin {
 				continue;
 			}
 
-			if ( ! Sdc_Frontend::has_view( (string) $component['type'] ) ) {
+			if ( ! Sdcpb_Frontend::has_view( (string) $component['type'] ) ) {
 				return true;
 			}
 		}
@@ -322,7 +322,7 @@ class Sdc_Admin {
 	 * @param string $meta_key  Meta key that changed.
 	 */
 	public static function clear_counts( $meta_id, $object_id, $meta_key ) {
-		if ( Sdc_Store::META_KEY === $meta_key ) {
+		if ( Sdcpb_Store::META_KEY === $meta_key ) {
 			delete_transient( self::INSTANCE_TRANSIENT );
 		}
 	}
@@ -337,14 +337,14 @@ class Sdc_Admin {
 	 * @return string Absolute path without trailing slash, empty when unknown.
 	 */
 	public static function write_dir() {
-		$default = defined( 'WP_CONTENT_DIR' ) ? WP_CONTENT_DIR . '/' . Sdc_Schema::USER_DIR : '';
+		$default = defined( 'WP_CONTENT_DIR' ) ? WP_CONTENT_DIR . '/' . Sdcpb_Schema::USER_DIR : '';
 
 		/**
 		 * Filters the directory new components are written to.
 		 *
 		 * @param string $dir Absolute path.
 		 */
-		$dir = (string) apply_filters( 'sdc_pb_write_dir', $default );
+		$dir = (string) apply_filters( 'sdcpb_write_dir', $default );
 
 		return untrailingslashit( $dir );
 	}
@@ -359,14 +359,14 @@ class Sdc_Admin {
 
 		if ( '' === $dir ) {
 			return new WP_Error(
-				'sdc_no_write_dir',
+				'sdcpb_no_write_dir',
 				__( 'Kein Zielordner: WP_CONTENT_DIR ist nicht definiert.', 'sdc-page-builder' )
 			);
 		}
 
 		if ( ! is_dir( $dir ) && ! wp_mkdir_p( $dir ) ) {
 			return new WP_Error(
-				'sdc_no_write_dir',
+				'sdcpb_no_write_dir',
 				sprintf(
 					/* translators: %s: absolute directory path. */
 					__( 'Der Ordner %s lässt sich nicht anlegen. Der Webserver braucht Schreibrecht auf wp-content.', 'sdc-page-builder' ),
@@ -375,9 +375,9 @@ class Sdc_Admin {
 			);
 		}
 
-		if ( ! is_writable( $dir ) ) {
+		if ( ! wp_is_writable( $dir ) ) {
 			return new WP_Error(
-				'sdc_no_write_dir',
+				'sdcpb_no_write_dir',
 				sprintf(
 					/* translators: %s: absolute directory path. */
 					__( 'Der Ordner %s ist nicht beschreibbar. Komponenten können hier nur gelesen werden.', 'sdc-page-builder' ),
@@ -417,10 +417,10 @@ class Sdc_Admin {
 		}
 
 		$dir      = self::write_dir();
-		$writable = '' !== $dir && ( is_dir( $dir ) ? is_writable( $dir ) : is_writable( dirname( $dir ) ) );
+		$writable = '' !== $dir && ( is_dir( $dir ) ? wp_is_writable( $dir ) : wp_is_writable( dirname( $dir ) ) );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Chooses which form to show; no data changes.
-		$edit = isset( $_GET['sdc_edit'] ) ? sanitize_key( wp_unslash( $_GET['sdc_edit'] ) ) : '';
+		$edit = isset( $_GET['sdcpb_edit'] ) ? sanitize_key( wp_unslash( $_GET['sdcpb_edit'] ) ) : '';
 
 		echo '<div class="wrap">';
 		echo '<h1>' . esc_html__( 'SDC-Komponenten', 'sdc-page-builder' ) . '</h1>';
@@ -475,7 +475,7 @@ class Sdc_Admin {
 	 * screen is the behaviour wp.org's guidelines call hijacking the admin.
 	 *
 	 * Filterable because an agency may ship this white-label — returning an
-	 * empty string from `sdc_pb_credit` removes the whole block, not just its
+	 * empty string from `sdcpb_credit` removes the whole block, not just its
 	 * text, so no empty bordered box is left behind.
 	 */
 	public static function credit() {
@@ -534,7 +534,7 @@ class Sdc_Admin {
 		 *
 		 * @param string $html Credit markup, or an empty string to hide it.
 		 */
-		echo wp_kses_post( (string) apply_filters( 'sdc_pb_credit', $html ) );
+		echo wp_kses_post( (string) apply_filters( 'sdcpb_credit', $html ) );
 	}
 
 	/**
@@ -582,8 +582,8 @@ class Sdc_Admin {
 		$counts = self::instance_counts();
 		$rows   = array();
 
-		foreach ( Sdc_Schema::components() as $type => $component ) {
-			$file   = Sdc_Schema::file_for_key( (string) $component['key'] );
+		foreach ( Sdcpb_Schema::components() as $type => $component ) {
+			$file   = Sdcpb_Schema::file_for_key( (string) $component['key'] );
 			$rows[] = array(
 				'type'        => $type,
 				'label'       => (string) $component['label'],
@@ -591,7 +591,7 @@ class Sdc_Admin {
 				'version'     => (int) $component['version'],
 				'fields'      => count( (array) $component['fields'] ),
 				'file'        => $file,
-				'template'    => Sdc_Schema::template( $type ),
+				'template'    => Sdcpb_Schema::template( $type ),
 				'source'      => self::source_label( $file ),
 				'writable'    => self::in_write_dir( $file ),
 				'pages'       => isset( $counts[ $type ]['pages'] ) ? (int) $counts[ $type ]['pages'] : 0,
@@ -619,7 +619,7 @@ class Sdc_Admin {
 
 		$normalized = wp_normalize_path( $file );
 
-		if ( 0 === strpos( $normalized, trailingslashit( wp_normalize_path( Sdc_Schema::dir() ) ) ) ) {
+		if ( 0 === strpos( $normalized, trailingslashit( wp_normalize_path( Sdcpb_Schema::dir() ) ) ) ) {
 			return __( 'Plugin', 'sdc-page-builder' );
 		}
 
@@ -695,7 +695,7 @@ class Sdc_Admin {
 			$edit_url = add_query_arg(
 				array(
 					'page'     => self::MENU_SLUG,
-					'sdc_edit' => $type,
+					'sdcpb_edit' => $type,
 				),
 				admin_url( 'admin.php' )
 			);
@@ -710,8 +710,8 @@ class Sdc_Admin {
 		$export_url = add_query_arg(
 			array(
 				'action'   => self::HOOK,
-				'sdc_task' => 'export',
-				'sdc_type' => rawurlencode( $type ),
+				'sdcpb_task' => 'export',
+				'sdcpb_type' => rawurlencode( $type ),
 				// Same field name handle() verifies — a `_wpnonce` here would
 				// be ignored and exporting would fail like the forms did.
 				self::NONCE_FIELD => wp_create_nonce( self::NONCE_ACTION ),
@@ -730,9 +730,9 @@ class Sdc_Admin {
 
 		printf( '<form method="post" action="%s" style="margin-top:6px;">', esc_url( admin_url( 'admin-post.php' ) ) );
 		self::form_hidden( 'duplicate' );
-		printf( '<input type="hidden" name="sdc_source" value="%s" />', esc_attr( $type ) );
+		printf( '<input type="hidden" name="sdcpb_source" value="%s" />', esc_attr( $type ) );
 		printf(
-			'<label for="sdc_type_%1$s">%2$s</label><br /><input type="text" id="sdc_type_%1$s" name="sdc_type" value="" placeholder="%3$s" required /> ',
+			'<label for="sdcpb_type_%1$s">%2$s</label><br /><input type="text" id="sdcpb_type_%1$s" name="sdcpb_type" value="" placeholder="%3$s" required /> ',
 			esc_attr( $type ),
 			esc_html__( 'Neuer Typ', 'sdc-page-builder' ),
 			esc_attr( $type . '-kopie' )
@@ -765,10 +765,10 @@ class Sdc_Admin {
 
 		printf( '<form method="post" action="%s" style="margin-top:6px;">', esc_url( admin_url( 'admin-post.php' ) ) );
 		self::form_hidden( 'delete' );
-		printf( '<input type="hidden" name="sdc_type" value="%s" />', esc_attr( $type ) );
+		printf( '<input type="hidden" name="sdcpb_type" value="%s" />', esc_attr( $type ) );
 		if ( $row['pages'] > 0 ) {
 			printf(
-				'<label><input type="checkbox" name="sdc_force" value="1" /> %s</label><br />',
+				'<label><input type="checkbox" name="sdcpb_force" value="1" /> %s</label><br />',
 				esc_html__( 'Auch bei Verwendung löschen', 'sdc-page-builder' )
 			);
 		}
@@ -798,34 +798,34 @@ class Sdc_Admin {
 
 		echo '<table class="form-table" role="presentation">';
 
-		echo '<tr><th scope="row"><label for="sdc_type">' . esc_html__( 'Typ', 'sdc-page-builder' ) . '</label></th><td>';
-		echo '<input type="text" id="sdc_type" name="sdc_type" value="" class="regular-text" required pattern="[a-z0-9][a-z0-9_-]*" />';
+		echo '<tr><th scope="row"><label for="sdcpb_type">' . esc_html__( 'Typ', 'sdc-page-builder' ) . '</label></th><td>';
+		echo '<input type="text" id="sdcpb_type" name="sdcpb_type" value="" class="regular-text" required pattern="[a-z0-9][a-z0-9-]*" />';
 		printf(
 			'<p class="description">%s</p>',
-			esc_html__( 'Kleinbuchstaben, Ziffern, Binde- und Unterstriche. Der Typ wird zum Ordnernamen und zum Teil des Gruppen-Keys: group_sdc_component_<typ>.', 'sdc-page-builder' )
+			esc_html__( 'Kleinbuchstaben, Ziffern und Bindestriche. Der Typ wird zum Ordnernamen, zum Blocknamen sdcpb/<typ> und zum Teil des Gruppen-Keys: group_sdcpb_component_<typ>.', 'sdc-page-builder' )
 		);
 		echo '</td></tr>';
 
-		echo '<tr><th scope="row"><label for="sdc_label">' . esc_html__( 'Name', 'sdc-page-builder' ) . '</label></th><td>';
-		echo '<input type="text" id="sdc_label" name="sdc_label" value="" class="regular-text" required />';
+		echo '<tr><th scope="row"><label for="sdcpb_label">' . esc_html__( 'Name', 'sdc-page-builder' ) . '</label></th><td>';
+		echo '<input type="text" id="sdcpb_label" name="sdcpb_label" value="" class="regular-text" required />';
 		printf( '<p class="description">%s</p>', esc_html__( 'Erscheint im Komponenten-Picker, z. B. „Zitat" oder „Preistabelle".', 'sdc-page-builder' ) );
 		echo '</td></tr>';
 
-		echo '<tr><th scope="row"><label for="sdc_description">' . esc_html__( 'Beschreibung', 'sdc-page-builder' ) . '</label></th><td>';
-		echo '<textarea id="sdc_description" name="sdc_description" rows="2" class="large-text"></textarea>';
+		echo '<tr><th scope="row"><label for="sdcpb_description">' . esc_html__( 'Beschreibung', 'sdc-page-builder' ) . '</label></th><td>';
+		echo '<textarea id="sdcpb_description" name="sdcpb_description" rows="2" class="large-text"></textarea>';
 		printf( '<p class="description">%s</p>', esc_html__( 'Optional. Steht als Hilfetext in der Kachel des Pickers.', 'sdc-page-builder' ) );
 		echo '</td></tr>';
 
-		echo '<tr><th scope="row"><label for="sdc_icon">' . esc_html__( 'Icon', 'sdc-page-builder' ) . '</label></th><td>';
-		echo '<input type="text" id="sdc_icon" name="sdc_icon" value="layout" class="regular-text" />';
+		echo '<tr><th scope="row"><label for="sdcpb_icon">' . esc_html__( 'Icon', 'sdc-page-builder' ) . '</label></th><td>';
+		echo '<input type="text" id="sdcpb_icon" name="sdcpb_icon" value="layout" class="regular-text" />';
 		printf(
 			'<p class="description">%s</p>',
 			esc_html__( 'Optional. Ein Dashicon-Name, z. B. layout, cover-image, format-quote, table.', 'sdc-page-builder' )
 		);
 		echo '</td></tr>';
 
-		echo '<tr><th scope="row"><label for="sdc_fields">' . esc_html__( 'Felder', 'sdc-page-builder' ) . '</label></th><td>';
-		Sdc_Field_Editor::render( '' );
+		echo '<tr><th scope="row"><label for="sdcpb_fields">' . esc_html__( 'Felder', 'sdc-page-builder' ) . '</label></th><td>';
+		Sdcpb_Field_Editor::render( '' );
 		self::render_fields_help();
 		echo '</td></tr>';
 
@@ -839,7 +839,7 @@ class Sdc_Admin {
 		 * browser hoist it out of the table.
 		 */
 		echo '<tr><th scope="row">' . esc_html__( 'Ansicht', 'sdc-page-builder' ) . '</th><td>';
-		Sdc_View_Editor::render( '' );
+		Sdcpb_View_Editor::render( '' );
 		echo '</td></tr>';
 
 		echo '</table>';
@@ -850,7 +850,7 @@ class Sdc_Admin {
 	/**
 	 * Form that edits a component this screen owns.
 	 *
-	 * The values come from the raw file, not from the loader: `Sdc_Schema::get()`
+	 * The values come from the raw file, not from the loader: `Sdcpb_Schema::get()`
 	 * hands back normalized fields (types cast, defaults filled in), and
 	 * writing those back would rewrite the whole file on a save the user never
 	 * asked for. The one exception is a rejected save — then the transient
@@ -866,7 +866,7 @@ class Sdc_Admin {
 			return;
 		}
 
-		$component = Sdc_Schema::get( $type );
+		$component = Sdcpb_Schema::get( $type );
 
 		if ( null === $component ) {
 			printf(
@@ -882,7 +882,7 @@ class Sdc_Admin {
 			return;
 		}
 
-		$file = Sdc_Schema::file_for_key( (string) $component['key'] );
+		$file = Sdcpb_Schema::file_for_key( (string) $component['key'] );
 
 		if ( '' === $file || ! is_readable( $file ) ) {
 			printf(
@@ -911,13 +911,13 @@ class Sdc_Admin {
 
 		$values = array(
 			'label'       => isset( $base['title'] ) ? (string) $base['title'] : $type,
-			'description' => isset( $base['sdc_description'] ) ? (string) $base['sdc_description'] : '',
-			'icon'        => isset( $base['sdc_icon'] ) ? (string) $base['sdc_icon'] : '',
+			'description' => isset( $base['sdcpb_description'] ) ? (string) $base['sdcpb_description'] : '',
+			'icon'        => isset( $base['sdcpb_icon'] ) ? (string) $base['sdcpb_icon'] : '',
 			'fields'      => self::printable_fields( isset( $base['fields'] ) && is_array( $base['fields'] ) ? $base['fields'] : array() ),
-			'view'        => Sdc_View::read( Sdc_View::file( self::write_dir(), $type ) ),
+			'view'        => Sdcpb_View::read( Sdcpb_View::file( self::write_dir(), $type ) ),
 			// The delivered stylesheet, not the slot in wp-content: when a
 			// theme ships the file, that is the one the page sees.
-			'css'         => Sdc_View::read_style( Sdc_View::style( $type ) ),
+			'css'         => Sdcpb_View::read_style( Sdcpb_View::style( $type ) ),
 		);
 
 		$draft = self::take_draft( $type );
@@ -958,7 +958,7 @@ class Sdc_Admin {
 
 		printf( '<form method="post" action="%s">', esc_url( admin_url( 'admin-post.php' ) ) );
 		self::form_hidden( 'update' );
-		printf( '<input type="hidden" name="sdc_type" value="%s" />', esc_attr( $type ) );
+		printf( '<input type="hidden" name="sdcpb_type" value="%s" />', esc_attr( $type ) );
 
 		/*
 		 * Three tabs, because this screen edits three different layers and a
@@ -974,7 +974,7 @@ class Sdc_Admin {
 		 */
 		$view_fields = json_decode( (string) $values['fields'], true );
 
-		Sdc_Tabs::render(
+		Sdcpb_Tabs::render(
 			array(
 				array(
 					'id'       => 'content',
@@ -992,7 +992,7 @@ class Sdc_Admin {
 					'label'    => __( 'Ansicht (PHP)', 'sdc-page-builder' ),
 					'hint'     => __( 'Wie die Komponente ausgegeben wird. Optional: ohne render.php erscheinen die Felder in einer generischen Ausgabe.', 'sdc-page-builder' ),
 					'callback' => function () use ( $type, $values, $view_fields ) {
-						Sdc_View_Editor::render( $type, is_array( $view_fields ) ? $view_fields : array(), $values['view'] );
+						Sdcpb_View_Editor::render( $type, is_array( $view_fields ) ? $view_fields : array(), $values['view'] );
 					},
 				),
 				array(
@@ -1000,7 +1000,7 @@ class Sdc_Admin {
 					'label'    => __( 'Styles (CSS)', 'sdc-page-builder' ),
 					'hint'     => __( 'Eigene Gestaltung der Komponente. Optional: ohne component.css erbt sie die Styles des Themes.', 'sdc-page-builder' ),
 					'callback' => function () use ( $type, $values ) {
-						Sdc_Style_Editor::render( $type, $values['css'] );
+						Sdcpb_Style_Editor::render( $type, $values['css'] );
 					},
 				),
 			),
@@ -1025,7 +1025,7 @@ class Sdc_Admin {
 	 */
 	private static function active_tab() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display flag only, no data changes.
-		return isset( $_GET['sdc_tab'] ) ? sanitize_key( wp_unslash( $_GET['sdc_tab'] ) ) : '';
+		return isset( $_GET['sdcpb_tab'] ) ? sanitize_key( wp_unslash( $_GET['sdcpb_tab'] ) ) : '';
 	}
 
 	/**
@@ -1044,18 +1044,18 @@ class Sdc_Admin {
 		);
 		echo '</td></tr>';
 
-		echo '<tr><th scope="row"><label for="sdc_label">' . esc_html__( 'Name', 'sdc-page-builder' ) . '</label></th><td>';
-		printf( '<input type="text" id="sdc_label" name="sdc_label" value="%s" class="regular-text" required />', esc_attr( $values['label'] ) );
+		echo '<tr><th scope="row"><label for="sdcpb_label">' . esc_html__( 'Name', 'sdc-page-builder' ) . '</label></th><td>';
+		printf( '<input type="text" id="sdcpb_label" name="sdcpb_label" value="%s" class="regular-text" required />', esc_attr( $values['label'] ) );
 		printf( '<p class="description">%s</p>', esc_html__( 'Erscheint im Komponenten-Picker, z. B. „Zitat" oder „Preistabelle".', 'sdc-page-builder' ) );
 		echo '</td></tr>';
 
-		echo '<tr><th scope="row"><label for="sdc_description">' . esc_html__( 'Beschreibung', 'sdc-page-builder' ) . '</label></th><td>';
-		printf( '<textarea id="sdc_description" name="sdc_description" rows="2" class="large-text">%s</textarea>', esc_textarea( $values['description'] ) );
+		echo '<tr><th scope="row"><label for="sdcpb_description">' . esc_html__( 'Beschreibung', 'sdc-page-builder' ) . '</label></th><td>';
+		printf( '<textarea id="sdcpb_description" name="sdcpb_description" rows="2" class="large-text">%s</textarea>', esc_textarea( $values['description'] ) );
 		printf( '<p class="description">%s</p>', esc_html__( 'Optional. Steht als Hilfetext in der Kachel des Pickers.', 'sdc-page-builder' ) );
 		echo '</td></tr>';
 
-		echo '<tr><th scope="row"><label for="sdc_icon">' . esc_html__( 'Icon', 'sdc-page-builder' ) . '</label></th><td>';
-		printf( '<input type="text" id="sdc_icon" name="sdc_icon" value="%s" class="regular-text" />', esc_attr( $values['icon'] ) );
+		echo '<tr><th scope="row"><label for="sdcpb_icon">' . esc_html__( 'Icon', 'sdc-page-builder' ) . '</label></th><td>';
+		printf( '<input type="text" id="sdcpb_icon" name="sdcpb_icon" value="%s" class="regular-text" />', esc_attr( $values['icon'] ) );
 		printf(
 			'<p class="description">%s</p>',
 			esc_html__( 'Optional. Ein Dashicon-Name, z. B. layout, cover-image, format-quote, table.', 'sdc-page-builder' )
@@ -1069,13 +1069,13 @@ class Sdc_Admin {
 	 * @param array $values Values the form shows.
 	 */
 	private static function render_fields_row( array $values ) {
-		echo '<tr><th scope="row"><label for="sdc_fields">' . esc_html__( 'Felder', 'sdc-page-builder' ) . '</label></th><td>';
-		Sdc_Field_Editor::render( $values['fields'] );
+		echo '<tr><th scope="row"><label for="sdcpb_fields">' . esc_html__( 'Felder', 'sdc-page-builder' ) . '</label></th><td>';
+		Sdcpb_Field_Editor::render( $values['fields'] );
 		// Outside the editor on purpose: the confirmation must stay visible even
 		// when the JSON panel is collapsed, or the save fails without a reason
 		// the user can see.
 		printf(
-			'<p><label><input type="checkbox" name="sdc_confirm_fields" value="1" /> %s</label></p>',
+			'<p><label><input type="checkbox" name="sdcpb_confirm_fields" value="1" /> %s</label></p>',
 			esc_html__( 'Felder entfernen bestätigen', 'sdc-page-builder' )
 		);
 		printf(
@@ -1146,13 +1146,13 @@ class Sdc_Admin {
 	 */
 	private static function take_draft( $type ) {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reading the form's own draft token; no data changes.
-		$token = isset( $_GET['sdc_detail'] ) ? sanitize_key( wp_unslash( $_GET['sdc_detail'] ) ) : '';
+		$token = isset( $_GET['sdcpb_detail'] ) ? sanitize_key( wp_unslash( $_GET['sdcpb_detail'] ) ) : '';
 
 		if ( '' === $token ) {
 			return null;
 		}
 
-		$key   = 'sdc_pb_draft_' . $token;
+		$key   = 'sdcpb_draft_' . $token;
 		$draft = get_transient( $key );
 
 		if ( ! is_array( $draft ) ) {
@@ -1223,7 +1223,7 @@ class Sdc_Admin {
 
 		printf( '<form method="post" action="%s" enctype="multipart/form-data">', esc_url( admin_url( 'admin-post.php' ) ) );
 		self::form_hidden( 'import' );
-		echo '<input type="file" name="sdc_component_file" accept=".json,application/json" required /> ';
+		echo '<input type="file" name="sdcpb_component_file" accept=".json,application/json" required /> ';
 		submit_button( __( 'Importieren', 'sdc-page-builder' ), 'secondary', 'submit', false );
 		echo '</form>';
 	}
@@ -1235,7 +1235,7 @@ class Sdc_Admin {
 	 */
 	private static function form_hidden( $task ) {
 		printf( '<input type="hidden" name="action" value="%s" />', esc_attr( self::HOOK ) );
-		printf( '<input type="hidden" name="sdc_task" value="%s" />', esc_attr( $task ) );
+		printf( '<input type="hidden" name="sdcpb_task" value="%s" />', esc_attr( $task ) );
 		wp_nonce_field( self::NONCE_ACTION, self::NONCE_FIELD );
 	}
 
@@ -1244,7 +1244,7 @@ class Sdc_Admin {
 	 */
 	private static function render_notice() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reading a notice code, no data changes.
-		$code = isset( $_GET['sdc_notice'] ) ? sanitize_key( wp_unslash( $_GET['sdc_notice'] ) ) : '';
+		$code = isset( $_GET['sdcpb_notice'] ) ? sanitize_key( wp_unslash( $_GET['sdcpb_notice'] ) ) : '';
 
 		if ( '' === $code ) {
 			return;
@@ -1266,14 +1266,14 @@ class Sdc_Admin {
 		list( $kind, $message ) = $messages[ $code ];
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reading a notice token, no data changes.
-		$token  = isset( $_GET['sdc_detail'] ) ? sanitize_key( wp_unslash( $_GET['sdc_detail'] ) ) : '';
+		$token  = isset( $_GET['sdcpb_detail'] ) ? sanitize_key( wp_unslash( $_GET['sdcpb_detail'] ) ) : '';
 		$detail = '';
 
 		if ( '' !== $token ) {
-			$stored = get_transient( 'sdc_pb_notice_' . $token );
+			$stored = get_transient( 'sdcpb_notice_' . $token );
 			if ( is_string( $stored ) && '' !== $stored ) {
 				$detail = $stored;
-				delete_transient( 'sdc_pb_notice_' . $token );
+				delete_transient( 'sdcpb_notice_' . $token );
 			}
 		}
 
@@ -1301,14 +1301,14 @@ class Sdc_Admin {
 		check_admin_referer( self::NONCE_ACTION, self::NONCE_FIELD );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified by check_admin_referer() above.
-		$task = isset( $_POST['sdc_task'] ) ? sanitize_key( wp_unslash( $_POST['sdc_task'] ) ) : '';
+		$task = isset( $_POST['sdcpb_task'] ) ? sanitize_key( wp_unslash( $_POST['sdcpb_task'] ) ) : '';
 
 		if ( '' === $task ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified by check_admin_referer() above; export links carry the task in the URL.
-			$task = isset( $_GET['sdc_task'] ) ? sanitize_key( wp_unslash( $_GET['sdc_task'] ) ) : '';
+			$task = isset( $_GET['sdcpb_task'] ) ? sanitize_key( wp_unslash( $_GET['sdcpb_task'] ) ) : '';
 		}
 
-		$result = new WP_Error( 'sdc_unknown_task', __( 'Unbekannte Aktion.', 'sdc-page-builder' ) );
+		$result = new WP_Error( 'sdcpb_unknown_task', __( 'Unbekannte Aktion.', 'sdc-page-builder' ) );
 
 		if ( 'export' === $task ) {
 			self::export();
@@ -1341,8 +1341,8 @@ class Sdc_Admin {
 
 				// A validator that knows which tab owns the box says so; the
 				// form then opens there instead of on the field list.
-				if ( ! empty( $args ) && is_array( $data ) && ! empty( $data['sdc_tab'] ) ) {
-					$args['sdc_tab'] = sanitize_key( (string) $data['sdc_tab'] );
+				if ( ! empty( $args ) && is_array( $data ) && ! empty( $data['sdcpb_tab'] ) ) {
+					$args['sdcpb_tab'] = sanitize_key( (string) $data['sdcpb_tab'] );
 				}
 
 				self::redirect( 'error', $result->get_error_message(), $args, $draft );
@@ -1381,12 +1381,12 @@ class Sdc_Admin {
 		// Whatever produced the answer the author is coming back to read
 		// decides which tab opens: the generator lives in the view, the
 		// scaffold in the styles.
-		if ( array() !== $args && Sdc_View_Editor::wants_generate() ) {
-			$args['sdc_tab'] = 'view';
+		if ( array() !== $args && Sdcpb_View_Editor::wants_generate() ) {
+			$args['sdcpb_tab'] = 'view';
 		}
 
-		if ( array() !== $args && Sdc_Style_Editor::wants_scaffold() ) {
-			$args['sdc_tab'] = 'styles';
+		if ( array() !== $args && Sdcpb_Style_Editor::wants_scaffold() ) {
+			$args['sdcpb_tab'] = 'styles';
 		}
 
 		return $args;
@@ -1398,9 +1398,9 @@ class Sdc_Admin {
 	 * @return array Empty when the posted type is not usable as a form target.
 	 */
 	private static function edit_args() {
-		$type = self::posted( 'sdc_type' );
+		$type = self::posted( 'sdcpb_type' );
 
-		return '' === $type ? array() : array( 'sdc_edit' => $type );
+		return '' === $type ? array() : array( 'sdcpb_edit' => $type );
 	}
 
 	/**
@@ -1410,13 +1410,13 @@ class Sdc_Admin {
 	 */
 	private static function posted_draft() {
 		return array(
-			'type'        => self::posted( 'sdc_type' ),
-			'label'       => self::posted( 'sdc_label' ),
-			'description' => self::posted( 'sdc_description' ),
-			'icon'        => self::posted( 'sdc_icon' ),
-			'fields'      => self::posted_raw( 'sdc_fields' ),
-			'view'        => self::posted_raw( Sdc_View_Editor::FIELD ),
-			'css'         => self::posted_raw( Sdc_Style_Editor::FIELD ),
+			'type'        => self::posted( 'sdcpb_type' ),
+			'label'       => self::posted( 'sdcpb_label' ),
+			'description' => self::posted( 'sdcpb_description' ),
+			'icon'        => self::posted( 'sdcpb_icon' ),
+			'fields'      => self::posted_raw( 'sdcpb_fields' ),
+			'view'        => self::posted_raw( Sdcpb_View_Editor::FIELD ),
+			'css'         => self::posted_raw( Sdcpb_Style_Editor::FIELD ),
 		);
 	}
 
@@ -1432,16 +1432,16 @@ class Sdc_Admin {
 			return $dir;
 		}
 
-		$type = self::posted( 'sdc_type' );
+		$type = self::posted( 'sdcpb_type' );
 		$type = self::validate_type( $type );
 
 		if ( is_wp_error( $type ) ) {
 			return $type;
 		}
 
-		if ( null !== Sdc_Schema::get( $type ) ) {
+		if ( null !== Sdcpb_Schema::get( $type ) ) {
 			return new WP_Error(
-				'sdc_type_exists',
+				'sdcpb_type_exists',
 				sprintf(
 					/* translators: %s: component type. */
 					__( 'Eine Komponente mit dem Typ %s gibt es bereits.', 'sdc-page-builder' ),
@@ -1450,13 +1450,13 @@ class Sdc_Admin {
 			);
 		}
 
-		$label = self::posted( 'sdc_label' );
+		$label = self::posted( 'sdcpb_label' );
 
 		if ( '' === $label ) {
-			return new WP_Error( 'sdc_no_label', __( 'Die Komponente braucht einen Namen.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_no_label', __( 'Die Komponente braucht einen Namen.', 'sdc-page-builder' ) );
 		}
 
-		$fields = self::parse_fields( self::posted_raw( 'sdc_fields' ), $type );
+		$fields = self::parse_fields( self::posted_raw( 'sdcpb_fields' ), $type );
 
 		if ( is_wp_error( $fields ) ) {
 			return $fields;
@@ -1465,8 +1465,8 @@ class Sdc_Admin {
 		$definition = self::definition(
 			$type,
 			$label,
-			self::posted( 'sdc_description' ),
-			self::posted( 'sdc_icon' ),
+			self::posted( 'sdcpb_description' ),
+			self::posted( 'sdcpb_icon' ),
 			$fields
 		);
 
@@ -1476,7 +1476,7 @@ class Sdc_Admin {
 		 * whose markup fatals on the next page load — and the error would
 		 * point at the frontend instead of the form.
 		 */
-		$view_valid = Sdc_View_Editor::validate( $type, $fields );
+		$view_valid = Sdcpb_View_Editor::validate( $type, $fields );
 
 		if ( is_wp_error( $view_valid ) ) {
 			return $view_valid;
@@ -1490,7 +1490,7 @@ class Sdc_Admin {
 
 		// After the definition: a view without one would be a file nothing
 		// loads, and the component itself is the thing that has to exist.
-		return Sdc_View_Editor::save( $dir, $type, $fields );
+		return Sdcpb_View_Editor::save( $dir, $type, $fields );
 	}
 
 	/**
@@ -1505,17 +1505,17 @@ class Sdc_Admin {
 			return $dir;
 		}
 
-		$source = self::validate_type( self::posted( 'sdc_source' ) );
+		$source = self::validate_type( self::posted( 'sdcpb_source' ) );
 
 		if ( is_wp_error( $source ) ) {
 			return $source;
 		}
 
-		$component = Sdc_Schema::get( $source );
+		$component = Sdcpb_Schema::get( $source );
 
 		if ( null === $component ) {
 			return new WP_Error(
-				'sdc_unknown_source',
+				'sdcpb_unknown_source',
 				sprintf(
 					/* translators: %s: component type. */
 					__( 'Die Komponente %s gibt es nicht.', 'sdc-page-builder' ),
@@ -1524,17 +1524,17 @@ class Sdc_Admin {
 			);
 		}
 
-		$file = Sdc_Schema::file_for_key( (string) $component['key'] );
+		$file = Sdcpb_Schema::file_for_key( (string) $component['key'] );
 
 		if ( '' === $file ) {
-			return new WP_Error( 'sdc_no_file', __( 'Zur Quellkomponente wurde keine definition.json gefunden.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_no_file', __( 'Zur Quellkomponente wurde keine definition.json gefunden.', 'sdc-page-builder' ) );
 		}
 
 		$raw = file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file inside the component directories.
 
 		if ( false === $raw ) {
 			return new WP_Error(
-				'sdc_unreadable',
+				'sdcpb_unreadable',
 				sprintf(
 					/* translators: %s: absolute file path. */
 					__( 'Die Datei %s ist nicht lesbar.', 'sdc-page-builder' ),
@@ -1547,7 +1547,7 @@ class Sdc_Admin {
 
 		if ( ! is_array( $definition ) ) {
 			return new WP_Error(
-				'sdc_broken_source',
+				'sdcpb_broken_source',
 				sprintf(
 					/* translators: %s: absolute file path. */
 					__( 'Die Datei %s enthält kein gültiges JSON.', 'sdc-page-builder' ),
@@ -1556,15 +1556,15 @@ class Sdc_Admin {
 			);
 		}
 
-		$type = self::validate_type( self::posted( 'sdc_type' ) );
+		$type = self::validate_type( self::posted( 'sdcpb_type' ) );
 
 		if ( is_wp_error( $type ) ) {
 			return $type;
 		}
 
-		if ( null !== Sdc_Schema::get( $type ) ) {
+		if ( null !== Sdcpb_Schema::get( $type ) ) {
 			return new WP_Error(
-				'sdc_type_exists',
+				'sdcpb_type_exists',
 				sprintf(
 					/* translators: %s: component type. */
 					__( 'Eine Komponente mit dem Typ %s gibt es bereits.', 'sdc-page-builder' ),
@@ -1575,11 +1575,11 @@ class Sdc_Admin {
 
 		$fields = isset( $definition['fields'] ) && is_array( $definition['fields'] ) ? $definition['fields'] : array();
 
-		$definition['key']         = Sdc_Schema::KEY_PREFIX . $type;
-		$definition['title']       = (string) $component['label'] . ' (Kopie)';
-		$definition['sdc_version'] = 1;
-		$definition['fields']      = self::rekey_fields( $fields, $type );
-		$definition['location']    = self::location();
+		$definition['key']           = Sdcpb_Schema::KEY_PREFIX . $type;
+		$definition['title']         = (string) $component['label'] . ' (Kopie)';
+		$definition['sdcpb_version'] = 1;
+		$definition['fields']        = self::rekey_fields( $fields, $type );
+		$definition['location']      = self::location();
 
 		return self::write_definition( $dir, $type, $definition );
 	}
@@ -1595,17 +1595,17 @@ class Sdc_Admin {
 	 * @return true|WP_Error
 	 */
 	private static function update() {
-		$type = self::validate_type( self::posted( 'sdc_type' ) );
+		$type = self::validate_type( self::posted( 'sdcpb_type' ) );
 
 		if ( is_wp_error( $type ) ) {
 			return $type;
 		}
 
-		$component = Sdc_Schema::get( $type );
+		$component = Sdcpb_Schema::get( $type );
 
 		if ( null === $component ) {
 			return new WP_Error(
-				'sdc_unknown_type',
+				'sdcpb_unknown_type',
 				sprintf(
 					/* translators: %s: component type. */
 					__( 'Die Komponente %s gibt es nicht.', 'sdc-page-builder' ),
@@ -1614,11 +1614,11 @@ class Sdc_Admin {
 			);
 		}
 
-		$file = Sdc_Schema::file_for_key( (string) $component['key'] );
+		$file = Sdcpb_Schema::file_for_key( (string) $component['key'] );
 
 		if ( '' === $file || ! self::in_write_dir( $file ) ) {
 			return new WP_Error(
-				'sdc_outside_write_dir',
+				'sdcpb_outside_write_dir',
 				__( 'Diese Komponente liegt nicht in wp-content/sdc-components/. Theme- und Plugin-Komponenten sind schreibgeschützt, weil der nächste Deploy die Änderung überschreiben würde. Dupliziere sie, um sie hier zu bearbeiten.', 'sdc-page-builder' )
 			);
 		}
@@ -1628,7 +1628,7 @@ class Sdc_Admin {
 
 		if ( ! is_array( $base ) ) {
 			return new WP_Error(
-				'sdc_read_failed',
+				'sdcpb_read_failed',
 				sprintf(
 					/* translators: %s: absolute file path. */
 					__( 'Die Datei %s ist nicht lesbar oder enthält kein gültiges JSON. Ohne sie lässt sich die Komponente nicht speichern.', 'sdc-page-builder' ),
@@ -1639,15 +1639,15 @@ class Sdc_Admin {
 
 		$base_fields = isset( $base['fields'] ) && is_array( $base['fields'] ) ? $base['fields'] : array();
 
-		$label = self::posted( 'sdc_label' );
+		$label = self::posted( 'sdcpb_label' );
 
 		if ( '' === $label ) {
-			return new WP_Error( 'sdc_no_label', __( 'Die Komponente braucht einen Namen.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_no_label', __( 'Die Komponente braucht einen Namen.', 'sdc-page-builder' ) );
 		}
 
 		// The stored field list is passed in so an unchanged name keeps its
 		// stored key instead of getting a derived one.
-		$fields = self::parse_fields( self::posted_raw( 'sdc_fields' ), $type, $base_fields );
+		$fields = self::parse_fields( self::posted_raw( 'sdcpb_fields' ), $type, $base_fields );
 
 		if ( is_wp_error( $fields ) ) {
 			return $fields;
@@ -1656,7 +1656,7 @@ class Sdc_Admin {
 		$removed = self::removed_names( $base_fields, $fields );
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified by check_admin_referer() in handle().
-		$confirm = '1' === self::posted( 'sdc_confirm_fields' );
+		$confirm = '1' === self::posted( 'sdcpb_confirm_fields' );
 
 		/*
 		 * A dropped field name is a silent data loss: the value stays in the
@@ -1666,7 +1666,7 @@ class Sdc_Admin {
 		 */
 		if ( ! empty( $removed ) && ! $confirm ) {
 			return new WP_Error(
-				'sdc_fields_removed',
+				'sdcpb_fields_removed',
 				sprintf(
 					/* translators: %s: comma separated list of field labels and names. */
 					__( 'Diese Felder fehlen in der neuen Feldliste: %s. Ihre Inhalte bleiben auf den Seiten gespeichert, sind danach aber unsichtbar. Setze „Felder entfernen bestätigen", wenn das gewollt ist.', 'sdc-page-builder' ),
@@ -1677,10 +1677,10 @@ class Sdc_Admin {
 
 		$definition = $base;
 
-		$definition['title']           = $label;
-		$definition['sdc_description'] = self::posted( 'sdc_description' );
-		$definition['sdc_icon']        = self::posted( 'sdc_icon' );
-		$definition['fields']          = $fields;
+		$definition['title']             = $label;
+		$definition['sdcpb_description'] = self::posted( 'sdcpb_description' );
+		$definition['sdcpb_icon']        = self::posted( 'sdcpb_icon' );
+		$definition['fields']            = $fields;
 
 		/*
 		 * Both code layers are linted before the first file is written, so a
@@ -1688,17 +1688,17 @@ class Sdc_Admin {
 		 * the edit applied. The write lints again — this is about the order
 		 * of the three files, not about trusting either answer.
 		 */
-		$view_valid = Sdc_View_Editor::validate( $type, $fields );
+		$view_valid = Sdcpb_View_Editor::validate( $type, $fields );
 
 		if ( is_wp_error( $view_valid ) ) {
-			$view_valid->add_data( array( 'sdc_tab' => 'view' ) );
+			$view_valid->add_data( array( 'sdcpb_tab' => 'view' ) );
 			return $view_valid;
 		}
 
-		$style_valid = Sdc_Style_Editor::validate( $type );
+		$style_valid = Sdcpb_Style_Editor::validate( $type );
 
 		if ( is_wp_error( $style_valid ) ) {
-			$style_valid->add_data( array( 'sdc_tab' => 'styles' ) );
+			$style_valid->add_data( array( 'sdcpb_tab' => 'styles' ) );
 			return $style_valid;
 		}
 
@@ -1708,13 +1708,13 @@ class Sdc_Admin {
 			return $written;
 		}
 
-		$viewed = Sdc_View_Editor::save( self::write_dir(), $type, $fields );
+		$viewed = Sdcpb_View_Editor::save( self::write_dir(), $type, $fields );
 
 		if ( is_wp_error( $viewed ) ) {
 			return $viewed;
 		}
 
-		return Sdc_Style_Editor::save( self::write_dir(), $type );
+		return Sdcpb_Style_Editor::save( self::write_dir(), $type );
 	}
 
 	/**
@@ -1781,17 +1781,17 @@ class Sdc_Admin {
 	 * @return true|WP_Error
 	 */
 	private static function delete() {
-		$type = self::validate_type( self::posted( 'sdc_type' ) );
+		$type = self::validate_type( self::posted( 'sdcpb_type' ) );
 
 		if ( is_wp_error( $type ) ) {
 			return $type;
 		}
 
-		$component = Sdc_Schema::get( $type );
+		$component = Sdcpb_Schema::get( $type );
 
 		if ( null === $component ) {
 			return new WP_Error(
-				'sdc_unknown_component',
+				'sdcpb_unknown_component',
 				sprintf(
 					/* translators: %s: component type. */
 					__( 'Die Komponente %s gibt es nicht.', 'sdc-page-builder' ),
@@ -1800,11 +1800,11 @@ class Sdc_Admin {
 			);
 		}
 
-		$file = Sdc_Schema::file_for_key( (string) $component['key'] );
+		$file = Sdcpb_Schema::file_for_key( (string) $component['key'] );
 
 		if ( ! self::in_write_dir( $file ) ) {
 			return new WP_Error(
-				'sdc_not_owned',
+				'sdcpb_not_owned',
 				__( 'Diese Komponente liegt nicht in wp-content/sdc-components/ — sie gehört zum Theme oder zum Plugin und wird dort gelöscht, nicht hier.', 'sdc-page-builder' )
 			);
 		}
@@ -1813,11 +1813,11 @@ class Sdc_Admin {
 		$pages  = isset( $counts[ $type ]['pages'] ) ? (int) $counts[ $type ]['pages'] : 0;
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified by check_admin_referer() in handle().
-		$force = isset( $_POST['sdc_force'] ) && '1' === (string) wp_unslash( $_POST['sdc_force'] );
+		$force = isset( $_POST['sdcpb_force'] ) && '1' === sanitize_key( wp_unslash( $_POST['sdcpb_force'] ) );
 
 		if ( $pages > 0 && ! $force ) {
 			return new WP_Error(
-				'sdc_in_use',
+				'sdcpb_in_use',
 				sprintf(
 					/* translators: 1: number of pages, 2: component type. */
 					__( 'Die Komponente %2$s steht auf %1$d Seiten. Setze „Auch bei Verwendung löschen", wenn das gewollt ist.', 'sdc-page-builder' ),
@@ -1832,9 +1832,15 @@ class Sdc_Admin {
 		// The .tmp is the leftover of a write that died before its rename;
 		// leaving it behind would keep the folder from ever being removed.
 		foreach ( array( $file . '.tmp', $file, $folder . '/render.php' ) as $target ) {
-			if ( is_file( $target ) && ! unlink( $target ) ) {
+			if ( ! is_file( $target ) ) {
+				continue;
+			}
+
+			wp_delete_file( $target );
+
+			if ( file_exists( $target ) ) {
 				return new WP_Error(
-					'sdc_unlink_failed',
+					'sdcpb_unlink_failed',
 					sprintf(
 						/* translators: %s: absolute file path. */
 						__( 'Die Datei %s ließ sich nicht löschen.', 'sdc-page-builder' ),
@@ -1847,7 +1853,7 @@ class Sdc_Admin {
 		// Only removes the directory when nothing else lives in it.
 		@rmdir( $folder ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- A non-empty component folder is not an error.
 
-		Sdc_Schema::flush();
+		Sdcpb_Schema::flush();
 		delete_transient( self::INSTANCE_TRANSIENT );
 
 		return true;
@@ -1858,14 +1864,14 @@ class Sdc_Admin {
 	 */
 	private static function export() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified by check_admin_referer() in handle().
-		$type = self::validate_type( isset( $_GET['sdc_type'] ) ? sanitize_key( wp_unslash( $_GET['sdc_type'] ) ) : '' );
+		$type = self::validate_type( isset( $_GET['sdcpb_type'] ) ? sanitize_key( wp_unslash( $_GET['sdcpb_type'] ) ) : '' );
 
 		if ( is_wp_error( $type ) ) {
 			self::redirect( 'error', $type->get_error_message() );
 		}
 
-		$component = Sdc_Schema::get( $type );
-		$file      = null === $component ? '' : Sdc_Schema::file_for_key( (string) $component['key'] );
+		$component = Sdcpb_Schema::get( $type );
+		$file      = null === $component ? '' : Sdcpb_Schema::file_for_key( (string) $component['key'] );
 
 		if ( '' === $file || ! is_readable( $file ) ) {
 			self::redirect( 'error', __( 'Für diese Komponente wurde keine lesbare definition.json gefunden.', 'sdc-page-builder' ) );
@@ -1896,25 +1902,42 @@ class Sdc_Admin {
 			return $dir;
 		}
 
-		if ( ! isset( $_FILES['sdc_component_file'] ) ) {
-			return new WP_Error( 'sdc_no_file', __( 'Es wurde keine Datei ausgewählt.', 'sdc-page-builder' ) );
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified by check_admin_referer() in handle().
+		if ( ! isset( $_FILES['sdcpb_component_file'] ) ) {
+			return new WP_Error( 'sdcpb_no_file', __( 'Es wurde keine Datei ausgewählt.', 'sdc-page-builder' ) );
 		}
 
-		$upload = (array) $_FILES['sdc_component_file']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Validated below: upload error code, size and is_uploaded_file().
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Verified by check_admin_referer() in handle(); the three values used are type-checked below before they reach any function.
+		$upload = (array) $_FILES['sdcpb_component_file'];
 
-		if ( isset( $upload['error'] ) && UPLOAD_ERR_OK !== (int) $upload['error'] ) {
-			return new WP_Error( 'sdc_upload_failed', __( 'Der Upload ist fehlgeschlagen.', 'sdc-page-builder' ) );
+		// A malformed request can send an array where a string is expected.
+		// is_uploaded_file() and file_get_contents() would then get an array
+		// and raise a TypeError on PHP 8 instead of failing cleanly.
+		if (
+			! isset( $upload['tmp_name'], $upload['error'] )
+			|| ! is_string( $upload['tmp_name'] )
+			|| ! is_scalar( $upload['error'] )
+		) {
+			return new WP_Error( 'sdcpb_upload_failed', __( 'Die hochgeladene Datei ist nicht angekommen.', 'sdc-page-builder' ) );
 		}
 
-		if ( empty( $upload['tmp_name'] ) || ! is_uploaded_file( $upload['tmp_name'] ) ) {
-			return new WP_Error( 'sdc_upload_failed', __( 'Die hochgeladene Datei ist nicht angekommen.', 'sdc-page-builder' ) );
+		if ( UPLOAD_ERR_OK !== (int) $upload['error'] ) {
+			return new WP_Error( 'sdcpb_upload_failed', __( 'Der Upload ist fehlgeschlagen.', 'sdc-page-builder' ) );
 		}
 
-		if ( isset( $upload['size'] ) && (int) $upload['size'] > self::MAX_IMPORT_BYTES ) {
-			return new WP_Error( 'sdc_upload_too_large', __( 'Die Datei ist zu groß für eine Komponente.', 'sdc-page-builder' ) );
+		$tmp_name = $upload['tmp_name'];
+
+		if ( '' === $tmp_name || ! is_uploaded_file( $tmp_name ) ) {
+			return new WP_Error( 'sdcpb_upload_failed', __( 'Die hochgeladene Datei ist nicht angekommen.', 'sdc-page-builder' ) );
 		}
 
-		$raw      = file_get_contents( $upload['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading the upload's temporary file.
+		$size = isset( $upload['size'] ) && is_scalar( $upload['size'] ) ? (int) $upload['size'] : 0;
+
+		if ( $size > self::MAX_IMPORT_BYTES ) {
+			return new WP_Error( 'sdcpb_upload_too_large', __( 'Die Datei ist zu groß für eine Komponente.', 'sdc-page-builder' ) );
+		}
+
+		$raw      = file_get_contents( $tmp_name ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading the upload's temporary file.
 		$imported = self::parse_definition( (string) $raw );
 
 		if ( is_wp_error( $imported ) ) {
@@ -1923,9 +1946,9 @@ class Sdc_Admin {
 
 		$type = $imported['type'];
 
-		if ( null !== Sdc_Schema::get( $type ) ) {
+		if ( null !== Sdcpb_Schema::get( $type ) ) {
 			return new WP_Error(
-				'sdc_type_exists',
+				'sdcpb_type_exists',
 				sprintf(
 					/* translators: %s: component type. */
 					__( 'Eine Komponente mit dem Typ %s gibt es bereits. Import überschreibt nichts.', 'sdc-page-builder' ),
@@ -1948,7 +1971,7 @@ class Sdc_Admin {
 
 		if ( ! is_array( $definition ) ) {
 			return new WP_Error(
-				'sdc_import_json',
+				'sdcpb_import_json',
 				sprintf(
 					/* translators: %s: JSON parser message. */
 					__( 'Die Datei ist kein gültiges JSON: %s', 'sdc-page-builder' ),
@@ -1959,18 +1982,18 @@ class Sdc_Admin {
 
 		$key = isset( $definition['key'] ) ? (string) $definition['key'] : '';
 
-		if ( 0 !== strpos( $key, Sdc_Schema::KEY_PREFIX ) ) {
+		if ( 0 !== strpos( $key, Sdcpb_Schema::KEY_PREFIX ) ) {
 			return new WP_Error(
-				'sdc_import_key',
+				'sdcpb_import_key',
 				sprintf(
 					/* translators: %s: key prefix. */
 					__( 'Der Gruppen-Key fehlt oder beginnt nicht mit %s.', 'sdc-page-builder' ),
-					Sdc_Schema::KEY_PREFIX
+					Sdcpb_Schema::KEY_PREFIX
 				)
 			);
 		}
 
-		$type = self::validate_type( substr( $key, strlen( Sdc_Schema::KEY_PREFIX ) ) );
+		$type = self::validate_type( substr( $key, strlen( Sdcpb_Schema::KEY_PREFIX ) ) );
 
 		if ( is_wp_error( $type ) ) {
 			return $type;
@@ -1979,18 +2002,18 @@ class Sdc_Admin {
 		$title = isset( $definition['title'] ) ? trim( (string) $definition['title'] ) : '';
 
 		if ( '' === $title ) {
-			return new WP_Error( 'sdc_import_title', __( 'Die Definition hat keinen Titel.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_import_title', __( 'Die Definition hat keinen Titel.', 'sdc-page-builder' ) );
 		}
 
 		$fields = isset( $definition['fields'] ) && is_array( $definition['fields'] ) ? $definition['fields'] : array();
 		$fields = self::rekey_fields( $fields, $type );
 
-		$definition['key']         = Sdc_Schema::KEY_PREFIX . $type;
-		$definition['title']       = $title;
-		$definition['fields']      = $fields;
-		$definition['location']    = self::location();
-		$definition['sdc_version'] = isset( $definition['sdc_version'] ) ? max( 1, (int) $definition['sdc_version'] ) : 1;
-		$definition['active']      = true;
+		$definition['key']           = Sdcpb_Schema::KEY_PREFIX . $type;
+		$definition['title']         = $title;
+		$definition['fields']        = $fields;
+		$definition['location']      = self::location();
+		$definition['sdcpb_version'] = isset( $definition['sdcpb_version'] ) ? max( 1, (int) $definition['sdcpb_version'] ) : 1;
+		$definition['active']        = true;
 
 		return array(
 			'type'       => $type,
@@ -2011,15 +2034,15 @@ class Sdc_Admin {
 		$type = (string) $type;
 
 		if ( '' === $type ) {
-			return new WP_Error( 'sdc_no_type', __( 'Es fehlt der Typ der Komponente.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_no_type', __( 'Es fehlt der Typ der Komponente.', 'sdc-page-builder' ) );
 		}
 
-		if ( ! preg_match( '/^[a-z0-9][a-z0-9_-]*$/', $type ) ) {
+		if ( ! preg_match( '/^[a-z0-9][a-z0-9-]*$/', $type ) ) {
 			return new WP_Error(
-				'sdc_bad_type',
+				'sdcpb_bad_type',
 				sprintf(
 					/* translators: %s: submitted type. */
-					__( 'Der Typ „%s" ist nicht erlaubt: nur Kleinbuchstaben, Ziffern, Binde- und Unterstriche, beginnend mit Buchstabe oder Ziffer.', 'sdc-page-builder' ),
+					__( 'Der Typ „%s" ist nicht erlaubt: nur Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit Buchstabe oder Ziffer. Unterstriche gehen nicht, weil jeder Typ auch ein Blockname wird („sdcpb/<typ>").', 'sdc-page-builder' ),
 					$type
 				)
 			);
@@ -2027,7 +2050,7 @@ class Sdc_Admin {
 
 		// The type becomes a directory name and part of a field key.
 		if ( strlen( $type ) > 40 ) {
-			return new WP_Error( 'sdc_bad_type', __( 'Der Typ ist zu lang (maximal 40 Zeichen).', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_bad_type', __( 'Der Typ ist zu lang (maximal 40 Zeichen).', 'sdc-page-builder' ) );
 		}
 
 		return $type;
@@ -2045,14 +2068,14 @@ class Sdc_Admin {
 	 */
 	private static function definition( $type, $label, $description, $icon, array $fields ) {
 		return array(
-			'key'                  => Sdc_Schema::KEY_PREFIX . $type,
+			'key'                  => Sdcpb_Schema::KEY_PREFIX . $type,
 			'title'                => $label,
-			'sdc_description'      => $description,
-			'sdc_icon'             => '' === $icon ? 'layout' : $icon,
-			'sdc_version'          => 1,
+			'sdcpb_description'      => $description,
+			'sdcpb_icon'             => '' === $icon ? 'layout' : $icon,
+			'sdcpb_version'          => 1,
 			'fields'               => $fields,
 			'location'             => self::location(),
-			'menu_order'           => count( Sdc_Schema::components() ),
+			'menu_order'           => count( Sdcpb_Schema::components() ),
 			'position'             => 'normal',
 			'style'                => 'default',
 			'label_placement'      => 'top',
@@ -2064,7 +2087,7 @@ class Sdc_Admin {
 
 	/**
 	 * The location rule that keeps the host from rendering the group on its
-	 * own: no admin screen matches `sdc_component == 1`, the builder renders
+	 * own: no admin screen matches `sdcpb_component == 1`, the builder renders
 	 * the fields itself.
 	 *
 	 * @return array[]
@@ -2073,7 +2096,7 @@ class Sdc_Admin {
 		return array(
 			array(
 				array(
-					'param'    => 'sdc_component',
+					'param'    => 'sdcpb_component',
 					'operator' => '==',
 					'value'    => '1',
 				),
@@ -2135,7 +2158,7 @@ class Sdc_Admin {
 
 		if ( JSON_ERROR_NONE !== json_last_error() ) {
 			return new WP_Error(
-				'sdc_fields_json',
+				'sdcpb_fields_json',
 				sprintf(
 					/* translators: %s: JSON parser message. */
 					__( 'Die Felder sind kein gültiges JSON: %s', 'sdc-page-builder' ),
@@ -2146,7 +2169,7 @@ class Sdc_Admin {
 
 		if ( ! is_array( $decoded ) || array_keys( $decoded ) !== range( 0, count( $decoded ) - 1 ) ) {
 			return new WP_Error(
-				'sdc_fields_shape',
+				'sdcpb_fields_shape',
 				__( 'Die Felder müssen eine Liste sein: [ {…}, {…} ].', 'sdc-page-builder' )
 			);
 		}
@@ -2179,7 +2202,7 @@ class Sdc_Admin {
 
 			if ( ! is_array( $field ) ) {
 				return new WP_Error(
-					'sdc_fields_entry',
+					'sdcpb_fields_entry',
 					sprintf(
 						/* translators: 1: nesting level, 2: entry number. */
 						__( 'Feld %2$d auf Ebene %1$d ist kein Objekt.', 'sdc-page-builder' ),
@@ -2193,7 +2216,7 @@ class Sdc_Admin {
 
 			if ( '' === $name ) {
 				return new WP_Error(
-					'sdc_fields_name',
+					'sdcpb_fields_name',
 					sprintf(
 						/* translators: 1: entry number, 2: nesting level. */
 						__( 'Feld %1$d auf Ebene %2$d hat keinen gültigen Namen (a–z, 0–9, _).', 'sdc-page-builder' ),
@@ -2205,7 +2228,7 @@ class Sdc_Admin {
 
 			if ( isset( $names[ $name ] ) ) {
 				return new WP_Error(
-					'sdc_fields_duplicate',
+					'sdcpb_fields_duplicate',
 					sprintf(
 						/* translators: %s: field name. */
 						__( 'Der Feldname %s kommt doppelt vor. Zwei Felder einer Ebene brauchen verschiedene Namen.', 'sdc-page-builder' ),
@@ -2219,7 +2242,7 @@ class Sdc_Admin {
 
 			if ( '' === $field_type ) {
 				return new WP_Error(
-					'sdc_fields_type',
+					'sdcpb_fields_type',
 					sprintf(
 						/* translators: %s: field name. */
 						__( 'Feld %s hat keinen Typ.', 'sdc-page-builder' ),
@@ -2230,7 +2253,7 @@ class Sdc_Admin {
 
 			if ( ! self::type_exists( $field_type ) ) {
 				return new WP_Error(
-					'sdc_fields_type',
+					'sdcpb_fields_type',
 					sprintf(
 						/* translators: 1: field type, 2: field name. */
 						__( 'Den Feldtyp „%1$s" (Feld %2$s) kennt der Host nicht.', 'sdc-page-builder' ),
@@ -2366,7 +2389,7 @@ class Sdc_Admin {
 		// while the folder stays behind forever.
 		if ( is_file( $file ) && ! $overwrite ) {
 			return new WP_Error(
-				'sdc_folder_exists',
+				'sdcpb_folder_exists',
 				sprintf(
 					/* translators: %s: absolute directory path. */
 					__( 'Der Ordner %s existiert bereits.', 'sdc-page-builder' ),
@@ -2377,7 +2400,7 @@ class Sdc_Admin {
 
 		if ( ! $existed && ! wp_mkdir_p( $folder ) ) {
 			return new WP_Error(
-				'sdc_mkdir_failed',
+				'sdcpb_mkdir_failed',
 				sprintf(
 					/* translators: %s: absolute directory path. */
 					__( 'Der Ordner %s ließ sich nicht anlegen.', 'sdc-page-builder' ),
@@ -2391,7 +2414,7 @@ class Sdc_Admin {
 		if ( false === $json ) {
 			self::discard_folder( $folder, $existed );
 
-			return new WP_Error( 'sdc_encode_failed', __( 'Die Definition ließ sich nicht als JSON schreiben.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_encode_failed', __( 'Die Definition ließ sich nicht als JSON schreiben.', 'sdc-page-builder' ) );
 		}
 
 		/*
@@ -2405,11 +2428,11 @@ class Sdc_Admin {
 		$done = file_put_contents( $tmp, $json . "\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Writing a component file; WP_Filesystem would ask for credentials in the admin.
 
 		if ( false === $done || ! @rename( $tmp, $file ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.rename_rename -- Same-directory rename; a failure is reported on the next lines.
-			@unlink( $tmp ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.unlink_unlink -- Removing the temporary file of a failed write.
+			wp_delete_file( $tmp );
 			self::discard_folder( $folder, $existed );
 
 			return new WP_Error(
-				'sdc_write_failed',
+				'sdcpb_write_failed',
 				sprintf(
 					/* translators: %s: absolute file path. */
 					__( 'Die Datei %s ließ sich nicht schreiben.', 'sdc-page-builder' ),
@@ -2418,7 +2441,7 @@ class Sdc_Admin {
 			);
 		}
 
-		Sdc_Schema::flush();
+		Sdcpb_Schema::flush();
 		delete_transient( self::INSTANCE_TRANSIENT );
 
 		return true;
@@ -2446,7 +2469,7 @@ class Sdc_Admin {
 	 * Where and how often each component is actually placed.
 	 *
 	 * Placement is the content of a page — blocks now, the stored document
-	 * only for a page the migration has not reached. Reading `_sdc_data` for
+	 * only for a page the migration has not reached. Reading `_sdcpb_data` for
 	 * both had two consequences this fixes:
 	 *
 	 * - Revisions carry a copy of the same meta row. One page saved sixteen
@@ -2471,7 +2494,7 @@ class Sdc_Admin {
 
 		$post_ids = get_posts(
 			array(
-				'post_type'   => Sdc_Editor::post_types(),
+				'post_type'   => Sdcpb_Editor::post_types(),
 				// No revisions, no autosaves, no trash: all three either copy
 				// a page or no longer render, and each would count as one.
 				'post_status' => array( 'publish', 'future', 'draft', 'pending', 'private' ),
@@ -2528,7 +2551,7 @@ class Sdc_Admin {
 		 * migrated; after that it is a backup. A component the author deleted
 		 * from the canvas has to stop counting, or nothing is ever deletable.
 		 */
-		if ( empty( $types ) && ! Sdc_Migration::is_migrated( $post_id ) ) {
+		if ( empty( $types ) && ! Sdcpb_Migration::is_migrated( $post_id ) ) {
 			$types = self::types_in_document( $post_id );
 		}
 
@@ -2539,14 +2562,14 @@ class Sdc_Admin {
 	 * Component types in block content.
 	 *
 	 * Walks `innerBlocks` as well: a component inside a column or a group is
-	 * placed just the same. The old `sdc/component` block names its type in an
+	 * placed just the same. The old `sdcpb/component` block names its type in an
 	 * attribute instead of the block name.
 	 *
 	 * @param string $content Post content.
 	 * @return string[]
 	 */
 	private static function types_in_content( $content ) {
-		if ( ! Sdc_Migration::has_blocks( (string) $content ) ) {
+		if ( ! Sdcpb_Migration::has_blocks( (string) $content ) ) {
 			return array();
 		}
 
@@ -2569,14 +2592,14 @@ class Sdc_Admin {
 
 			$name = isset( $block['blockName'] ) ? (string) $block['blockName'] : '';
 
-			if ( Sdc_Block::LEGACY === $name ) {
+			if ( Sdcpb_Block::LEGACY === $name ) {
 				$legacy = isset( $block['attrs']['type'] ) ? (string) $block['attrs']['type'] : '';
 
 				if ( '' !== $legacy ) {
 					$types[] = $legacy;
 				}
-			} elseif ( 0 === strpos( $name, Sdc_Block::PREFIX ) ) {
-				$types[] = substr( $name, strlen( Sdc_Block::PREFIX ) );
+			} elseif ( 0 === strpos( $name, Sdcpb_Block::PREFIX ) ) {
+				$types[] = substr( $name, strlen( Sdcpb_Block::PREFIX ) );
 			}
 
 			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
@@ -2590,7 +2613,7 @@ class Sdc_Admin {
 	/**
 	 * Component types in a post's stored document.
 	 *
-	 * Both shapes are read: a PHP array in one meta row (how `Sdc_Store`
+	 * Both shapes are read: a PHP array in one meta row (how `Sdcpb_Store`
 	 * writes) and an older JSON string. A counter that understood only one of
 	 * them reported zero and silently disabled the in-use guard.
 	 *
@@ -2598,7 +2621,7 @@ class Sdc_Admin {
 	 * @return string[]
 	 */
 	private static function types_in_document( $post_id ) {
-		$document = Sdc_Store::get_data( (int) $post_id );
+		$document = Sdcpb_Store::get_data( (int) $post_id );
 
 		if ( empty( $document['components'] ) || ! is_array( $document['components'] ) ) {
 			return array();
@@ -2700,7 +2723,7 @@ class Sdc_Admin {
 	private static function redirect( $code, $detail = '', array $extra = array(), array $draft = array() ) {
 		$args = array(
 			'page'       => self::MENU_SLUG,
-			'sdc_notice' => $code,
+			'sdcpb_notice' => $code,
 		);
 
 		if ( '' !== $detail ) {
@@ -2712,14 +2735,14 @@ class Sdc_Admin {
 			 */
 			$token = strtolower( wp_generate_password( 12, false, false ) );
 
-			set_transient( 'sdc_pb_notice_' . $token, $detail, 5 * MINUTE_IN_SECONDS );
+			set_transient( 'sdcpb_notice_' . $token, $detail, 5 * MINUTE_IN_SECONDS );
 
-			$args['sdc_detail'] = $token;
+			$args['sdcpb_detail'] = $token;
 
 			// Same one-time token as the message, so the draft cannot be
 			// read by guessing a second one.
 			if ( ! empty( $draft ) ) {
-				set_transient( 'sdc_pb_draft_' . $token, $draft, 5 * MINUTE_IN_SECONDS );
+				set_transient( 'sdcpb_draft_' . $token, $draft, 5 * MINUTE_IN_SECONDS );
 			}
 		}
 

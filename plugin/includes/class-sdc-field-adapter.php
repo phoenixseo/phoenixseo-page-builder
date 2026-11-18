@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Thin facade over the ACF/SCF field API.
  */
-class Sdc_Field_Adapter {
+class Sdcpb_Field_Adapter {
 
 	/**
 	 * Function that must exist for the host to be usable.

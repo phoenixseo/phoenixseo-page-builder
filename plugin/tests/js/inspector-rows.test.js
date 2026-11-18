@@ -234,5 +234,5 @@ test( 'layoutForRow reads the layout of a row and answers null for none', () => 
 } );
 
 test( 'the module exports itself for the browser as well', () => {
-	assert.equal( globalThis.SDCBlockRows, rows );
+	assert.equal( globalThis.SDCPBBlockRows, rows );
 } );

@@ -2,7 +2,7 @@
 
 Ein komponentenbasierter Page-Builder für WordPress, der **Advanced Custom Fields** und **Secure Custom Fields** als Feld-Lieferanten nutzt — und Seiten in einem einzigen JSON-Dokument speichert.
 
-**Status: 0.2.0.** Editor, Speicherung, Frontend-Ausgabe, Revisionen und Import/Export stehen und sind gemessen: 339 Tests / 1825 Assertions auf WordPress 7.1.4 **und** auf der erklärten Mindestversion 6.4.14, PHPCS ohne Befund, readme.txt formal konform. Offen sind Screenshots und die Freigabe im WordPress.org-Review.
+**Status: 0.2.1.** Editor, Speicherung, Frontend-Ausgabe, Revisionen und Import/Export stehen und sind gemessen: 367 Tests / 2118 Assertions auf WordPress 7.1.4 **und** auf der erklärten Mindestversion 6.4.14, gegen ACF **und** SCF, PHPCS ohne Befund, Plugin Check am gebauten Paket ohne Befund, readme.txt formal konform. Offen sind Screenshots und die Freigabe im WordPress.org-Review.
 
 ## Warum es das gibt
 
@@ -75,7 +75,7 @@ Der Begriff SDC ist Drupals Name für diese Disziplin, nicht Frosts. Die Idee da
 - **Umziehen.** Ein Ordner kopieren bringt die Komponente in ein anderes Projekt. Inhalte gehen als JSON-Export mit.
 - **Bedingt eingreifen.** Ein Filter kann eine Komponente umschreiben oder weglassen — etwa für Besucher ohne Anmeldung.
 - **Design-System ohne Zusatzwerkzeug.** Eine Seite, die jede Komponente einmal zeigt, ist die Pattern Library. Dafür braucht es kein Storybook und keinen zweiten Build.
-- **Außerhalb des Builders weiterverwenden.** `Sdc_Frontend::component_fields_html( $type, $data )` liefert dasselbe Feldmarkup in einem normalen Theme-Template. Die Felddefinition gilt also an beiden Stellen.
+- **Außerhalb des Builders weiterverwenden.** `Sdcpb_Frontend::component_fields_html( $type, $data )` liefert dasselbe Feldmarkup in einem normalen Theme-Template. Die Felddefinition gilt also an beiden Stellen.
 
 ### Und im SDC Page Builder
 
@@ -108,18 +108,18 @@ wp-content/themes/<dein-theme>/sdc-components/teaser/
 
 ```json
 {
-  "key": "group_sdc_component_teaser",
+  "key": "group_sdcpb_component_teaser",
   "title": "Teaser",
-  "sdc_description": "Karte mit Überschrift, Text und Link.",
-  "sdc_icon": "screenoptions",
-  "sdc_version": 1,
+  "sdcpb_description": "Karte mit Überschrift, Text und Link.",
+  "sdcpb_icon": "screenoptions",
+  "sdcpb_version": 1,
   "fields": [
     { "key": "field_sdc_teaser_heading", "label": "Überschrift", "name": "heading", "type": "text", "required": 1 },
     { "key": "field_sdc_teaser_text", "label": "Text", "name": "text", "type": "textarea", "required": 0, "rows": 3 },
     { "key": "field_sdc_teaser_link", "label": "Link", "name": "link", "type": "link", "required": 0, "return_format": "array" }
   ],
   "location": [
-    [ { "param": "sdc_component", "operator": "==", "value": "1" } ]
+    [ { "param": "sdcpb_component", "operator": "==", "value": "1" } ]
   ],
   "menu_order": 0,
   "position": "normal",
@@ -131,7 +131,7 @@ wp-content/themes/<dein-theme>/sdc-components/teaser/
 }
 ```
 
-Drei Dinge sind daran wichtig: Der Key im JSON beginnt mit `group_sdc_component_`, der Rest ist der Typ (`teaser`). Der Dateiname sagt nichts über den Typ — er ist in jedem Komponenten-Ordner `definition.json`, weil der Key ihn bestimmt. Jedes Feld hat einen eigenen Key und einen `name`, unter dem der Wert im Dokument landet. Und die Location-Regel `sdc_component == 1` hält die Gruppe von den normalen Metaboxen fern.
+Drei Dinge sind daran wichtig: Der Key im JSON beginnt mit `group_sdcpb_component_`, der Rest ist der Typ (`teaser`). Der Dateiname sagt nichts über den Typ — er ist in jedem Komponenten-Ordner `definition.json`, weil der Key ihn bestimmt. Jedes Feld hat einen eigenen Key und einen `name`, unter dem der Wert im Dokument landet. Und die Location-Regel `sdcpb_component == 1` hält die Gruppe von den normalen Metaboxen fern.
 
 **2. Das Markup** — `render.php`:
 
@@ -158,7 +158,7 @@ $link = isset( $data['link'] ) && is_array( $data['link'] ) ? $data['link'] : ar
 
 **4. Stylen.** `render.php` liefert nur Markup. Das CSS gehört ins Theme — `wp_enqueue_style()` in `functions.php`, ein Stylesheet pro Komponente, oder was dein Build ohnehin macht.
 
-Wer die Felder nachträglich ändert, ändert den Typ für **alle** Seiten, die ihn benutzen. Neue Felder sind unkritisch. Ein Feld umbenennen heißt: alte Werte liegen unter dem alten Namen. Deshalb ist `sdc_version` im JSON und `schema` im Dokument — die Migration hängt an der Version, nicht am Zufall.
+Wer die Felder nachträglich ändert, ändert den Typ für **alle** Seiten, die ihn benutzen. Neue Felder sind unkritisch. Ein Feld umbenennen heißt: alte Werte liegen unter dem alten Namen. Deshalb ist `sdcpb_version` im JSON und `schema` im Dokument — die Migration hängt an der Version, nicht am Zufall.
 
 ## Aufbau
 
@@ -167,8 +167,8 @@ plugin/
 ├── sdc-page-builder.php              Bootstrap, GPL-Header, Admin-Hinweis ohne Wirt
 ├── includes/
 │   ├── class-sdc-field-adapter.php   einzige Stelle mit acf_*-Aufrufen
-│   ├── class-sdc-store.php           _sdc_data: ein Key, ein Write, Revisionen
-│   ├── class-sdc-schema.php          Komponenten = Feldgruppen mit group_sdc_component_*
+│   ├── class-sdc-store.php           _sdcpb_data: ein Key, ein Write, Revisionen
+│   ├── class-sdc-schema.php          Komponenten = Feldgruppen mit group_sdcpb_component_*
 │   └── class-sdc-rest.php            sdc-pb/v1/pages/{id}, sdc-pb/v1/components
 ├── schemas/                          mitgelieferte Beispiel-Komponenten (hero/, faq/)
 └── tests/m1-verify.php               20 Prüfungen, end-to-end
@@ -187,7 +187,7 @@ plugin/
 
 `_id` gibt jeder Komponente eine stabile Identität für Sortieren und Undo. `schema` erlaubt Versionierung: alte Daten bleiben lesbar, migriert wird beim Lesen.
 
-**Komponenten definieren:** eine Feldgruppe als JSON mit Key-Präfix `group_sdc_component_`. Der Rest des Keys ist der Typ (`group_sdc_component_faq` → `faq`). Eine Location-Regel auf `sdc_component == 1` sorgt dafür, dass der Wirt die Gruppe nie als normale Metabox rendert.
+**Komponenten definieren:** eine Feldgruppe als JSON mit Key-Präfix `group_sdcpb_component_`. Der Rest des Keys ist der Typ (`group_sdcpb_component_faq` → `faq`). Eine Location-Regel auf `sdcpb_component == 1` sorgt dafür, dass der Wirt die Gruppe nie als normale Metabox rendert.
 
 ## Eigene Komponenten anlegen
 
@@ -209,7 +209,7 @@ Gesucht wird in dieser Reihenfolge, der erste Treffer gewinnt:
 Andere Orte per Filter:
 
 ```php
-add_filter( 'sdc_pb_component_dirs', function ( $dirs ) {
+add_filter( 'sdcpb_component_dirs', function ( $dirs ) {
     $dirs[] = __DIR__ . '/meine-komponenten';
     return $dirs;
 } );
@@ -231,16 +231,16 @@ Die Datei läuft im Scope der Renderer-Methode und sieht drei Variablen:
 <article class="hero">
 	<h2><?php echo esc_html( $data['heading'] ); ?></h2>
 	<p><?php echo esc_html( $data['subline'] ); ?></p>
-	<?php echo Sdc_Frontend::component_fields_html( $type, $data ); ?>
+	<?php echo Sdcpb_Frontend::component_fields_html( $type, $data ); ?>
 </article>
 ```
 
-Zwei Dinge sind bewusst so: `$data` kommt **unescaped** an (Escaping ist Aufgabe des Templates — es ist Theme-Code, gleiche Vertrauensgrenze wie ein Template-Part), und `Sdc_Frontend::component_fields_html()` liefert das Standard-Markup der Felder, wenn nur der Rahmen eigen sein soll. Ohne `render.php` rendert das Plugin generisch (`div.sdc-component--<typ>` mit `sdc-field--<name>`-Spans).
+Zwei Dinge sind bewusst so: `$data` kommt **unescaped** an (Escaping ist Aufgabe des Templates — es ist Theme-Code, gleiche Vertrauensgrenze wie ein Template-Part), und `Sdcpb_Frontend::component_fields_html()` liefert das Standard-Markup der Felder, wenn nur der Rahmen eigen sein soll. Ohne `render.php` rendert das Plugin generisch (`div.sdc-component--<typ>` mit `sdc-field--<name>`-Spans).
 
 ### Letzter Eingriff: der Filter
 
 ```php
-add_filter( 'sdc_pb_component_html', function ( $html, $type, $data, $component ) {
+add_filter( 'sdcpb_component_html', function ( $html, $type, $data, $component ) {
     if ( 'hero' === $type && empty( $data['heading'] ) ) {
         return ''; // Komponente weglassen
     }
@@ -285,7 +285,7 @@ Was daraus wird, entscheidet das Plugin: die Feld-Keys werden auf `field_sdc_<ty
 
 **Duplizieren** legt die Kopie immer unter `wp-content/sdc-components/` an und schreibt den Gruppen-Key um. Das ist der Weg, eine mitgelieferte oder Theme-Komponente zu bearbeiten, ohne das Theme anzufassen: duplizieren, umbauen, Original im Theme bleibt als Vorlage.
 
-**Bearbeiten** öffnet dieselbe Maske wie das Anlegen, vorbelegt aus der Datei. Der Typ ist nur lesbar und Feld-Keys erscheinen nicht im Formular: ein Key ist der Schlüssel, unter dem eine Seite ihre Werte ablegt. Ein gespeicherter Key bleibt deshalb, wie er in der Datei steht — auch wenn er von Hand vergeben wurde und nicht dem Muster `field_sdc_<typ>_<name>` folgt. Nur ein Feld, das die Datei noch nicht kennt, bekommt einen neuen Key. Gespeichert wird ausschließlich, was das Formular kennt: `title`, `sdc_description`, `sdc_icon` und `fields`. `menu_order`, `location` und eigene Eigenschaften der Datei bleiben, wie sie sind, weil die Datei die Grundlage ist und nicht das Formular. Verschwindet ein Feldname aus der Liste, verlangt das Formular eine Bestätigung und nennt die betroffenen Felder; ohne Häkchen bleibt die Datei byte-identisch.
+**Bearbeiten** öffnet dieselbe Maske wie das Anlegen, vorbelegt aus der Datei. Der Typ ist nur lesbar und Feld-Keys erscheinen nicht im Formular: ein Key ist der Schlüssel, unter dem eine Seite ihre Werte ablegt. Ein gespeicherter Key bleibt deshalb, wie er in der Datei steht — auch wenn er von Hand vergeben wurde und nicht dem Muster `field_sdc_<typ>_<name>` folgt. Nur ein Feld, das die Datei noch nicht kennt, bekommt einen neuen Key. Gespeichert wird ausschließlich, was das Formular kennt: `title`, `sdcpb_description`, `sdcpb_icon` und `fields`. `menu_order`, `location` und eigene Eigenschaften der Datei bleiben, wie sie sind, weil die Datei die Grundlage ist und nicht das Formular. Verschwindet ein Feldname aus der Liste, verlangt das Formular eine Bestätigung und nennt die betroffenen Felder; ohne Häkchen bleibt die Datei byte-identisch.
 
 **Löschen** geht nur für Dateien in `wp-content/sdc-components/`. Steht die Komponente noch auf Seiten, verlangt das Formular ein Häkchen — der Inhalt der Seiten bleibt in beiden Fällen erhalten, es verschwindet nur die Definition.
 

@@ -24,7 +24,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Server-side rendering of builder components.
  */
-class Sdc_Renderer {
+class Sdcpb_Renderer {
 
 	/**
 	 * Maximum nesting depth for containers.
@@ -43,12 +43,12 @@ class Sdc_Renderer {
 	 * @return string HTML.
 	 */
 	public static function render_component( $type, $data, $context = 'editor', $instance = '' ) {
-		$component = Sdc_Schema::get( $type );
+		$component = Sdcpb_Schema::get( $type );
 		if ( ! $component ) {
 			return '';
 		}
 
-		$fields = Sdc_Field_Adapter::get_fields( Sdc_Field_Adapter::get_field_group( $component['key'] ) );
+		$fields = Sdcpb_Field_Adapter::get_fields( Sdcpb_Field_Adapter::get_field_group( $component['key'] ) );
 
 		// One prefix per instance. Two components of the same type otherwise
 		// produce identical input names — measured: 18 of 18 collided — and the
@@ -119,7 +119,7 @@ class Sdc_Renderer {
 		$field['_prepare'] = false; // Let the host prepare it itself.
 
 		return '<div class="sdc-field sdc-field--' . esc_attr( $field['type'] ) . '" data-sdc-name="' . esc_attr( $field['name'] ) . '">'
-			. Sdc_Field_Adapter::render_field( $field )
+			. Sdcpb_Field_Adapter::render_field( $field )
 			. '</div>';
 	}
 

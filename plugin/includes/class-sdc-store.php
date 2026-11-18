@@ -22,14 +22,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Reads and writes builder documents.
  */
-class Sdc_Store {
+class Sdcpb_Store {
 
 	/**
 	 * Meta key holding the whole document.
 	 *
 	 * Leading underscore keeps it out of the generic custom-fields panel.
 	 */
-	const META_KEY = '_sdc_data';
+	const META_KEY = '_sdcpb_data';
 
 	/**
 	 * Envelope format version.

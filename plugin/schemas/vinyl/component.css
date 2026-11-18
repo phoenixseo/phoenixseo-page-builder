@@ -1,0 +1,135 @@
+/**
+ * Vinyl: cover beside the record's details, tracks underneath, one column per
+ * side.
+ *
+ * The head is a wrapping flex row instead of a two-column grid with a break
+ * point: `flex: 0 1 14rem` on the cover and `1 1 18rem` on the text means the
+ * text drops below the cover by itself when a theme puts the component into a
+ * narrow column — no media query can know how wide the column is, and a media
+ * query on the window would be wrong in a sidebar.
+ *
+ * The track numbers come from a CSS counter, so the `<ol>` stays the thing
+ * that counts. `.sdc-vinyl__track` is a grid, and a grid item has no list
+ * marker; the counter draws what the marker used to draw.
+ */
+
+.sdc-vinyl {
+	--sdc-vinyl-gap: 1.75rem;
+	--sdc-vinyl-radius: 0.5rem;
+	--sdc-vinyl-border: color-mix(in srgb, currentColor 15%, transparent);
+	--sdc-vinyl-muted: color-mix(in srgb, currentColor 62%, transparent);
+	--sdc-vinyl-surface: color-mix(in srgb, currentColor 4%, transparent);
+	--sdc-vinyl-cover: 4px;
+
+	margin: 0 0 2rem;
+}
+
+.sdc-vinyl__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: var(--sdc-vinyl-gap);
+	margin: 0 0 1.5rem;
+}
+
+.sdc-vinyl__cover {
+	flex: 0 1 14rem;
+	margin: 0;
+}
+
+.sdc-vinyl__image {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: var(--sdc-vinyl-cover);
+	/* A record sleeve is square; the photo may not be. */
+	aspect-ratio: 1;
+	object-fit: cover;
+	background: var(--sdc-vinyl-surface);
+}
+
+.sdc-vinyl__meta {
+	flex: 1 1 18rem;
+	min-width: 0;
+}
+
+.sdc-vinyl__artist {
+	margin: 0 0 0.15rem;
+	font-size: 0.8rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--sdc-vinyl-muted);
+}
+
+.sdc-vinyl__album {
+	margin: 0 0 0.6rem;
+	font-size: clamp(1.4rem, 1.2rem + 0.7vw, 1.9rem);
+	line-height: 1.15;
+}
+
+.sdc-vinyl__line {
+	margin: 0 0 0.25rem;
+	font-size: 0.95rem;
+	color: var(--sdc-vinyl-muted);
+}
+
+.sdc-vinyl__count {
+	font-variant-numeric: tabular-nums;
+	color: inherit;
+}
+
+.sdc-vinyl__sides {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+	gap: 0 var(--sdc-vinyl-gap);
+}
+
+.sdc-vinyl__side-title {
+	margin: 0 0 0.35rem;
+	padding: 0 0 0.3rem;
+	font-size: 0.85rem;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--sdc-vinyl-muted);
+	border-block-end: 2px solid var(--sdc-vinyl-border);
+}
+
+.sdc-vinyl__tracks {
+	margin: 0 0 1.25rem;
+	padding: 0;
+	list-style: none;
+	counter-reset: sdc-vinyl-track;
+}
+
+.sdc-vinyl__track {
+	display: grid;
+	grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+	gap: 0 0.5rem;
+	align-items: baseline;
+	padding: 0.4rem 0;
+	border-block-end: 1px solid var(--sdc-vinyl-border);
+	counter-increment: sdc-vinyl-track;
+}
+
+.sdc-vinyl__track:last-child {
+	border-block-end: 0;
+}
+
+.sdc-vinyl__track::before {
+	content: counter(sdc-vinyl-track) ".";
+	font-size: 0.85rem;
+	font-variant-numeric: tabular-nums;
+	color: var(--sdc-vinyl-muted);
+}
+
+.sdc-vinyl__track-title {
+	min-width: 0;
+}
+
+.sdc-vinyl__track-time {
+	font-size: 0.85rem;
+	font-variant-numeric: tabular-nums;
+	color: var(--sdc-vinyl-muted);
+}

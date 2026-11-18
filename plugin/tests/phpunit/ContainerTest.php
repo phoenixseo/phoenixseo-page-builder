@@ -15,7 +15,7 @@
 /**
  * One list layout with a title, one with a quote, and a group of two texts.
  */
-class ContainerTest extends Sdc_TestCase {
+class ContainerTest extends Sdcpb_TestCase {
 
 	/**
 	 * A flexible field: two layouts, each with one field of its own.
@@ -132,7 +132,7 @@ class ContainerTest extends Sdc_TestCase {
 	 */
 	public function test_each_row_renders_only_the_fields_of_its_layout() {
 		$html = $this->rows_only(
-			Sdc_Renderer::render_fields( array( $this->flexible_field() ), array( 'panels' => $this->two_layouts() ) )
+			Sdcpb_Renderer::render_fields( array( $this->flexible_field() ), array( 'panels' => $this->two_layouts() ) )
 		);
 
 		$this->assertStringContainsString( 'Erstes Panel', $html );
@@ -161,7 +161,7 @@ class ContainerTest extends Sdc_TestCase {
 	 * and if they never do, the server drops the row.
 	 */
 	public function test_row_template_carries_the_first_layout() {
-		$html = Sdc_Renderer::render_fields( array( $this->flexible_field() ), array( 'panels' => array() ) );
+		$html = Sdcpb_Renderer::render_fields( array( $this->flexible_field() ), array( 'panels' => array() ) );
 
 		$this->assertMatchesRegularExpression( '/<template data-sdc-row-template>.*<\/template>/s', $html );
 
@@ -181,7 +181,7 @@ class ContainerTest extends Sdc_TestCase {
 		$rows = array( array( 'panel_title' => 'Verwaist' ) );
 
 		$html = $this->rows_only(
-			Sdc_Renderer::render_fields( array( $this->flexible_field() ), array( 'panels' => $rows ) )
+			Sdcpb_Renderer::render_fields( array( $this->flexible_field() ), array( 'panels' => $rows ) )
 		);
 
 		$this->assertStringNotContainsString( 'Verwaist', $html );
@@ -192,7 +192,7 @@ class ContainerTest extends Sdc_TestCase {
 	 * A group renders its sub-fields with their own names.
 	 */
 	public function test_group_renders_its_sub_fields() {
-		$html = Sdc_Renderer::render_fields(
+		$html = Sdcpb_Renderer::render_fields(
 			array( $this->group_field() ),
 			array(
 				'contact' => array(
@@ -212,7 +212,7 @@ class ContainerTest extends Sdc_TestCase {
 	 * The frontend prints the values of each row's own layout.
 	 */
 	public function test_frontend_prints_values_of_the_rows_layout() {
-		$html = Sdc_Frontend::render_fields_probe( array( $this->flexible_field() ), array( 'panels' => $this->two_layouts() ) );
+		$html = Sdcpb_Frontend::render_fields_probe( array( $this->flexible_field() ), array( 'panels' => $this->two_layouts() ) );
 
 		$this->assertStringContainsString( 'Erstes Panel', $html );
 		$this->assertStringContainsString( 'Zweites Panel', $html );
@@ -226,7 +226,7 @@ class ContainerTest extends Sdc_TestCase {
 	 * The frontend prints a group's sub-values.
 	 */
 	public function test_frontend_prints_group_values() {
-		$html = Sdc_Frontend::render_fields_probe(
+		$html = Sdcpb_Frontend::render_fields_probe(
 			array( $this->group_field() ),
 			array(
 				'contact' => array(
@@ -250,7 +250,7 @@ class ContainerTest extends Sdc_TestCase {
 	 * string. It must not take the page down.
 	 */
 	public function test_group_fed_a_string_does_not_break_the_page() {
-		$html = Sdc_Frontend::render_fields_probe( array( $this->group_field() ), array( 'contact' => 'irgendwas' ) );
+		$html = Sdcpb_Frontend::render_fields_probe( array( $this->group_field() ), array( 'contact' => 'irgendwas' ) );
 
 		$this->assertIsString( $html );
 		$this->assertStringNotContainsString( 'irgendwas', $html );

@@ -17,13 +17,13 @@
 // next to this file. It must be resolved here rather than in phpunit.xml: a
 // relative path there depends on the working directory, and a run that
 // silently boots the wrong core proves nothing about the version it claims.
-$sdc_wp_dir = getenv( 'SDC_TEST_WP_DIR' );
-if ( ! $sdc_wp_dir || ! is_dir( $sdc_wp_dir ) ) {
-	$sdc_wp_dir = dirname( __DIR__, 2 ) . '/wordpress';
+$sdcpb_wp_dir = getenv( 'SDC_TEST_WP_DIR' );
+if ( ! $sdcpb_wp_dir || ! is_dir( $sdcpb_wp_dir ) ) {
+	$sdcpb_wp_dir = dirname( __DIR__, 2 ) . '/wordpress';
 }
 
-$sdc_wp_dir = realpath( $sdc_wp_dir );
-if ( ! $sdc_wp_dir || ! is_file( $sdc_wp_dir . '/wp-includes/version.php' ) ) {
+$sdcpb_wp_dir = realpath( $sdcpb_wp_dir );
+if ( ! $sdcpb_wp_dir || ! is_file( $sdcpb_wp_dir . '/wp-includes/version.php' ) ) {
 	// A thrown exception, not a printed warning: this file is loaded before
 	// phpunit owns the run, so a warning would scroll past hundreds of passing
 	// lines and the suite would still exit 0 on the wrong core. The message
@@ -32,7 +32,7 @@ if ( ! $sdc_wp_dir || ! is_file( $sdc_wp_dir . '/wp-includes/version.php' ) ) {
 	throw new RuntimeException( 'SDC_TEST_WP_DIR does not point at a WordPress checkout.' );
 }
 
-define( 'ABSPATH', $sdc_wp_dir . '/' );
+define( 'ABSPATH', $sdcpb_wp_dir . '/' );
 
 define( 'DB_NAME', getenv( 'SDC_TEST_DB_NAME' ) ? getenv( 'SDC_TEST_DB_NAME' ) : 'wp_tests' );
 define( 'DB_USER', getenv( 'SDC_TEST_DB_USER' ) ? getenv( 'SDC_TEST_DB_USER' ) : 'root' );

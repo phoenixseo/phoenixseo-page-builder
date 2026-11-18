@@ -28,17 +28,11 @@
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<property name="prefixes" type="array">
-				<element value="sdc"/>
-				<element value="SDC"/>
+				<element value="sdcpb"/>
+				<element value="Sdcpb"/>
+				<element value="SDCPB"/>
 			</property>
 		</properties>
-		<!--
-			`sdc` is three characters, which WPCS flags as non-unique. It is the
-			plugin's established prefix across file names, constants, meta keys
-			and the REST namespace; renaming it now would break stored documents
-			and saved field keys. Accepted deliberately, not overlooked.
-		-->
-		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.ShortPrefixPassed"/>
 	</rule>
 
 	<rule ref="WordPress.WP.I18n">
@@ -56,7 +50,7 @@
 	</rule>
 
 	<!--
-		class-sdc-view.php holds the Sdc_View class and, below it, the sdc_*
+		class-sdc-view.php holds the Sdcpb_View class and, below it, the sdcpb_*
 		template helpers as `function_exists()`-guarded file-level functions.
 		That mix is the point of the file: a view is a template the frontend
 		includes, and the helpers have to exist before the first page renders,
@@ -83,6 +77,19 @@
 	<rule ref="WordPress">
 		<include-pattern>tests/*</include-pattern>
 		<exclude name="WordPress.Files.FileName"/>
+		<!--
+			A test touches three kinds of names it does not own, and the sniff
+			cannot tell "the plugin declared this" from "the test named it":
+			PHPUnit classes (discovered by the `*Test` suffix), WordPress's own
+			test-config constants (`ABSPATH`, `DB_NAME`, `WP_CLI`), and core
+			hooks the tests apply (`init`, `block_categories_all`,
+			`acf/include_fields`). None of that ships — `build-zip.py` leaves
+			`tests/` out of the package — so prefixing it would only make the
+			suite uglier, not the plugin safer.
+		-->
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound"/>
 		<exclude name="WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents"/>
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_operations_fopen"/>
 		<exclude name="WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents"/>

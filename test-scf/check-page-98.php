@@ -15,20 +15,20 @@ if ( ! $post ) {
 }
 
 echo "Titel: {$post->post_title} ({$post->post_type})\n";
-echo 'Markiert: ' . ( Sdc_Migration::is_migrated( $id ) ? 'ja' : 'nein' ) . "\n";
+echo 'Markiert: ' . ( Sdcpb_Migration::is_migrated( $id ) ? 'ja' : 'nein' ) . "\n";
 
 $before = array();
 preg_match_all( '/wp:sdc\/([a-z0-9_-]+)/', (string) $post->post_content, $before );
 echo 'Blöcke vorher: ' . implode( ',', $before[1] ) . "\n";
 
-$changed = Sdc_Migration::migrate_post( $id, true );
+$changed = Sdcpb_Migration::migrate_post( $id, true );
 
 $after = array();
 preg_match_all( '/wp:sdc\/([a-z0-9_-]+)/', (string) get_post_field( 'post_content', $id, 'raw' ), $after );
 echo 'Blöcke nachher: ' . implode( ',', $after[1] ) . "\n";
 echo 'Schreibzugriff: ' . ( $changed ? 'ja' : 'nein' ) . "\n";
 
-$document = Sdc_Store::get_data( $id );
+$document = Sdcpb_Store::get_data( $id );
 $types    = array();
 if ( isset( $document['components'] ) && is_array( $document['components'] ) ) {
 	foreach ( $document['components'] as $component ) {

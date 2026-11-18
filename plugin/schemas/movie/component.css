@@ -1,0 +1,200 @@
+/**
+ * Movie: a poster and the facts, then cast and synopsis.
+ *
+ * The body is a grid whose two columns exist only while a poster is there:
+ * without the figure the single remaining child spans the whole width, so a
+ * film without artwork still starts at the left edge. No `.sdc-movie--no-poster`
+ * modifier, no second template — the same markup covers both.
+ *
+ * The fact list is a grid rather than a `<dl>` with floats, because a term and
+ * its value belong on one row and must stay together when the column narrows.
+ */
+
+.sdc-movie {
+	--sdc-mv-gap: 1.75rem;
+	--sdc-mv-poster: 10rem;
+	--sdc-mv-radius: 0.5rem;
+	--sdc-mv-border: color-mix(in srgb, currentColor 15%, transparent);
+	--sdc-mv-muted: color-mix(in srgb, currentColor 62%, transparent);
+	--sdc-mv-surface: color-mix(in srgb, currentColor 4%, transparent);
+
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--sdc-mv-gap);
+	margin: 0 0 2rem;
+}
+
+/* The poster column appears only when there is a poster to put in it. */
+.sdc-movie:has(.sdc-movie__poster) {
+	grid-template-columns: var(--sdc-mv-poster) minmax(0, 1fr);
+}
+
+.sdc-movie__poster {
+	margin: 0;
+}
+
+.sdc-movie__image {
+	display: block;
+	width: 100%;
+	height: auto;
+	/* A film poster is 2:3. The photo may not be. */
+	aspect-ratio: 2 / 3;
+	object-fit: cover;
+	border-radius: var(--sdc-mv-radius);
+	background: var(--sdc-mv-surface);
+}
+
+.sdc-movie__body {
+	min-width: 0;
+}
+
+.sdc-movie__title {
+	margin: 0 0 0.35rem;
+	font-size: clamp(1.4rem, 1.2rem + 0.7vw, 1.9rem);
+	line-height: 1.15;
+}
+
+.sdc-movie__year {
+	font-weight: 400;
+	color: var(--sdc-mv-muted);
+}
+
+.sdc-movie__original {
+	margin: 0 0 1rem;
+	font-size: 0.9rem;
+	color: var(--sdc-mv-muted);
+}
+
+.sdc-movie__facts {
+	display: grid;
+	gap: 0.45rem 1.5rem;
+	margin: 0 0 1.25rem;
+	padding: 0 0 0 0;
+}
+
+.sdc-movie__fact {
+	display: grid;
+	grid-template-columns: minmax(5.5rem, max-content) minmax(0, 1fr);
+	gap: 0 0.75rem;
+	align-items: baseline;
+	padding-block-end: 0.45rem;
+	border-block-end: 1px solid var(--sdc-mv-border);
+}
+
+.sdc-movie__term {
+	margin: 0;
+	font-size: 0.75rem;
+	font-weight: 600;
+	letter-spacing: 0.07em;
+	text-transform: uppercase;
+	color: var(--sdc-mv-muted);
+}
+
+.sdc-movie__value {
+	margin: 0;
+}
+
+.sdc-movie__rating {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.sdc-movie__meter {
+	/* `meter` has a default width of 5em in most engines; here it stretches. */
+	width: 7rem;
+	max-width: 45%;
+	height: 0.55rem;
+	/* Firefox draws the bar from these; WebKit from `::-webkit-meter-*`. */
+	background: var(--sdc-mv-surface);
+	border: 0;
+	border-radius: 999px;
+}
+
+.sdc-movie__meter::-webkit-meter-bar {
+	background: var(--sdc-mv-surface);
+	border: 0;
+	border-radius: 999px;
+}
+
+.sdc-movie__meter::-webkit-meter-optimum-value {
+	background: var(--sdc-mv-accent-bar, currentColor);
+	border-radius: 999px;
+}
+
+.sdc-movie__meter::-webkit-meter-suboptimum-value,
+.sdc-movie__meter::-webkit-meter-even-less-good-value {
+	border-radius: 999px;
+}
+
+.sdc-movie__score {
+	font-size: 0.88rem;
+	font-variant-numeric: tabular-nums;
+	color: var(--sdc-mv-muted);
+}
+
+.sdc-movie__synopsis {
+	margin: 0 0 1.25rem;
+	line-height: 1.65;
+	max-width: 62ch;
+}
+
+.sdc-movie__cast-title {
+	margin: 0 0 0.5rem;
+	font-size: 0.85rem;
+	font-weight: 600;
+	letter-spacing: 0.07em;
+	text-transform: uppercase;
+	color: var(--sdc-mv-muted);
+}
+
+.sdc-movie__cast-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem 1.25rem;
+	margin: 0 0 1.25rem;
+	padding: 0;
+	list-style: none;
+}
+
+.sdc-movie__person {
+	font-size: 0.95rem;
+}
+
+.sdc-movie__role {
+	display: block;
+	font-size: 0.82rem;
+	color: var(--sdc-mv-muted);
+}
+
+.sdc-movie__actions {
+	margin: 0;
+}
+
+.sdc-movie__button {
+	display: inline-block;
+	padding: 0.55rem 1.1rem;
+	border: 1px solid currentColor;
+	border-radius: 0.375rem;
+	font-size: 0.9rem;
+	text-decoration: none;
+}
+
+.sdc-movie__button:hover,
+.sdc-movie__button:focus-visible {
+	background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+/*
+ * Below this width a 10rem poster next to the text leaves the text too narrow
+ * to read, so the poster takes its own row and the text sits underneath.
+ */
+@media (max-width: 34rem) {
+	.sdc-movie:has(.sdc-movie__poster) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.sdc-movie__poster {
+		max-width: 11rem;
+	}
+}

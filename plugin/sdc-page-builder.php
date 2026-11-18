@@ -3,7 +3,7 @@
  * Plugin Name:       SDC Page Builder
  * Plugin URI:        https://github.com/phoenixseo/sdc-page-builder
  * Description:       Komponentenbasierter Page Builder: ACF- oder SCF-Felder als Bausteine, ein Block pro Komponententyp, im Editor serverseitig gerendert.
- * Version:           0.2.0
+ * Version:           0.2.1
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            PHOENIXSEO – Frank Pfabigan
@@ -18,10 +18,10 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SDC_PB_VERSION', '0.2.0' );
-define( 'SDC_PB_FILE', __FILE__ );
-define( 'SDC_PB_DIR', plugin_dir_path( __FILE__ ) );
-define( 'SDC_PB_URL', plugin_dir_url( __FILE__ ) );
+define( 'SDCPB_VERSION', '0.2.1' );
+define( 'SDCPB_FILE', __FILE__ );
+define( 'SDCPB_DIR', plugin_dir_path( __FILE__ ) );
+define( 'SDCPB_URL', plugin_dir_url( __FILE__ ) );
 
 /*
  * `array_is_list()` is PHP 8.1+. The plugin header promises 7.4, and the
@@ -50,76 +50,72 @@ if ( ! function_exists( 'array_is_list' ) ) {
 	}
 }
 
-require_once SDC_PB_DIR . 'includes/class-sdc-field-adapter.php';
-require_once SDC_PB_DIR . 'includes/class-sdc-store.php';
-require_once SDC_PB_DIR . 'includes/class-sdc-schema.php';
-require_once SDC_PB_DIR . 'includes/class-sdc-rest.php';
-require_once SDC_PB_DIR . 'includes/class-sdc-renderer.php';
-require_once SDC_PB_DIR . 'includes/class-sdc-editor.php';
-require_once SDC_PB_DIR . 'includes/class-sdc-field-editor.php';
+require_once SDCPB_DIR . 'includes/class-sdc-field-adapter.php';
+require_once SDCPB_DIR . 'includes/class-sdc-store.php';
+require_once SDCPB_DIR . 'includes/class-sdc-schema.php';
+require_once SDCPB_DIR . 'includes/class-sdc-rest.php';
+require_once SDCPB_DIR . 'includes/class-sdc-renderer.php';
+require_once SDCPB_DIR . 'includes/class-sdc-editor.php';
+require_once SDCPB_DIR . 'includes/class-sdc-field-editor.php';
 
 /*
- * The view layer registers the `sdc_*` template helpers at file scope, which
- * is why there is no `Sdc_View::init()` below: a view is included by the
+ * The view layer registers the `sdcpb_*` template helpers at file scope, which
+ * is why there is no `Sdcpb_View::init()` below: a view is included by the
  * frontend, not hooked into it, and the helpers have to exist before the first
  * page renders.
  */
-require_once SDC_PB_DIR . 'includes/class-sdc-view.php';
-require_once SDC_PB_DIR . 'includes/class-sdc-view-editor.php';
-require_once SDC_PB_DIR . 'includes/class-sdc-style-editor.php';
-require_once SDC_PB_DIR . 'includes/class-sdc-tabs.php';
-require_once SDC_PB_DIR . 'includes/class-sdc-admin.php';
-require_once SDC_PB_DIR . 'includes/class-sdc-frontend.php';
-require_once SDC_PB_DIR . 'includes/class-sdc-block.php';
-require_once SDC_PB_DIR . 'includes/class-sdc-migration.php';
-require_once SDC_PB_DIR . 'includes/class-sdc-repair.php';
+require_once SDCPB_DIR . 'includes/class-sdc-view.php';
+require_once SDCPB_DIR . 'includes/class-sdc-view-editor.php';
+require_once SDCPB_DIR . 'includes/class-sdc-style-editor.php';
+require_once SDCPB_DIR . 'includes/class-sdc-tabs.php';
+require_once SDCPB_DIR . 'includes/class-sdc-admin.php';
+require_once SDCPB_DIR . 'includes/class-sdc-frontend.php';
+require_once SDCPB_DIR . 'includes/class-sdc-block.php';
+require_once SDCPB_DIR . 'includes/class-sdc-migration.php';
+require_once SDCPB_DIR . 'includes/class-sdc-repair.php';
+require_once SDCPB_DIR . 'includes/class-sdc-rename.php';
 
-/**
- * Load the plugin's translations.
+/*
+ * Translations are not loaded here.
  *
- * Attached to `init`, not called at file scope: WordPress 6.7 warns — and
- * `_load_textdomain_just_in_time()` fires a notice in the log — when a
- * textdomain is touched before then. Measured in the container, the notice
- * appeared for every request while the domain was loaded early.
- *
- * No arguments on purpose: the `Domain Path` header and the plugin directory
- * are what `load_plugin_textdomain()` uses when called with the textdomain
- * alone, and staying argument-free means wp.org's language packs work without
- * a hardcoded path.
+ * Since WordPress 4.6 a plugin hosted on wordpress.org is translated by core:
+ * it loads `wp-content/languages/plugins/sdc-page-builder-<locale>.mo`, which is
+ * where language packs are installed, and it does so just in time. Calling
+ * `load_plugin_textdomain()` on top of that loads the same catalog a second
+ * time from the plugin directory, which is why the plugin review asks for the
+ * call to go. The `Text Domain` and `Domain Path` headers stay — they are what
+ * the packaging and the language packs key off.
  */
-function sdc_pb_load_textdomain() {
-	load_plugin_textdomain( 'sdc-page-builder' );
-}
-add_action( 'init', 'sdc_pb_load_textdomain' );
 
 /**
  * Boot the plugin once all plugins are loaded, so the host field plugin
  * (ACF or SCF) has registered its API.
  */
-function sdc_pb_boot() {
-	if ( ! Sdc_Field_Adapter::is_available() ) {
-		add_action( 'admin_notices', 'sdc_pb_missing_host_notice' );
+function sdcpb_boot() {
+	if ( ! Sdcpb_Field_Adapter::is_available() ) {
+		add_action( 'admin_notices', 'sdcpb_missing_host_notice' );
 		return;
 	}
 
-	Sdc_Store::init();
-	Sdc_Schema::init();
-	Sdc_Rest::init();
-	Sdc_Frontend::init();
-	Sdc_Block::init();
-	Sdc_Migration::init();
+	Sdcpb_Store::init();
+	Sdcpb_Schema::init();
+	Sdcpb_Rest::init();
+	Sdcpb_Frontend::init();
+	Sdcpb_Block::init();
+	Sdcpb_Migration::init();
+	Sdcpb_Rename::init();
 
 	if ( is_admin() ) {
-		Sdc_Field_Editor::init();
-		Sdc_Admin::init();
+		Sdcpb_Field_Editor::init();
+		Sdcpb_Admin::init();
 	}
 }
-add_action( 'plugins_loaded', 'sdc_pb_boot' );
+add_action( 'plugins_loaded', 'sdcpb_boot' );
 
 /**
  * Warn instead of fatal when neither ACF nor SCF is active.
  */
-function sdc_pb_missing_host_notice() {
+function sdcpb_missing_host_notice() {
 	if ( ! current_user_can( 'activate_plugins' ) ) {
 		return;
 	}
@@ -134,21 +130,21 @@ function sdc_pb_missing_host_notice() {
  *
  * The plugin's own `schemas/` holds the examples. The site's components live
  * in the theme (`sdc-components/`) or in `wp-content/sdc-components/`, one
- * directory per component — see `Sdc_Schema::json_paths()`.
+ * directory per component — see `Sdcpb_Schema::json_paths()`.
  *
  * @param array $paths Directories ACF reads JSON from.
  * @return array
  */
-function sdc_pb_json_load_path( $paths ) {
+function sdcpb_json_load_path( $paths ) {
 	$paths = (array) $paths;
 
-	foreach ( Sdc_Schema::json_paths() as $path ) {
+	foreach ( Sdcpb_Schema::json_paths() as $path ) {
 		$paths[] = $path;
 	}
 
 	return $paths;
 }
-add_filter( 'acf/json/load_paths', 'sdc_pb_json_load_path' );
+add_filter( 'acf/json/load_paths', 'sdcpb_json_load_path' );
 
 /**
  * Write a component's field group back to the file that defines it.
@@ -157,10 +153,10 @@ add_filter( 'acf/json/load_paths', 'sdc_pb_json_load_path' );
  * @param array    $post  Field group being saved.
  * @return string[]
  */
-function sdc_pb_json_save_paths( $paths, $post ) {
-	return Sdc_Schema::save_paths( (array) $paths, (array) $post );
+function sdcpb_json_save_paths( $paths, $post ) {
+	return Sdcpb_Schema::save_paths( (array) $paths, (array) $post );
 }
-add_filter( 'acf/json/save_paths', 'sdc_pb_json_save_paths', 10, 2 );
+add_filter( 'acf/json/save_paths', 'sdcpb_json_save_paths', 10, 2 );
 
 /**
  * Keep a component's file name when the host writes it back.
@@ -174,7 +170,7 @@ add_filter( 'acf/json/save_paths', 'sdc_pb_json_save_paths', 10, 2 );
  * @param string $load_path File it was loaded from, if any.
  * @return string
  */
-function sdc_pb_json_save_file_name( $filename, $post, $load_path ) {
-	return Sdc_Schema::save_file_name( $filename, (array) $post, (string) $load_path );
+function sdcpb_json_save_file_name( $filename, $post, $load_path ) {
+	return Sdcpb_Schema::save_file_name( $filename, (array) $post, (string) $load_path );
 }
-add_filter( 'acf/json/save_file_name', 'sdc_pb_json_save_file_name', 10, 3 );
+add_filter( 'acf/json/save_file_name', 'sdcpb_json_save_file_name', 10, 3 );

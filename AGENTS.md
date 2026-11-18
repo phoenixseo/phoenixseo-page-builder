@@ -16,10 +16,10 @@ Unterprojekt von PHOENIXSEO — **SDC Page Builder**: komponentenbasierter Page-
 
 - **Repo:** `phoenixseo/sdc-page-builder` (privat bis zur ersten funktionierenden Version)
 - **Stand:** M1 (Datenschicht) grün — 20/20 Prüfungen, `plugin/tests/m1-verify.php`
-- **Altlasten:** `../sdc-page-builder-alt/` — eingestellter Pods-Repeater-Weg, nicht mehr in Arbeit
+- **Altlasten:** `../../_archiv/projekte/pods-repeater/` — eingestellter Pods-Repeater-Weg, am 2026-11-14 gepackt (`pods-repeater_2026-11-02_frozen.tar.gz`, Repo-Ende `bfd4bf2`), Ordner gelöscht
 
 ## Hinweise
 
-- Workspace-Ordner: `workspaces/phoenixseo/sdc-page-builder/`
-- In diesem Ordner liegt nur, was zum aktuellen Projekt gehört. Alles zum Pods-Fork steht in `sdc-page-builder-alt/`.
+- Workspace-Ordner: `workspaces/sdc-page-builder/`
+- In diesem Ordner liegt nur, was zum aktuellen Projekt gehört. Alles zum Pods-Fork liegt gepackt in `../../_archiv/projekte/pods-repeater/`.
 - Plugin-Code unter `plugin/`, Teststack unter `test-scf/`.

@@ -19,20 +19,20 @@
  * dependencies: `wp.media` exists only after `wp_enqueue_media()`. Without it
  * the picker renders a button that does nothing — so it is asserted here.
  */
-class EditorAssetsTest extends Sdc_TestCase {
+class EditorAssetsTest extends Sdcpb_TestCase {
 
 	/**
 	 * The block script is enqueued together with both of its modules.
 	 */
 	public function test_the_editor_script_depends_on_its_modules() {
-		Sdc_Block::enqueue_editor_assets();
+		Sdcpb_Block::enqueue_editor_assets();
 
-		$this->assertTrue( wp_script_is( Sdc_Block::SCRIPT, 'enqueued' ), 'Das Editor-Skript ist eingereiht.' );
+		$this->assertTrue( wp_script_is( Sdcpb_Block::SCRIPT, 'enqueued' ), 'Das Editor-Skript ist eingereiht.' );
 
-		$deps = wp_scripts()->registered[ Sdc_Block::SCRIPT ]->deps;
+		$deps = wp_scripts()->registered[ Sdcpb_Block::SCRIPT ]->deps;
 
-		$this->assertContains( Sdc_Block::SCRIPT . '-rows', $deps, 'Die Zeilen-Operationen sind Abhängigkeit.' );
-		$this->assertContains( Sdc_Block::SCRIPT . '-media', $deps, 'Die Medien-Wertregeln sind Abhängigkeit.' );
+		$this->assertContains( Sdcpb_Block::SCRIPT . '-rows', $deps, 'Die Zeilen-Operationen sind Abhängigkeit.' );
+		$this->assertContains( Sdcpb_Block::SCRIPT . '-media', $deps, 'Die Medien-Wertregeln sind Abhängigkeit.' );
 		$this->assertContains( 'media-views', $deps, 'Die Mediathek ist Abhängigkeit.' );
 	}
 
@@ -44,14 +44,14 @@ class EditorAssetsTest extends Sdc_TestCase {
 	 * wrong cause.
 	 */
 	public function test_the_media_module_points_at_the_shipped_file() {
-		Sdc_Block::enqueue_editor_assets();
+		Sdcpb_Block::enqueue_editor_assets();
 
-		$this->assertTrue( wp_script_is( Sdc_Block::SCRIPT . '-media', 'enqueued' ) );
+		$this->assertTrue( wp_script_is( Sdcpb_Block::SCRIPT . '-media', 'enqueued' ) );
 
-		$src = (string) wp_scripts()->registered[ Sdc_Block::SCRIPT . '-media' ]->src;
+		$src = (string) wp_scripts()->registered[ Sdcpb_Block::SCRIPT . '-media' ]->src;
 
 		$this->assertStringEndsWith( 'assets/media-field.js', $src );
-		$this->assertFileExists( SDC_PB_DIR . 'assets/media-field.js' );
+		$this->assertFileExists( SDCPB_DIR . 'assets/media-field.js' );
 	}
 
 	/**
@@ -62,7 +62,7 @@ class EditorAssetsTest extends Sdc_TestCase {
 	 * stays inert.
 	 */
 	public function test_the_media_modal_is_enqueued() {
-		Sdc_Block::enqueue_editor_assets();
+		Sdcpb_Block::enqueue_editor_assets();
 
 		$this->assertTrue( wp_script_is( 'media-views', 'enqueued' ), 'wp_enqueue_media() wurde aufgerufen.' );
 	}
@@ -75,11 +75,11 @@ class EditorAssetsTest extends Sdc_TestCase {
 	 * already happened once with the row module.
 	 */
 	public function test_the_block_script_reads_the_media_global() {
-		$source = (string) file_get_contents( SDC_PB_DIR . 'assets/block.js' );
-		$module = (string) file_get_contents( SDC_PB_DIR . 'assets/media-field.js' );
+		$source = (string) file_get_contents( SDCPB_DIR . 'assets/block.js' );
+		$module = (string) file_get_contents( SDCPB_DIR . 'assets/media-field.js' );
 
-		$this->assertStringContainsString( 'window.SDCMediaField', $source );
-		$this->assertStringContainsString( 'root.SDCMediaField', $module );
+		$this->assertStringContainsString( 'window.SDCPBMediaField', $source );
+		$this->assertStringContainsString( 'root.SDCPBMediaField', $module );
 	}
 
 	/**
@@ -91,7 +91,7 @@ class EditorAssetsTest extends Sdc_TestCase {
 	 * asserted by name. A rename of the branch has to pass through here.
 	 */
 	public function test_the_inspector_branches_on_media_types() {
-		$source = (string) file_get_contents( SDC_PB_DIR . 'assets/block.js' );
+		$source = (string) file_get_contents( SDCPB_DIR . 'assets/block.js' );
 
 		foreach ( array( 'image', 'file', 'gallery' ) as $type ) {
 			$this->assertStringContainsString(

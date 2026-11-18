@@ -20,14 +20,14 @@
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- test bootstrap.
 // phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fwrite -- STDERR diagnostics before WordPress loads; WP_Filesystem does not exist yet.
 
-$sdc_tests_dir = getenv( 'WP_TESTS_DIR' );
-if ( ! $sdc_tests_dir ) {
+$sdcpb_tests_dir = getenv( 'WP_TESTS_DIR' );
+if ( ! $sdcpb_tests_dir ) {
 	fwrite( STDERR, "WP_TESTS_DIR is not set. See plugin/tests/phpunit/README.md.\n" );
 	exit( 1 );
 }
 
-$sdc_wp_dir = getenv( 'SDC_TEST_WP_DIR' );
-if ( ! $sdc_wp_dir || ! is_dir( $sdc_wp_dir ) ) {
+$sdcpb_wp_dir = getenv( 'SDC_TEST_WP_DIR' );
+if ( ! $sdcpb_wp_dir || ! is_dir( $sdcpb_wp_dir ) ) {
 	fwrite( STDERR, "SDC_TEST_WP_DIR does not point at a WordPress checkout.\n" );
 	exit( 1 );
 }
@@ -41,7 +41,7 @@ define( 'WP_TESTS_CONFIG_FILE_PATH', __DIR__ . '/wp-tests-config.php' );
 
 // tests_add_filter() and friends live here; the library's bootstrap.php loads
 // this file itself, but only after we have already needed the helper.
-require_once $sdc_tests_dir . '/includes/functions.php';
+require_once $sdcpb_tests_dir . '/includes/functions.php';
 
 /*
  * The repair command is defined only when `WP_CLI` is set, so the suite
@@ -53,17 +53,17 @@ require_once $sdc_tests_dir . '/includes/functions.php';
  */
 require_once __DIR__ . '/class-wp-cli-stub.php';
 
-$sdc_plugin_dir = dirname( __DIR__, 2 );
+$sdcpb_plugin_dir = dirname( __DIR__, 2 );
 
 // The plugin lives outside the WordPress tree during tests; link it in so that
 // plugin_dir_path(), plugin_basename() and activation behave normally.
-$sdc_plugin_install_dir = $sdc_wp_dir . '/wp-content/plugins';
-if ( ! is_dir( $sdc_plugin_install_dir ) ) {
-	mkdir( $sdc_plugin_install_dir, 0777, true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test bootstrap.
+$sdcpb_plugin_install_dir = $sdcpb_wp_dir . '/wp-content/plugins';
+if ( ! is_dir( $sdcpb_plugin_install_dir ) ) {
+	mkdir( $sdcpb_plugin_install_dir, 0777, true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test bootstrap.
 }
-$sdc_link = $sdc_plugin_install_dir . '/sdc-page-builder';
-if ( ! file_exists( $sdc_link ) ) {
-	symlink( $sdc_plugin_dir, $sdc_link );
+$sdcpb_link = $sdcpb_plugin_install_dir . '/sdc-page-builder';
+if ( ! file_exists( $sdcpb_link ) ) {
+	symlink( $sdcpb_plugin_dir, $sdcpb_link );
 }
 
 /**
@@ -73,7 +73,7 @@ if ( ! file_exists( $sdc_link ) ) {
  * ACF Free and SCF ship the same API under different names; the suite runs
  * against whichever is requested so host parity is tested, not assumed.
  */
-$sdc_host = getenv( 'SDC_TEST_HOST_PLUGIN' ) ? getenv( 'SDC_TEST_HOST_PLUGIN' ) : 'acf';
+$sdcpb_host = getenv( 'SDC_TEST_HOST_PLUGIN' ) ? getenv( 'SDC_TEST_HOST_PLUGIN' ) : 'acf';
 
 /**
  * Link one directory into the test install.
@@ -82,12 +82,12 @@ $sdc_host = getenv( 'SDC_TEST_HOST_PLUGIN' ) ? getenv( 'SDC_TEST_HOST_PLUGIN' ) 
  * @param string $link_name  Name inside wp-content/plugins.
  * @param string $env_name   Environment variable, for the error message.
  */
-$sdc_stage = static function ( $source, $link_name, $env_name ) use ( $sdc_plugin_install_dir ) {
+$sdcpb_stage = static function ( $source, $link_name, $env_name ) use ( $sdcpb_plugin_install_dir ) {
 	if ( ! $source || ! is_dir( $source ) ) {
 		fwrite( STDERR, "$env_name must point at an unpacked field plugin.\n" );
 		exit( 1 );
 	}
-	$target = $sdc_plugin_install_dir . '/' . $link_name;
+	$target = $sdcpb_plugin_install_dir . '/' . $link_name;
 	if ( is_link( $target ) ) {
 		unlink( $target ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- test bootstrap.
 	}
@@ -98,18 +98,18 @@ $sdc_stage = static function ( $source, $link_name, $env_name ) use ( $sdc_plugi
 
 // Only one host may be present: two field plugins active at once fight over
 // the same API names.
-$sdc_other      = 'scf' === $sdc_host ? 'advanced-custom-fields' : 'secure-custom-fields';
-$sdc_other_link = $sdc_plugin_install_dir . '/' . $sdc_other;
-if ( is_link( $sdc_other_link ) ) {
-	unlink( $sdc_other_link ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- test bootstrap.
+$sdcpb_other      = 'scf' === $sdcpb_host ? 'advanced-custom-fields' : 'secure-custom-fields';
+$sdcpb_other_link = $sdcpb_plugin_install_dir . '/' . $sdcpb_other;
+if ( is_link( $sdcpb_other_link ) ) {
+	unlink( $sdcpb_other_link ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- test bootstrap.
 }
 
-if ( 'scf' === $sdc_host ) {
+if ( 'scf' === $sdcpb_host ) {
 	// SCF is not in wp.org's free directory; it is taken from the install that
 	// ships it.
-	$sdc_stage( getenv( 'SDC_TEST_SCF_DIR' ), 'secure-custom-fields', 'SDC_TEST_SCF_DIR' );
+	$sdcpb_stage( getenv( 'SDC_TEST_SCF_DIR' ), 'secure-custom-fields', 'SDC_TEST_SCF_DIR' );
 } else {
-	$sdc_stage( getenv( 'SDC_TEST_ACF_ZIP' ), 'advanced-custom-fields', 'SDC_TEST_ACF_ZIP' );
+	$sdcpb_stage( getenv( 'SDC_TEST_ACF_ZIP' ), 'advanced-custom-fields', 'SDC_TEST_ACF_ZIP' );
 }
 
 /**
@@ -117,12 +117,12 @@ if ( 'scf' === $sdc_host ) {
  */
 tests_add_filter(
 	'muplugins_loaded',
-	static function () use ( $sdc_host ) {
+	static function () use ( $sdcpb_host ) {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 		$to_enable = array( 'sdc-page-builder/sdc-page-builder.php' );
 
-		if ( 'scf' === $sdc_host ) {
+		if ( 'scf' === $sdcpb_host ) {
 			$to_enable[] = 'secure-custom-fields/secure-custom-fields.php';
 		} else {
 			$to_enable[] = 'advanced-custom-fields/acf.php';
@@ -136,7 +136,7 @@ tests_add_filter(
 	}
 );
 
-require $sdc_tests_dir . '/includes/bootstrap.php';
+require $sdcpb_tests_dir . '/includes/bootstrap.php';
 
 // WP_UnitTestCase only exists once the library has booted.
 require_once __DIR__ . '/class-sdc-test-case.php';

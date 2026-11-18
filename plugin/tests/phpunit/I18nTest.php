@@ -10,7 +10,7 @@
  * domain is actually loaded, at the right moment (WordPress 6.7 warns when it
  * is touched before `init`), and that the POT file covers the strings.
  */
-class I18nTest extends Sdc_TestCase {
+class I18nTest extends Sdcpb_TestCase {
 
 	/**
 	 * The plugin declares a text domain and a domain path.
@@ -27,12 +27,23 @@ class I18nTest extends Sdc_TestCase {
 	}
 
 	/**
-	 * The loading function is hooked to `init`, where WordPress 6.7+ expects it.
+	 * The plugin does not load its own textdomain.
+	 *
+	 * WordPress loads it from `wp-content/languages/plugins/` just in time, and
+	 * the plugin review asks for `load_plugin_textdomain()` to be gone: on a
+	 * wordpress.org-hosted plugin it only loads the same catalog a second time.
+	 * The header test above pins the header this depends on.
 	 */
-	public function test_textdomain_loading_is_hooked_to_init() {
-		$this->assertNotFalse(
-			has_action( 'init', 'sdc_pb_load_textdomain' ),
-			'sdc_pb_load_textdomain() is not attached to init'
+	public function test_plugin_does_not_load_its_own_textdomain() {
+		$source = (string) file_get_contents( dirname( __DIR__, 2 ) . '/sdc-page-builder.php' );
+
+		// The call with the argument, not the bare name: the comment where the
+		// call used to be names the function in prose, and that prose is what
+		// keeps the next reader from adding it back.
+		$this->assertStringNotContainsString(
+			"load_plugin_textdomain( 'sdc-page-builder' )",
+			$source,
+			'load_plugin_textdomain() is back in the plugin file — wordpress.org loads the domain itself'
 		);
 	}
 
@@ -188,12 +199,18 @@ class I18nTest extends Sdc_TestCase {
 	/**
 	 * Files whose strings are shipped and translated.
 	 *
+	 * `schemas/<typ>/render.php` belongs here: a component's labels are shown on
+	 * the front end like any other string, and leaving them out let the POT fall
+	 * 18 strings behind the eight example components — the suite stayed green
+	 * because it never looked at them.
+	 *
 	 * @return string[]
 	 */
 	private static function translatable_sources() {
 		$base    = dirname( __DIR__, 2 );
 		$files   = glob( $base . '/includes/*.php' );
 		$files   = array_merge( $files, glob( $base . '/assets/*.js' ) );
+		$files   = array_merge( $files, glob( $base . '/schemas/*/render.php' ) );
 		$files[] = $base . '/sdc-page-builder.php';
 
 		return array_values( array_filter( $files, 'is_file' ) );

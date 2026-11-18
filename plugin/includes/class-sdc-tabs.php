@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Prints a tab list and its panels.
  */
-class Sdc_Tabs {
+class Sdcpb_Tabs {
 
 	/**
 	 * Render a set of tabs.

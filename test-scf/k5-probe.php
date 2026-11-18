@@ -6,7 +6,7 @@
  * an und räumt sie wieder ab — Seite 98 und die übrigen Bestandsseiten werden
  * nicht angefasst.
  *
- * @package Sdc_Page_Builder
+ * @package Sdcpb_Page_Builder
  */
 
 $log = ini_get( 'error_log' );
@@ -32,7 +32,7 @@ if ( ! $page_id || is_wp_error( $page_id ) ) {
 
 $unknown = 'k5-gone-' . substr( md5( (string) microtime( true ) ), 0, 6 );
 
-Sdc_Store::save_data(
+Sdcpb_Store::save_data(
 	$page_id,
 	array(
 		'v'          => 1,
@@ -54,11 +54,11 @@ Sdc_Store::save_data(
 );
 
 wp_set_current_user( 0 );
-$html = Sdc_Frontend::render_post( $page_id );
+$html = Sdcpb_Frontend::render_post( $page_id );
 
 echo "Seite: {$page_id}\n";
 echo 'Testtyp: ' . $unknown . "\n";
-echo 'has_view(unbekannt): ' . ( Sdc_Frontend::has_view( $unknown ) ? 'true' : 'false' ) . "\n";
+echo 'has_view(unbekannt): ' . ( Sdcpb_Frontend::has_view( $unknown ) ? 'true' : 'false' ) . "\n";
 echo 'Marker im Besucher-HTML: ' . ( false === strpos( (string) $html, '<!-- sdc:' ) ? 'nein' : 'JA' ) . "\n";
 
 $editor_id = 0;
@@ -67,7 +67,7 @@ foreach ( get_users( array( 'role' => 'administrator', 'number' => 1 ) ) as $use
 }
 if ( $editor_id ) {
 	wp_set_current_user( $editor_id );
-	$editor_html = Sdc_Frontend::render_post( $page_id );
+	$editor_html = Sdcpb_Frontend::render_post( $page_id );
 	echo 'Marker im Redakteurs-HTML: ' . ( false === strpos( (string) $editor_html, '<!-- sdc:' ) ? 'nein' : 'ja' ) . "\n";
 	echo '  ' . trim( (string) preg_replace( '/\s+/', ' ', (string) $editor_html ) ) . "\n";
 }

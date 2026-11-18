@@ -15,8 +15,8 @@
  *   - The browser owns the rows. Adding, reordering, removing and the
  *     type-specific option controls are DOM work; nothing about them needs a
  *     request.
- *   - The submitted value stays a single `sdc_fields` textarea. The server
- *     path (`Sdc_Admin::parse_fields()`) does not change, and a site with
+ *   - The submitted value stays a single `sdcpb_fields` textarea. The server
+ *     path (`Sdcpb_Admin::parse_fields()`) does not change, and a site with
  *     JavaScript switched off still has a usable form.
  *
  * The textarea is therefore both the transport and the fallback, not the
@@ -30,7 +30,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Field catalog and markup for the component form.
  */
-class Sdc_Field_Editor {
+class Sdcpb_Field_Editor {
 
 	/**
 	 * Option kinds the browser knows how to render.
@@ -308,20 +308,20 @@ class Sdc_Field_Editor {
 	 * @param string $hook Current admin page.
 	 */
 	public static function enqueue( $hook ) {
-		if ( 'toplevel_page_' . Sdc_Admin::MENU_SLUG !== $hook ) {
+		if ( 'toplevel_page_' . Sdcpb_Admin::MENU_SLUG !== $hook ) {
 			return;
 		}
 
 		wp_enqueue_style(
 			'sdc-pb-tabs',
-			SDC_PB_URL . 'assets/admin-tabs.css',
+			SDCPB_URL . 'assets/admin-tabs.css',
 			array(),
 			self::asset_version( 'assets/admin-tabs.css' )
 		);
 
 		wp_enqueue_script(
 			'sdc-pb-tabs',
-			SDC_PB_URL . 'assets/admin-tabs.js',
+			SDCPB_URL . 'assets/admin-tabs.js',
 			array(),
 			self::asset_version( 'assets/admin-tabs.js' ),
 			true
@@ -329,14 +329,14 @@ class Sdc_Field_Editor {
 
 		wp_enqueue_style(
 			'sdc-pb-field-editor',
-			SDC_PB_URL . 'assets/field-editor.css',
+			SDCPB_URL . 'assets/field-editor.css',
 			array(),
 			self::asset_version( 'assets/field-editor.css' )
 		);
 
 		wp_enqueue_script(
 			'sdc-pb-field-editor',
-			SDC_PB_URL . 'assets/field-editor.js',
+			SDCPB_URL . 'assets/field-editor.js',
 			array(),
 			self::asset_version( 'assets/field-editor.js' ),
 			true
@@ -344,13 +344,13 @@ class Sdc_Field_Editor {
 
 		/*
 		 * No `wp_set_script_translations()`: every string this script shows
-		 * arrives through `SDC_FIELD_EDITOR.labels` below, translated by PHP
+		 * arrives through `SDCPB_FIELD_EDITOR.labels` below, translated by PHP
 		 * at localize time. Script translations would register metadata that
 		 * nothing reads — the JS has no `wp.i18n` calls.
 		 */
 		wp_localize_script(
 			'sdc-pb-field-editor',
-			'SDC_FIELD_EDITOR',
+			'SDCPB_FIELD_EDITOR',
 			array(
 				// A list, not a map: the picker shows the types in this order.
 				'types'  => self::types(),
@@ -402,7 +402,7 @@ class Sdc_Field_Editor {
 	 * @return string
 	 */
 	private static function asset_version( $relative ) {
-		$file = SDC_PB_DIR . $relative;
+		$file = SDCPB_DIR . $relative;
 
 		if ( is_readable( $file ) ) {
 			$stamp = filemtime( $file );
@@ -412,7 +412,7 @@ class Sdc_Field_Editor {
 			}
 		}
 
-		return SDC_PB_VERSION;
+		return SDCPB_VERSION;
 	}
 
 	/**
@@ -479,7 +479,7 @@ class Sdc_Field_Editor {
 		echo '<summary>' . esc_html__( 'JSON direkt bearbeiten', 'sdc-page-builder' ) . '</summary>';
 		echo '<p class="description">' . esc_html__( 'Wird aus den Feldern oben gefüllt und beim Absenden mitgeschickt. Wer hier von Hand ändert, klickt danach „JSON übernehmen“.', 'sdc-page-builder' ) . '</p>';
 		printf(
-			'<textarea id="sdc_fields" name="sdc_fields" rows="16" class="large-text code" spellcheck="false">%s</textarea>',
+			'<textarea id="sdcpb_fields" name="sdcpb_fields" rows="16" class="large-text code" spellcheck="false">%s</textarea>',
 			esc_textarea( (string) $json )
 		);
 		echo '<p><button type="button" class="button" data-sdc-fe-apply>' . esc_html__( 'JSON übernehmen', 'sdc-page-builder' ) . '</button></p>';
@@ -529,7 +529,7 @@ class Sdc_Field_Editor {
 	/**
 	 * Properties each field row carries besides its type options.
 	 *
-	 * Used by the tests and by `Sdc_Admin::FIELD_PROPS` as documentation of
+	 * Used by the tests and by `Sdcpb_Admin::FIELD_PROPS` as documentation of
 	 * what the editor can set; the writing side stays the whitelist there.
 	 *
 	 * @return string[]

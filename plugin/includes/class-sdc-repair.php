@@ -38,7 +38,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	/**
 	 * Report and repair pages whose content lacks a component of its document.
 	 */
-	class Sdc_Repair {
+	class Sdcpb_Repair {
 
 		/**
 		 * Report pages one component short, without writing.
@@ -76,7 +76,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$written = 0;
 
 			foreach ( $pages as $post ) {
-				$missing = Sdc_Migration::missing_types( $post->ID );
+				$missing = Sdcpb_Migration::missing_types( $post->ID );
 
 				if ( empty( $missing ) ) {
 					continue;
@@ -89,7 +89,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 					continue;
 				}
 
-				if ( Sdc_Migration::migrate_post( $post->ID, true ) ) {
+				if ( Sdcpb_Migration::migrate_post( $post->ID, true ) ) {
 					++$written;
 					continue;
 				}
@@ -125,7 +125,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			if ( isset( $assoc_args['post'] ) ) {
 				$post = get_post( (int) $assoc_args['post'] );
 
-				if ( ! $post || ! in_array( $post->post_type, Sdc_Editor::post_types(), true ) ) {
+				if ( ! $post || ! in_array( $post->post_type, Sdcpb_Editor::post_types(), true ) ) {
 					return null;
 				}
 
@@ -134,7 +134,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 			return get_posts(
 				array(
-					'post_type'        => Sdc_Editor::post_types(),
+					'post_type'        => Sdcpb_Editor::post_types(),
 					'post_status'      => array( 'publish', 'future', 'draft', 'pending', 'private' ),
 					'numberposts'      => -1,
 					'orderby'          => 'ID',
@@ -171,5 +171,5 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	 * `wp sdc-pb repair repair` — the command would list itself in the help
 	 * and never run the subcommand anyone types.
 	 */
-	WP_CLI::add_command( 'sdc-pb', 'Sdc_Repair' );
+	WP_CLI::add_command( 'sdc-pb', 'Sdcpb_Repair' );
 }

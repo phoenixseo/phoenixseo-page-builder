@@ -2,7 +2,7 @@
 /**
  * Move an old metabox document into blocks.
  *
- * Pages built before the block editor carry their components in `_sdc_data`
+ * Pages built before the block editor carry their components in `_sdcpb_data`
  * and nothing in `post_content`; `the_content` appended them. With the
  * metabox gone, such a page renders correctly in the frontend but opens empty
  * in the editor — the author sees a blank canvas for a page that is full of
@@ -29,8 +29,8 @@
  * On a marked page the marker alone is not evidence: the broken run set it
  * while a component was still missing. The page is therefore still read —
  * one parse of the document, no write — and components without a block are
- * appended then. [`Sdc_Migration::missing_types()`] is that read; the repair
- * command pairs it with [`Sdc_Migration::migrate_post()`] as its dry run, so
+ * appended then. [`Sdcpb_Migration::missing_types()`] is that read; the repair
+ * command pairs it with [`Sdcpb_Migration::migrate_post()`] as its dry run, so
  * report and write cannot drift apart.
  *
  * `--force` is the other direction: on a marked page the automatic run stops
@@ -47,12 +47,12 @@ defined( 'ABSPATH' ) || exit;
 /**
  * One-way migration from the metabox document to blocks.
  */
-class Sdc_Migration {
+class Sdcpb_Migration {
 
 	/**
 	 * Meta key marking a page as migrated. Holds the version that ran.
 	 */
-	const META_KEY = '_sdc_migrated';
+	const META_KEY = '_sdcpb_migrated';
 
 	/**
 	 * Current migration version.
@@ -147,7 +147,7 @@ class Sdc_Migration {
 		$post_id = (int) $post_id;
 		$post    = $post_id > 0 ? get_post( $post_id ) : null;
 
-		if ( ! $post || ! in_array( $post->post_type, Sdc_Editor::post_types(), true ) ) {
+		if ( ! $post || ! in_array( $post->post_type, Sdcpb_Editor::post_types(), true ) ) {
 			return false;
 		}
 
@@ -249,7 +249,7 @@ class Sdc_Migration {
 		$post_id = (int) $post_id;
 		$post    = $post_id > 0 ? get_post( $post_id ) : null;
 
-		if ( ! $post || ! in_array( $post->post_type, Sdc_Editor::post_types(), true ) ) {
+		if ( ! $post || ! in_array( $post->post_type, Sdcpb_Editor::post_types(), true ) ) {
 			return array();
 		}
 
@@ -287,7 +287,7 @@ class Sdc_Migration {
 	 * @return array[] Components; empty when the page has no document.
 	 */
 	private static function document_components( $post_id ) {
-		$document = Sdc_Store::get_data( $post_id );
+		$document = Sdcpb_Store::get_data( $post_id );
 
 		return isset( $document['components'] ) && is_array( $document['components'] )
 			? $document['components']
@@ -308,7 +308,7 @@ class Sdc_Migration {
 			return false;
 		}
 
-		return (bool) preg_match( '#<!--\s+wp:sdc/#', $content );
+		return (bool) preg_match( '#<!--\s+wp:sdcpb/#', $content );
 	}
 
 	/**
@@ -322,7 +322,7 @@ class Sdc_Migration {
 	 *
 	 * Only content *outside* a component block is walked. A component can
 	 * place blocks or contain a serialized copy of its own payload; a nested
-	 * `sdc/faq` is rendered by its parent and is not a placement the author
+	 * `sdcpb/faq` is rendered by its parent and is not a placement the author
 	 * made, so counting it would make the migration skip a component that
 	 * has no block of its own.
 	 *
@@ -378,13 +378,13 @@ class Sdc_Migration {
 
 		$type = (string) $component['type'];
 
-		if ( ! Sdc_Schema::get( $type ) ) {
+		if ( ! Sdcpb_Schema::get( $type ) ) {
 			return '';
 		}
 
 		return serialize_block(
 			array(
-				'blockName'    => Sdc_Block::name( $type ),
+				'blockName'    => Sdcpb_Block::name( $type ),
 				'attrs'        => array(
 					'data' => isset( $component['data'] ) && is_array( $component['data'] )
 						? $component['data']
@@ -402,7 +402,7 @@ class Sdc_Migration {
 	 * block.
 	 *
 	 * Distinguishes the two block shapes the plugin has ever written: the
-	 * `sdc/<type>` name, and the earlier single `sdc/component` block that
+	 * `sdcpb/<type>` name, and the earlier single `sdcpb/component` block that
 	 * keeps the type in an attribute. Blocks nested inside a component are
 	 * not placements of their own and are skipped with their parent.
 	 *
@@ -413,7 +413,7 @@ class Sdc_Migration {
 		$content = (string) $content;
 		$types   = array();
 
-		if ( false === strpos( $content, 'wp:' . Sdc_Block::PREFIX ) ) {
+		if ( false === strpos( $content, 'wp:' . Sdcpb_Block::PREFIX ) ) {
 			return $types;
 		}
 
@@ -424,7 +424,7 @@ class Sdc_Migration {
 
 			$name = (string) $block['blockName'];
 
-			if ( Sdc_Block::LEGACY === $name ) {
+			if ( Sdcpb_Block::LEGACY === $name ) {
 				$legacy = isset( $block['attrs']['type'] ) ? (string) $block['attrs']['type'] : '';
 
 				if ( '' !== $legacy ) {
@@ -433,8 +433,8 @@ class Sdc_Migration {
 				continue;
 			}
 
-			if ( 0 === strpos( $name, Sdc_Block::PREFIX ) ) {
-				$type = substr( $name, strlen( Sdc_Block::PREFIX ) );
+			if ( 0 === strpos( $name, Sdcpb_Block::PREFIX ) ) {
+				$type = substr( $name, strlen( Sdcpb_Block::PREFIX ) );
 
 				if ( '' !== $type ) {
 					$types[] = $type;

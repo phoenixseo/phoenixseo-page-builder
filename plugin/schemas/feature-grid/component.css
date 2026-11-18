@@ -1,0 +1,100 @@
+/**
+ * Feature grid: equal-height cards in a fluid grid.
+ *
+ * One custom property decides the minimum card width, so a site can widen the
+ * grid without touching a selector: `.sdc-feature-grid { --sdc-fg-min: 18rem; }`.
+ * Columns are sized by the grid itself, never by a media query — a theme can
+ * put the component in a narrow column and it still fits.
+ */
+
+.sdc-feature-grid {
+	--sdc-fg-min: 15rem;
+	--sdc-fg-gap: 1.5rem;
+	--sdc-fg-pad: 1.5rem;
+	--sdc-fg-radius: 0.75rem;
+	--sdc-fg-border: color-mix(in srgb, currentColor 15%, transparent);
+	--sdc-fg-surface: color-mix(in srgb, currentColor 4%, transparent);
+	--sdc-fg-accent: currentColor;
+
+	margin: 0 0 2rem;
+}
+
+.sdc-feature-grid__heading {
+	margin: 0 0 0.5rem;
+	font-size: clamp(1.4rem, 1.2rem + 0.8vw, 1.9rem);
+	line-height: 1.2;
+}
+
+.sdc-feature-grid__intro {
+	margin: 0 0 1.75rem;
+	max-width: 60ch;
+	line-height: 1.6;
+}
+
+.sdc-feature-grid__items {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(var(--sdc-fg-min), 1fr));
+	gap: var(--sdc-fg-gap);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.sdc-feature-grid__item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	margin: 0;
+	padding: var(--sdc-fg-pad);
+	border: 1px solid var(--sdc-fg-border);
+	border-radius: var(--sdc-fg-radius);
+	background: var(--sdc-fg-surface);
+}
+
+.sdc-feature-grid__icon {
+	width: 1.75rem;
+	height: 1.75rem;
+	margin-bottom: 0.25rem;
+	color: var(--sdc-fg-accent);
+	flex: none;
+}
+
+.sdc-feature-grid__title {
+	margin: 0;
+	font-size: 1.0625rem;
+	line-height: 1.35;
+}
+
+.sdc-feature-grid__link {
+	color: inherit;
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.15em;
+}
+
+.sdc-feature-grid__link:hover,
+.sdc-feature-grid__link:focus-visible {
+	text-decoration-thickness: 2px;
+}
+
+.sdc-feature-grid__text {
+	margin: 0;
+	line-height: 1.6;
+}
+
+/* The focus ring belongs to the keyboard, and a card is not a control. */
+.sdc-feature-grid__link:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 3px;
+	border-radius: 0.15em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.sdc-feature-grid__item {
+		transition: border-color 120ms ease;
+	}
+
+	.sdc-feature-grid__item:hover {
+		border-color: color-mix(in srgb, currentColor 30%, transparent);
+	}
+}

@@ -11,7 +11,7 @@
  * `acf_render_field()` does render outside the admin (143 bytes for a text
  * field, full markup for a textarea), and it renders an *input with the value
  * in an attribute*. That is a control, not content. It is also why the
- * frontend path cannot reuse `Sdc_Renderer::render_component()`: that method
+ * frontend path cannot reuse `Sdcpb_Renderer::render_component()`: that method
  * emits `data-sdc-*` control attributes and row templates for the browser.
  *
  * So this class renders the containers (list, group) just like the renderer —
@@ -29,10 +29,10 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Renders builder documents in the frontend.
  */
-class Sdc_Frontend {
+class Sdcpb_Frontend {
 
 	/**
-	 * Maximum nesting depth. Mirrors `Sdc_Renderer::MAX_DEPTH`.
+	 * Maximum nesting depth. Mirrors `Sdcpb_Renderer::MAX_DEPTH`.
 	 *
 	 * Beyond this, containers are dropped instead of rendered — and the drop is
 	 * logged, so a content author's silent loss is never silent to us.
@@ -64,7 +64,7 @@ class Sdc_Frontend {
 		}
 
 		$post = get_post();
-		if ( ! $post || ! in_array( $post->post_type, Sdc_Editor::post_types(), true ) ) {
+		if ( ! $post || ! in_array( $post->post_type, Sdcpb_Editor::post_types(), true ) ) {
 			return $content;
 		}
 
@@ -73,7 +73,7 @@ class Sdc_Frontend {
 		 * renderer already prints them from `the_content`. Appending the
 		 * document on top of that would show every component twice.
 		 */
-		if ( Sdc_Migration::is_migrated( $post->ID ) ) {
+		if ( Sdcpb_Migration::is_migrated( $post->ID ) ) {
 			return $content;
 		}
 
@@ -108,7 +108,7 @@ class Sdc_Frontend {
 	 * @return array[] Component entries; empty when the post has no document.
 	 */
 	private static function document_components( $post_id ) {
-		$document = Sdc_Store::get_data( (int) $post_id );
+		$document = Sdcpb_Store::get_data( (int) $post_id );
 
 		return isset( $document['components'] ) && is_array( $document['components'] )
 			? $document['components']
@@ -131,11 +131,11 @@ class Sdc_Frontend {
 	public static function enqueue_component_styles() {
 		/*
 		 * Component styles are inlined into the head by
-		 * `Sdc_Block::print_component_styles()`, which reads the same document
+		 * `Sdcpb_Block::print_component_styles()`, which reads the same document
 		 * and also covers blocks. Running both would ship every stylesheet
 		 * twice — once inline, once as a file.
 		 */
-		if ( apply_filters( 'sdc_pb_inline_component_styles', true ) && class_exists( 'Sdc_Block' ) ) {
+		if ( apply_filters( 'sdcpb_inline_component_styles', true ) && class_exists( 'Sdcpb_Block' ) ) {
 			return;
 		}
 
@@ -147,7 +147,7 @@ class Sdc_Frontend {
 
 		$post = get_post();
 
-		if ( ! $post || ! in_array( $post->post_type, Sdc_Editor::post_types(), true ) ) {
+		if ( ! $post || ! in_array( $post->post_type, Sdcpb_Editor::post_types(), true ) ) {
 			return;
 		}
 
@@ -163,7 +163,7 @@ class Sdc_Frontend {
 
 			$seen[ $type ] = true;
 
-			$file = Sdc_View::style( $type );
+			$file = Sdcpb_View::style( $type );
 
 			if ( '' === $file ) {
 				continue;
@@ -181,7 +181,7 @@ class Sdc_Frontend {
 			 * @param string $file Absolute path of the stylesheet.
 			 * @param string $type Component type.
 			 */
-			$src = (string) apply_filters( 'sdc_pb_component_style_src', $src, $file, $type );
+			$src = (string) apply_filters( 'sdcpb_component_style_src', $src, $file, $type );
 
 			if ( '' === $src ) {
 				continue;
@@ -225,8 +225,8 @@ class Sdc_Frontend {
 			$roots[ WP_CONTENT_DIR ] = content_url();
 		}
 
-		if ( defined( 'SDC_PB_DIR' ) && defined( 'SDC_PB_URL' ) ) {
-			$roots[ SDC_PB_DIR ] = SDC_PB_URL;
+		if ( defined( 'SDCPB_DIR' ) && defined( 'SDCPB_URL' ) ) {
+			$roots[ SDCPB_DIR ] = SDCPB_URL;
 		}
 
 		foreach ( $roots as $root => $url ) {
@@ -279,7 +279,7 @@ class Sdc_Frontend {
 	 * @return string
 	 */
 	public static function component_style_url( $type ) {
-		$file = Sdc_View::style( $type );
+		$file = Sdcpb_View::style( $type );
 
 		return '' === $file ? '' : self::asset_src( $file );
 	}
@@ -289,7 +289,7 @@ class Sdc_Frontend {
 	 *
 	 * Three layers, in this order: a theme template (`render.php` next to the
 	 * component's JSON), the generic markup built from the field definitions,
-	 * then the `sdc_pb_component_html` filter over whichever of the two won.
+	 * then the `sdcpb_component_html` filter over whichever of the two won.
 	 * A theme can therefore restyle, replace, or drop a component without
 	 * touching the plugin.
 	 *
@@ -358,7 +358,7 @@ class Sdc_Frontend {
 		 * @param array  $data      Stored values of this instance.
 		 * @param array  $component Full document entry (`_id`, `type`, `schema`, `data`).
 		 */
-		return (string) apply_filters( 'sdc_pb_component_html', $html, $type, $data, $component );
+		return (string) apply_filters( 'sdcpb_component_html', $html, $type, $data, $component );
 	}
 
 	/**
@@ -382,12 +382,12 @@ class Sdc_Frontend {
 	 */
 	public static function has_view( $type ) {
 		$type = (string) $type;
-		$meta = '' === $type ? null : Sdc_Schema::get( $type );
+		$meta = '' === $type ? null : Sdcpb_Schema::get( $type );
 		if ( ! $meta ) {
 			return false;
 		}
 
-		if ( '' !== (string) Sdc_Schema::template( $type ) ) {
+		if ( '' !== (string) Sdcpb_Schema::template( $type ) ) {
 			return true;
 		}
 
@@ -474,7 +474,7 @@ class Sdc_Frontend {
 	 * @return string|null HTML, or null when there is no template.
 	 */
 	private static function render_template( $type, array $data, array $component ) {
-		$file = Sdc_Schema::template( $type );
+		$file = Sdcpb_Schema::template( $type );
 
 		if ( '' === $file ) {
 			return null;
@@ -487,18 +487,18 @@ class Sdc_Frontend {
 			ob_start();
 
 			/*
-			 * The `sdc_*` helpers take no data argument, so the component
+			 * The `sdcpb_*` helpers take no data argument, so the component
 			 * being rendered has to be known somewhere else: this is that
 			 * place. Pushed around the include and dropped in `finally`,
 			 * because a template that dies must not leave the next
 			 * component reading this one's values.
 			 */
-			Sdc_View::push( $type, $data );
+			Sdcpb_View::push( $type, $data );
 
 			try {
 				include $file;
 			} finally {
-				Sdc_View::pop();
+				Sdcpb_View::pop();
 				$html = (string) ob_get_clean();
 			}
 
@@ -521,12 +521,12 @@ class Sdc_Frontend {
 	 * @return string HTML; empty string for an unknown type.
 	 */
 	public static function component_fields_html( $type, $data ) {
-		$meta = Sdc_Schema::get( (string) $type );
+		$meta = Sdcpb_Schema::get( (string) $type );
 		if ( ! $meta ) {
 			return '';
 		}
 
-		$fields = Sdc_Field_Adapter::get_fields( Sdc_Field_Adapter::get_field_group( $meta['key'] ) );
+		$fields = Sdcpb_Field_Adapter::get_fields( Sdcpb_Field_Adapter::get_field_group( $meta['key'] ) );
 
 		return self::render_fields( $fields, is_array( $data ) ? $data : array(), 1 );
 	}

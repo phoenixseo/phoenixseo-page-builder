@@ -14,7 +14,7 @@
 /**
  * Class RepairTest
  */
-class RepairTest extends Sdc_TestCase {
+class RepairTest extends Sdcpb_TestCase {
 
 	/**
 	 * Marker prefix for pages this class creates, so a leftover page can be
@@ -25,7 +25,7 @@ class RepairTest extends Sdc_TestCase {
 	/**
 	 * The command under test.
 	 *
-	 * @var Sdc_Repair
+	 * @var Sdcpb_Repair
 	 */
 	private $command;
 
@@ -35,7 +35,7 @@ class RepairTest extends Sdc_TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->command = new Sdc_Repair();
+		$this->command = new Sdcpb_Repair();
 		WP_CLI::capture();
 	}
 
@@ -48,9 +48,9 @@ class RepairTest extends Sdc_TestCase {
 		// comes from the class's `repair()` method. Pinning `sdc-pb repair`
 		// here would let `wp sdc-pb repair repair` pass this test.
 		$this->assertArrayHasKey( 'sdc-pb', WP_CLI::$commands );
-		$this->assertSame( 'Sdc_Repair', WP_CLI::$commands['sdc-pb'] );
-		$this->assertTrue( class_exists( 'Sdc_Repair' ) );
-		$this->assertTrue( method_exists( 'Sdc_Repair', 'repair' ) );
+		$this->assertSame( 'Sdcpb_Repair', WP_CLI::$commands['sdc-pb'] );
+		$this->assertTrue( class_exists( 'Sdcpb_Repair' ) );
+		$this->assertTrue( method_exists( 'Sdcpb_Repair', 'repair' ) );
 	}
 
 	/**
@@ -60,7 +60,7 @@ class RepairTest extends Sdc_TestCase {
 	 * @param array[] $components Components.
 	 */
 	private function old_document( $post_id, array $components ) {
-		Sdc_Store::save_data( $post_id, array( 'components' => $components ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => $components ) );
 	}
 
 	/**
@@ -88,8 +88,8 @@ class RepairTest extends Sdc_TestCase {
 		$types = array();
 
 		foreach ( parse_blocks( (string) get_post_field( 'post_content', $post_id, 'raw' ) ) as $block ) {
-			if ( ! empty( $block['blockName'] ) && 0 === strpos( $block['blockName'], 'sdc/' ) ) {
-				$types[] = substr( $block['blockName'], 4 );
+			if ( ! empty( $block['blockName'] ) && 0 === strpos( $block['blockName'], Sdcpb_Block::PREFIX ) ) {
+				$types[] = substr( $block['blockName'], strlen( Sdcpb_Block::PREFIX ) );
 			}
 		}
 
@@ -118,7 +118,7 @@ class RepairTest extends Sdc_TestCase {
 	private function affected_page() {
 		$post_id = $this->page(
 			array(
-				'post_content' => '<!-- wp:sdc/faq {"data":{"heading":"Schon da"}} /-->',
+				'post_content' => '<!-- wp:sdcpb/faq {"data":{"heading":"Schon da"}} /-->',
 			)
 		);
 		$this->old_document(
@@ -128,7 +128,7 @@ class RepairTest extends Sdc_TestCase {
 				array_merge( array( '_id' => 'c_faq000001' ), $this->faq_component( 'Schon da' ) ),
 			)
 		);
-		update_post_meta( $post_id, Sdc_Migration::META_KEY, Sdc_Migration::VERSION );
+		update_post_meta( $post_id, Sdcpb_Migration::META_KEY, Sdcpb_Migration::VERSION );
 
 		return $post_id;
 	}
@@ -141,7 +141,7 @@ class RepairTest extends Sdc_TestCase {
 	public function test_dry_run_reports_the_missing_component_and_writes_nothing() {
 		$post_id = $this->page(
 			array(
-				'post_content' => '<!-- wp:sdc/faq {"data":{"heading":"Schon da"}} /-->',
+				'post_content' => '<!-- wp:sdcpb/faq {"data":{"heading":"Schon da"}} /-->',
 			)
 		);
 		$this->old_document(
@@ -169,7 +169,7 @@ class RepairTest extends Sdc_TestCase {
 
 		$this->assertSame( $content, get_post_field( 'post_content', $post_id, 'raw' ) );
 		$this->assertSame( $revisions, count( wp_get_post_revisions( $post_id ) ) );
-		$this->assertFalse( Sdc_Migration::is_migrated( $post_id ), 'The dry run must not mark the page.' );
+		$this->assertFalse( Sdcpb_Migration::is_migrated( $post_id ), 'The dry run must not mark the page.' );
 	}
 
 	/**
@@ -238,7 +238,7 @@ class RepairTest extends Sdc_TestCase {
 	public function test_unaffected_page_is_not_reported() {
 		$post_id = $this->page(
 			array(
-				'post_content' => '<!-- wp:sdc/hero {"data":{"heading":"Da"}} /-->',
+				'post_content' => '<!-- wp:sdcpb/hero {"data":{"heading":"Da"}} /-->',
 			)
 		);
 		$this->old_document(
@@ -247,7 +247,7 @@ class RepairTest extends Sdc_TestCase {
 				array_merge( array( '_id' => 'c_hero00001' ), $this->hero_component( 'Da' ) ),
 			)
 		);
-		update_post_meta( $post_id, Sdc_Migration::META_KEY, Sdc_Migration::VERSION );
+		update_post_meta( $post_id, Sdcpb_Migration::META_KEY, Sdcpb_Migration::VERSION );
 
 		$this->run_command( array( 'post' => (string) $post_id ) );
 
@@ -296,7 +296,7 @@ class RepairTest extends Sdc_TestCase {
 
 		$this->assertSame( array(), WP_CLI::lines( 'log' ) );
 		$this->assertSame( 'Nur Text', get_post_field( 'post_content', $post_id, 'raw' ) );
-		$this->assertFalse( Sdc_Migration::is_migrated( $post_id ) );
+		$this->assertFalse( Sdcpb_Migration::is_migrated( $post_id ) );
 		$this->assertCount( 0, wp_get_post_revisions( $post_id ) );
 	}
 
@@ -308,7 +308,7 @@ class RepairTest extends Sdc_TestCase {
 	public function test_report_lists_exactly_what_apply_writes() {
 		$post_id = $this->page(
 			array(
-				'post_content' => '<!-- wp:sdc/faq {"data":{"heading":"Eins"}} /-->',
+				'post_content' => '<!-- wp:sdcpb/faq {"data":{"heading":"Eins"}} /-->',
 			)
 		);
 		$this->old_document(
@@ -320,7 +320,7 @@ class RepairTest extends Sdc_TestCase {
 				array_merge( array( '_id' => 'c_faq000003' ), $this->faq_component( 'Drei' ) ),
 			)
 		);
-		update_post_meta( $post_id, Sdc_Migration::META_KEY, Sdc_Migration::VERSION );
+		update_post_meta( $post_id, Sdcpb_Migration::META_KEY, Sdcpb_Migration::VERSION );
 
 		$this->run_command( array( 'post' => (string) $post_id ) );
 
@@ -349,7 +349,7 @@ class RepairTest extends Sdc_TestCase {
 	public function test_marked_page_without_blocks_is_reported() {
 		$post_id = $this->page( array( 'post_content' => 'Nur Text' ) );
 		$this->old_document( $post_id, array( $this->faq_component( 'Nachzuholen' ) ) );
-		update_post_meta( $post_id, Sdc_Migration::META_KEY, Sdc_Migration::VERSION );
+		update_post_meta( $post_id, Sdcpb_Migration::META_KEY, Sdcpb_Migration::VERSION );
 
 		$this->run_command( array( 'post' => (string) $post_id ) );
 
@@ -365,7 +365,7 @@ class RepairTest extends Sdc_TestCase {
 		$foreign = '<!-- wp:paragraph {"className":"fremd"} --><p class="fremd">Fremdtext</p><!-- /wp:paragraph -->';
 		$post_id = $this->page(
 			array(
-				'post_content' => '<!-- wp:sdc/faq {"data":{"heading":"Schon da"}} /-->' . "\n\n" . $foreign,
+				'post_content' => '<!-- wp:sdcpb/faq {"data":{"heading":"Schon da"}} /-->' . "\n\n" . $foreign,
 			)
 		);
 		$this->old_document(
@@ -375,7 +375,7 @@ class RepairTest extends Sdc_TestCase {
 				array_merge( array( '_id' => 'c_faq000001' ), $this->faq_component( 'Schon da' ) ),
 			)
 		);
-		update_post_meta( $post_id, Sdc_Migration::META_KEY, Sdc_Migration::VERSION );
+		update_post_meta( $post_id, Sdcpb_Migration::META_KEY, Sdcpb_Migration::VERSION );
 
 		$this->run_command(
 			array(
@@ -394,7 +394,7 @@ class RepairTest extends Sdc_TestCase {
 		}
 
 		$this->assertStringContainsString( $foreign, $content );
-		$this->assertSame( array( 'sdc/faq', 'core/paragraph', 'sdc/hero' ), $types );
+		$this->assertSame( array( 'sdcpb/faq', 'core/paragraph', 'sdcpb/hero' ), $types );
 	}
 
 	/**
@@ -413,6 +413,6 @@ class RepairTest extends Sdc_TestCase {
 		}
 
 		$this->assertSame( '', get_post_field( 'post_content', $post_id, 'raw' ) );
-		$this->assertFalse( Sdc_Migration::is_migrated( $post_id ) );
+		$this->assertFalse( Sdcpb_Migration::is_migrated( $post_id ) );
 	}
 }

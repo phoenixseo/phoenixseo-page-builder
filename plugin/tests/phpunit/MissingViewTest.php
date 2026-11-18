@@ -8,16 +8,16 @@
  * known type whose render.php is gone) and they have to stay distinguishable
  * from a component that renders correctly but output deliberately nothing.
  *
- * @package Sdc_Page_Builder
+ * @package Sdcpb_Page_Builder
  */
 
 /**
  * Missing views are logged, and marked for editors only.
  *
- * @covers Sdc_Frontend::has_view
- * @covers Sdc_Frontend::report_missing
+ * @covers Sdcpb_Frontend::has_view
+ * @covers Sdcpb_Frontend::report_missing
  */
-class MissingViewTest extends Sdc_TestCase {
+class MissingViewTest extends Sdcpb_TestCase {
 
 	/**
 	 * File error_log() is pointed at during one test.
@@ -64,7 +64,7 @@ class MissingViewTest extends Sdc_TestCase {
 	public function tear_down() {
 		ini_set( 'error_log', '' ); // phpcs:ignore WordPress.PHP.IniSet.Risky -- Undo the redirect above.
 
-		remove_filter( 'sdc_pb_component_dirs', array( $this, 'prepend_view_dir' ) );
+		remove_filter( 'sdcpb_component_dirs', array( $this, 'prepend_view_dir' ) );
 
 		foreach ( $this->view_dirs as $dir ) {
 			self::rmdir_tree( $dir );
@@ -72,7 +72,7 @@ class MissingViewTest extends Sdc_TestCase {
 		$this->view_dirs = array();
 		$this->views     = '';
 
-		Sdc_Schema::flush();
+		Sdcpb_Schema::flush();
 
 		parent::tear_down();
 	}
@@ -155,7 +155,7 @@ class MissingViewTest extends Sdc_TestCase {
 	private function page_with( array $components, $title = 'SDC-CREW-vermisste-ansicht' ) {
 		$post_id = $this->make_page( array( 'post_title' => $title ) );
 
-		Sdc_Store::save_data(
+		Sdcpb_Store::save_data(
 			$post_id,
 			array(
 				'v'          => 1,
@@ -190,7 +190,7 @@ class MissingViewTest extends Sdc_TestCase {
 			)
 		);
 
-		$html = Sdc_Frontend::render_post( $post_id );
+		$html = Sdcpb_Frontend::render_post( $post_id );
 
 		$this->assertSame( '', trim( (string) $html ), 'A visitor must not see a marker or stray text.' );
 		$this->assertCount( 1, $this->logged(), 'The missing view must reach the log.' );
@@ -212,7 +212,7 @@ class MissingViewTest extends Sdc_TestCase {
 
 		$this->login_as_editor();
 
-		$html = Sdc_Frontend::render_post( $post_id );
+		$html = Sdcpb_Frontend::render_post( $post_id );
 
 		$this->assertStringContainsString( '<!-- sdc:', $html );
 		$this->assertStringContainsString( 'hat keine Ansicht', $html );
@@ -247,7 +247,7 @@ class MissingViewTest extends Sdc_TestCase {
 			)
 		);
 
-		$html = Sdc_Frontend::render_post( $post_id );
+		$html = Sdcpb_Frontend::render_post( $post_id );
 
 		$this->assertCount( 0, $this->logged(), 'A working component must stay quiet.' );
 		$this->assertStringNotContainsString( '<!-- sdc:', (string) $html );
@@ -275,7 +275,7 @@ class MissingViewTest extends Sdc_TestCase {
 			)
 		);
 
-		Sdc_Frontend::render_post( $post_id );
+		Sdcpb_Frontend::render_post( $post_id );
 
 		$this->assertCount( 1, $this->logged() );
 	}
@@ -298,7 +298,7 @@ class MissingViewTest extends Sdc_TestCase {
 			)
 		);
 
-		Sdc_Frontend::render_post( $post_id );
+		Sdcpb_Frontend::render_post( $post_id );
 
 		$this->assertCount( 2, $this->logged() );
 	}
@@ -323,9 +323,9 @@ class MissingViewTest extends Sdc_TestCase {
 			)
 		);
 
-		$this->assertFalse( Sdc_Frontend::has_view( $type ) );
+		$this->assertFalse( Sdcpb_Frontend::has_view( $type ) );
 
-		Sdc_Frontend::render_post( $post_id );
+		Sdcpb_Frontend::render_post( $post_id );
 
 		$this->assertCount( 1, $this->logged() );
 	}
@@ -345,7 +345,7 @@ class MissingViewTest extends Sdc_TestCase {
 			$this->fail( 'Could not build a component with fields and no view.' );
 		}
 
-		$this->assertTrue( Sdc_Frontend::has_view( $type ) );
+		$this->assertTrue( Sdcpb_Frontend::has_view( $type ) );
 
 		$post_id = $this->page_with(
 			array(
@@ -356,9 +356,9 @@ class MissingViewTest extends Sdc_TestCase {
 			)
 		);
 
-		Sdc_Schema::flush();
+		Sdcpb_Schema::flush();
 
-		Sdc_Frontend::render_post( $post_id );
+		Sdcpb_Frontend::render_post( $post_id );
 
 		$this->assertCount( 0, $this->logged(), 'A type the schema can print is not a lost component: ' . implode( ' | ', $this->logged() ) );
 	}
@@ -367,7 +367,7 @@ class MissingViewTest extends Sdc_TestCase {
 	 * A type name with capitals cannot survive a round trip through the
 	 * document, so the schema lookup has to be case-consistent.
 	 *
-	 * `Sdc_Store::sanitize()` runs the type through `sanitize_key()`, which
+	 * `Sdcpb_Store::sanitize()` runs the type through `sanitize_key()`, which
 	 * lowercases. A component whose type is `HeroBG` therefore comes back as
 	 * `herobg` — and if the schema keys it as `HeroBG`, `has_view()` says
 	 * "no view" for a component that is right there. This pinned the cause of
@@ -383,7 +383,7 @@ class MissingViewTest extends Sdc_TestCase {
 			)
 		);
 
-		$doc = Sdc_Store::get_data( $post_id );
+		$doc = Sdcpb_Store::get_data( $post_id );
 
 		$this->assertSame( 'mixedcase', $doc['components'][0]['type'] );
 	}
@@ -392,12 +392,12 @@ class MissingViewTest extends Sdc_TestCase {
 	 * The view check answers the same for the unknown and the known case.
 	 */
 	public function test_has_view_answers_for_known_and_unknown_types() {
-		$this->assertFalse( Sdc_Frontend::has_view( $this->unknown_type() ) );
-		$this->assertFalse( Sdc_Frontend::has_view( '' ) );
+		$this->assertFalse( Sdcpb_Frontend::has_view( $this->unknown_type() ) );
+		$this->assertFalse( Sdcpb_Frontend::has_view( '' ) );
 
 		$type = $this->known_type_with_view();
 		if ( '' !== $type ) {
-			$this->assertTrue( Sdc_Frontend::has_view( $type ) );
+			$this->assertTrue( Sdcpb_Frontend::has_view( $type ) );
 		}
 	}
 
@@ -405,7 +405,7 @@ class MissingViewTest extends Sdc_TestCase {
 	 * The block path reports too — a component can be lost without the
 	 * document path being involved at all.
 	 *
-	 * `Sdc_Block::render()` gates unknown types before the renderer sees
+	 * `Sdcpb_Block::render()` gates unknown types before the renderer sees
 	 * them, which would keep the block path silent — and a page built from
 	 * blocks is where a renamed type is *most* likely to go unnoticed,
 	 * because the editor canvas shows the block's placeholder rather than an
@@ -414,7 +414,7 @@ class MissingViewTest extends Sdc_TestCase {
 	public function test_block_render_reports_a_missing_view() {
 		$type = $this->unknown_type();
 
-		$html = Sdc_Block::render( $type, array( 'data' => array() ), 0 );
+		$html = Sdcpb_Block::render( $type, array( 'data' => array() ), 0 );
 
 		$this->assertSame( '', (string) $html, 'Nothing may reach the visitor.' );
 		$this->assertCount( 1, $this->logged(), 'The block path must not swallow the loss.' );
@@ -426,7 +426,7 @@ class MissingViewTest extends Sdc_TestCase {
 	 */
 	public function test_notice_names_the_number_of_affected_pages() {
 		$this->login_as_editor();
-		delete_transient( Sdc_Admin::BROKEN_TRANSIENT );
+		delete_transient( Sdcpb_Admin::BROKEN_TRANSIENT );
 
 		$broken = $this->page_with(
 			array(
@@ -440,7 +440,7 @@ class MissingViewTest extends Sdc_TestCase {
 		$this->assertGreaterThan( 0, $broken );
 		$this->set_page_list_screen();
 
-		$count = Sdc_Admin::count_broken_pages();
+		$count = Sdcpb_Admin::count_broken_pages();
 		$this->assertGreaterThanOrEqual( 1, $count, 'The page with a lost component has to be counted.' );
 
 		$notice = $this->notice_html();
@@ -450,7 +450,7 @@ class MissingViewTest extends Sdc_TestCase {
 
 		// The count is cached: a second ask reads the transient, so the page
 		// list can be reloaded without rescanning every page each time.
-		$this->assertSame( $count, (int) get_transient( Sdc_Admin::BROKEN_TRANSIENT ) );
+		$this->assertSame( $count, (int) get_transient( Sdcpb_Admin::BROKEN_TRANSIENT ) );
 	}
 
 	/**
@@ -459,11 +459,11 @@ class MissingViewTest extends Sdc_TestCase {
 	 */
 	public function test_clear_counts_now_drops_the_broken_page_cache() {
 		$this->login_as_editor();
-		set_transient( Sdc_Admin::BROKEN_TRANSIENT, 4, MINUTE_IN_SECONDS );
+		set_transient( Sdcpb_Admin::BROKEN_TRANSIENT, 4, MINUTE_IN_SECONDS );
 
-		Sdc_Admin::clear_counts_now();
+		Sdcpb_Admin::clear_counts_now();
 
-		$this->assertFalse( get_transient( Sdc_Admin::BROKEN_TRANSIENT ), 'A repaired page must stop being reported at once, not in two minutes.' );
+		$this->assertFalse( get_transient( Sdcpb_Admin::BROKEN_TRANSIENT ), 'A repaired page must stop being reported at once, not in two minutes.' );
 	}
 
 	/**
@@ -472,7 +472,7 @@ class MissingViewTest extends Sdc_TestCase {
 	 */
 	public function test_notice_stays_away_when_no_page_is_affected() {
 		$this->login_as_editor();
-		set_transient( Sdc_Admin::BROKEN_TRANSIENT, 0, MINUTE_IN_SECONDS );
+		set_transient( Sdcpb_Admin::BROKEN_TRANSIENT, 0, MINUTE_IN_SECONDS );
 
 		$this->set_page_list_screen();
 
@@ -484,7 +484,7 @@ class MissingViewTest extends Sdc_TestCase {
 	 */
 	public function test_notice_stays_away_on_another_screen() {
 		$this->login_as_editor();
-		set_transient( Sdc_Admin::BROKEN_TRANSIENT, 3, MINUTE_IN_SECONDS );
+		set_transient( Sdcpb_Admin::BROKEN_TRANSIENT, 3, MINUTE_IN_SECONDS );
 
 		set_current_screen( 'dashboard' );
 
@@ -496,7 +496,7 @@ class MissingViewTest extends Sdc_TestCase {
 	 */
 	public function test_notice_stays_away_for_a_role_without_the_capability() {
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'subscriber' ) ) );
-		set_transient( Sdc_Admin::BROKEN_TRANSIENT, 3, MINUTE_IN_SECONDS );
+		set_transient( Sdcpb_Admin::BROKEN_TRANSIENT, 3, MINUTE_IN_SECONDS );
 
 		$this->set_page_list_screen();
 
@@ -517,7 +517,7 @@ class MissingViewTest extends Sdc_TestCase {
 	 */
 	private function notice_html() {
 		ob_start();
-		Sdc_Admin::render_broken_notice();
+		Sdcpb_Admin::render_broken_notice();
 		return (string) ob_get_clean();
 	}
 
@@ -541,7 +541,7 @@ class MissingViewTest extends Sdc_TestCase {
 	 * @return string Type name, or '' when no type is installed.
 	 */
 	private function known_type_with_view() {
-		$types = array_keys( Sdc_Schema::components() );
+		$types = array_keys( Sdcpb_Schema::components() );
 		if ( ! $types ) {
 			return '';
 		}
@@ -555,8 +555,8 @@ class MissingViewTest extends Sdc_TestCase {
 
 		$written     = file_put_contents( $dir . '/' . $type . '/render.php', "<?php echo 'sdc-view';\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Scratch file of this test.
 		$this->views = $dir;
-		add_filter( 'sdc_pb_component_dirs', array( $this, 'prepend_view_dir' ) );
-		Sdc_Schema::flush();
+		add_filter( 'sdcpb_component_dirs', array( $this, 'prepend_view_dir' ) );
+		Sdcpb_Schema::flush();
 
 		return false === $written ? '' : $type;
 	}
@@ -622,25 +622,25 @@ class MissingViewTest extends Sdc_TestCase {
 	 * Write a component definition and make the schema see it.
 	 *
 	 * The definition is written directly instead of through
-	 * `Sdc_Admin::create()`: that path runs a form validation chain (label,
+	 * `Sdcpb_Admin::create()`: that path runs a form validation chain (label,
 	 * field list, type name) whose failures are not the subject of this
 	 * test, and a rejected create here would turn a missing view test into a
 	 * form test. What matters is the shape ACF's Local JSON loader reads —
-	 * `group_sdc_component_<type>` as key, the fields as declared — and that
+	 * `group_sdcpb_component_<type>` as key, the fields as declared — and that
 	 * the folder is one the schema scans.
 	 *
 	 * @param array[] $fields Field definitions for the component.
 	 * @return string Type name, or '' on failure.
 	 */
 	private function definition_type( array $fields ) {
-		// Lowercase only: `Sdc_Store::sanitize()` runs the type through
+		// Lowercase only: `Sdcpb_Store::sanitize()` runs the type through
 		// `sanitize_key()`, so a mixed-case name would come back lowercased
 		// and stop matching its own schema key — measured, and it looks
 		// exactly like "the schema does not know the type".
 		$type = 'norender-' . strtolower( wp_generate_password( 6, false, false ) );
 		$root = $this->view_dir();
 
-		add_filter( 'sdc_pb_component_dirs', array( $this, 'prepend_view_dir' ) );
+		add_filter( 'sdcpb_component_dirs', array( $this, 'prepend_view_dir' ) );
 		$this->views = $root;
 		$folder      = untrailingslashit( $root ) . '/' . $type;
 		if ( ! wp_mkdir_p( $folder ) ) {
@@ -654,13 +654,13 @@ class MissingViewTest extends Sdc_TestCase {
 		}
 
 		$definition = array(
-			'key'      => Sdc_Schema::KEY_PREFIX . $type,
+			'key'      => Sdcpb_Schema::KEY_PREFIX . $type,
 			'title'    => 'SDC test',
 			'fields'   => $fields,
 			'location' => array(
 				array(
 					array(
-						'param'    => 'sdc_component',
+						'param'    => 'sdcpb_component',
 						'operator' => '==',
 						'value'    => '1',
 					),
@@ -690,11 +690,11 @@ class MissingViewTest extends Sdc_TestCase {
 	 * ACF/SCF load Local JSON through their own stores and keep the groups
 	 * for the process; a file written by the code under test stays invisible
 	 * until the stores are reset and the include hook runs again. Measured
-	 * without this: the type was a file on disk, `Sdc_Schema::get()` did not
+	 * without this: the type was a file on disk, `Sdcpb_Schema::get()` did not
 	 * know it, and `has_view()` answered "no view" for the wrong reason.
 	 */
 	private function reload_host() {
-		Sdc_Schema::flush();
+		Sdcpb_Schema::flush();
 
 		if ( function_exists( 'acf_get_store' ) ) {
 			foreach ( array( 'field-groups', 'fields' ) as $store ) {
@@ -708,6 +708,6 @@ class MissingViewTest extends Sdc_TestCase {
 		// The hook name comes from the host and cannot be renamed.
 		do_action( 'acf/include_fields' ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Hook defined by ACF/SCF.
 
-		Sdc_Schema::flush();
+		Sdcpb_Schema::flush();
 	}
 }

@@ -6,10 +6,10 @@
  */
 
 /**
- * The store is the only writer of `_sdc_data`. Everything the builder promises
+ * The store is the only writer of `_sdcpb_data`. Everything the builder promises
  * about history, ids and payload shape is decided here.
  */
-class StoreTest extends Sdc_TestCase {
+class StoreTest extends Sdcpb_TestCase {
 
 	/**
 	 * A page with no document reads as an empty document, not as null.
@@ -17,11 +17,11 @@ class StoreTest extends Sdc_TestCase {
 	public function test_missing_meta_reads_as_empty_document() {
 		$post_id = $this->make_page();
 
-		$doc = Sdc_Store::get_data( $post_id );
+		$doc = Sdcpb_Store::get_data( $post_id );
 
-		$this->assertSame( Sdc_Store::empty_document(), $doc );
+		$this->assertSame( Sdcpb_Store::empty_document(), $doc );
 		$this->assertSame( array(), $doc['components'] );
-		$this->assertSame( Sdc_Store::FORMAT_VERSION, $doc['v'] );
+		$this->assertSame( Sdcpb_Store::FORMAT_VERSION, $doc['v'] );
 	}
 
 	/**
@@ -36,10 +36,10 @@ class StoreTest extends Sdc_TestCase {
 			),
 		);
 
-		Sdc_Store::save_data( $post_id, $input );
-		$doc = Sdc_Store::get_data( $post_id );
+		Sdcpb_Store::save_data( $post_id, $input );
+		$doc = Sdcpb_Store::get_data( $post_id );
 
-		$this->assertSame( Sdc_Store::FORMAT_VERSION, $doc['v'] );
+		$this->assertSame( Sdcpb_Store::FORMAT_VERSION, $doc['v'] );
 		$this->assertCount( 2, $doc['components'] );
 		$this->assertSame( 'hero', $doc['components'][0]['type'] );
 		$this->assertSame( 'faq', $doc['components'][1]['type'] );
@@ -54,12 +54,12 @@ class StoreTest extends Sdc_TestCase {
 		$post_id = $this->make_page();
 		$text    = 'Größenwahn & "Anführungszeichen" — 100 % äöüß';
 
-		Sdc_Store::save_data(
+		Sdcpb_Store::save_data(
 			$post_id,
 			array( 'components' => array( $this->faq_component( $text, 1 ) ) )
 		);
 
-		$doc = Sdc_Store::get_data( $post_id );
+		$doc = Sdcpb_Store::get_data( $post_id );
 		$this->assertSame( $text, $doc['components'][0]['data']['heading'] );
 	}
 
@@ -69,7 +69,7 @@ class StoreTest extends Sdc_TestCase {
 	public function test_ids_are_assigned_and_unique() {
 		$post_id = $this->make_page();
 
-		$doc = Sdc_Store::save_data(
+		$doc = Sdcpb_Store::save_data(
 			$post_id,
 			array(
 				'components' => array(
@@ -96,14 +96,14 @@ class StoreTest extends Sdc_TestCase {
 	public function test_ids_survive_a_load_and_save_cycle() {
 		$post_id = $this->make_page();
 
-		$first = Sdc_Store::save_data(
+		$first = Sdcpb_Store::save_data(
 			$post_id,
 			array( 'components' => array( $this->faq_component(), $this->hero_component() ) )
 		);
 		$ids   = array_column( $first['components'], '_id' );
 
 		// The editor's cycle: read the stored document, save it unchanged.
-		$second = Sdc_Store::save_data( $post_id, Sdc_Store::get_data( $post_id ) );
+		$second = Sdcpb_Store::save_data( $post_id, Sdcpb_Store::get_data( $post_id ) );
 
 		$this->assertSame( $ids, array_column( $second['components'], '_id' ) );
 	}
@@ -117,8 +117,8 @@ class StoreTest extends Sdc_TestCase {
 		$document                         = array( 'components' => array( $this->faq_component() ) );
 		$document['components'][0]['_id'] = 'c_fixed001';
 
-		$first  = Sdc_Store::save_data( $post_id, $document );
-		$second = Sdc_Store::save_data( $post_id, $document );
+		$first  = Sdcpb_Store::save_data( $post_id, $document );
+		$second = Sdcpb_Store::save_data( $post_id, $document );
 
 		$this->assertSame( 'c_fixed001', $first['components'][0]['_id'] );
 		$this->assertSame( 'c_fixed001', $second['components'][0]['_id'] );
@@ -133,7 +133,7 @@ class StoreTest extends Sdc_TestCase {
 		$dup['components'][0]['_id'] = 'c_fixed001';
 		$dup['components'][1]['_id'] = 'c_fixed001';
 
-		$doc = Sdc_Store::save_data( $post_id, $dup );
+		$doc = Sdcpb_Store::save_data( $post_id, $dup );
 
 		$this->assertSame( 'c_fixed001', $doc['components'][0]['_id'] );
 		$this->assertNotSame( 'c_fixed001', $doc['components'][1]['_id'] );
@@ -145,7 +145,7 @@ class StoreTest extends Sdc_TestCase {
 	public function test_id_is_stripped_to_safe_characters() {
 		$post_id = $this->make_page();
 
-		$doc = Sdc_Store::save_data(
+		$doc = Sdcpb_Store::save_data(
 			$post_id,
 			array(
 				'components' => array(
@@ -167,7 +167,7 @@ class StoreTest extends Sdc_TestCase {
 	public function test_components_without_type_are_dropped() {
 		$post_id = $this->make_page();
 
-		$doc = Sdc_Store::save_data(
+		$doc = Sdcpb_Store::save_data(
 			$post_id,
 			array(
 				'components' => array(
@@ -187,9 +187,9 @@ class StoreTest extends Sdc_TestCase {
 	 */
 	public function test_broken_json_in_meta_reads_as_empty_document() {
 		$post_id = $this->make_page();
-		update_post_meta( $post_id, Sdc_Store::META_KEY, '{"components": [ this is not json' );
+		update_post_meta( $post_id, Sdcpb_Store::META_KEY, '{"components": [ this is not json' );
 
-		$this->assertSame( Sdc_Store::empty_document(), Sdc_Store::get_data( $post_id ) );
+		$this->assertSame( Sdcpb_Store::empty_document(), Sdcpb_Store::get_data( $post_id ) );
 	}
 
 	/**
@@ -197,7 +197,7 @@ class StoreTest extends Sdc_TestCase {
 	 * and the editor send.
 	 */
 	public function test_sanitize_accepts_json_string() {
-		$clean = Sdc_Store::sanitize( wp_json_encode( array( 'components' => array( $this->faq_component() ) ) ) );
+		$clean = Sdcpb_Store::sanitize( wp_json_encode( array( 'components' => array( $this->faq_component() ) ) ) );
 
 		$this->assertCount( 1, $clean['components'] );
 		$this->assertSame( 'faq', $clean['components'][0]['type'] );
@@ -208,11 +208,11 @@ class StoreTest extends Sdc_TestCase {
 	 */
 	public function test_empty_document_can_be_saved_over_content() {
 		$post_id = $this->make_page();
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->faq_component() ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->faq_component() ) ) );
 
-		Sdc_Store::save_data( $post_id, array( 'components' => array() ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array() ) );
 
-		$this->assertSame( array(), Sdc_Store::get_data( $post_id )['components'] );
+		$this->assertSame( array(), Sdcpb_Store::get_data( $post_id )['components'] );
 	}
 
 	/**
@@ -223,7 +223,7 @@ class StoreTest extends Sdc_TestCase {
 		$post_id = $this->make_page();
 		$before  = count( wp_get_post_revisions( $post_id ) );
 
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->faq_component() ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->faq_component() ) ) );
 
 		$this->assertGreaterThan( $before, count( wp_get_post_revisions( $post_id ) ) );
 	}
@@ -234,7 +234,7 @@ class StoreTest extends Sdc_TestCase {
 	public function test_document_is_one_meta_row_regardless_of_component_count() {
 		$post_id = $this->make_page();
 
-		Sdc_Store::save_data(
+		Sdcpb_Store::save_data(
 			$post_id,
 			array(
 				'components' => array(
@@ -245,32 +245,32 @@ class StoreTest extends Sdc_TestCase {
 			)
 		);
 
-		$rows = get_post_meta( $post_id, Sdc_Store::META_KEY, false );
+		$rows = get_post_meta( $post_id, Sdcpb_Store::META_KEY, false );
 		$this->assertCount( 1, $rows );
 	}
 
 	/**
 	 * The storage key itself is a compatibility contract and must not drift.
 	 *
-	 * Every other test reads through `Sdc_Store::META_KEY`, so changing the
+	 * Every other test reads through `Sdcpb_Store::META_KEY`, so changing the
 	 * constant keeps the whole suite green while silently orphaning the
 	 * documents of every site that already runs the plugin. Measured: renaming
 	 * the constant left 53/53 tests passing. This is the only test that fails
 	 * when that happens.
 	 */
 	public function test_meta_key_is_the_published_contract() {
-		$this->assertSame( '_sdc_data', Sdc_Store::META_KEY );
+		$this->assertSame( '_sdcpb_data', Sdcpb_Store::META_KEY );
 
 		$post_id = $this->make_page();
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->faq_component() ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->faq_component() ) ) );
 
 		// Read back with the literal key: proves the document really lands
-		// under `_sdc_data` in the database, not just under the constant.
+		// under `_sdcpb_data` in the database, not just under the constant.
 		// `get_post_meta( ..., true )` returns the unserialized value, which
 		// is the decoded array — not a JSON string.
-		$data = get_post_meta( $post_id, '_sdc_data', true );
+		$data = get_post_meta( $post_id, '_sdcpb_data', true );
 
-		$this->assertIsArray( $data, 'No document stored under _sdc_data' );
+		$this->assertIsArray( $data, 'No document stored under _sdcpb_data' );
 		$this->assertSame( 1, $data['v'] );
 		$this->assertSame( 'faq', $data['components'][0]['type'] );
 	}
@@ -280,9 +280,9 @@ class StoreTest extends Sdc_TestCase {
 	 */
 	public function test_format_version_is_written_to_storage() {
 		$post_id = $this->make_page();
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->hero_component() ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->hero_component() ) ) );
 
-		$data = get_post_meta( $post_id, '_sdc_data', true );
+		$data = get_post_meta( $post_id, '_sdcpb_data', true );
 
 		$this->assertIsArray( $data );
 		$this->assertSame( 1, $data['v'], 'The stored format version changed; stored documents would need a migration' );

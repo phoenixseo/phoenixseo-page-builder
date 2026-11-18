@@ -1,9 +1,9 @@
 {
-    "key": "group_sdc_component_hero",
+    "key": "group_sdcpb_component_hero",
     "title": "Hero",
-    "sdc_description": "Seitenkopf mit Überschrift, Unterzeile und optionalem Handlungsaufruf.",
-    "sdc_icon": "cover-image",
-    "sdc_version": 1,
+    "sdcpb_description": "Seitenkopf mit Überschrift, Unterzeile und optionalem Handlungsaufruf.",
+    "sdcpb_icon": "cover-image",
+    "sdcpb_version": 1,
     "fields": [
         {
             "key": "field_sdc_hero_heading",
@@ -39,7 +39,7 @@
     "location": [
         [
             {
-                "param": "sdc_component",
+                "param": "sdcpb_component",
                 "operator": "==",
                 "value": "1"
             }

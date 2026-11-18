@@ -10,7 +10,7 @@
  * the disk work itself — redirected into a temporary directory so the suite
  * never writes into `wp-content/` or the plugin's own `schemas/`.
  */
-class AdminTest extends Sdc_TestCase {
+class AdminTest extends Sdcpb_TestCase {
 
 	/**
 	 * Temporary write directory for the current test.
@@ -33,20 +33,20 @@ class AdminTest extends Sdc_TestCase {
 		parent::set_up();
 
 		$this->root = untrailingslashit( get_temp_dir() ) . '/sdc-admin-' . wp_generate_password( 8, false );
-		$this->dir  = $this->root . '/' . Sdc_Schema::USER_DIR;
+		$this->dir  = $this->root . '/' . Sdcpb_Schema::USER_DIR;
 
 		$this->assertTrue( wp_mkdir_p( $this->dir ) );
 
 		$dir = $this->dir;
 
 		add_filter(
-			'sdc_pb_write_dir',
+			'sdcpb_write_dir',
 			static function () use ( $dir ) {
 				return $dir;
 			}
 		);
 		add_filter(
-			'sdc_pb_component_dirs',
+			'sdcpb_component_dirs',
 			static function () use ( $dir ) {
 				return array( $dir );
 			}
@@ -61,10 +61,10 @@ class AdminTest extends Sdc_TestCase {
 	 * Drop the filters, the scratch directory and any posted state.
 	 */
 	public function tear_down() {
-		remove_all_filters( 'sdc_pb_write_dir' );
-		remove_all_filters( 'sdc_pb_component_dirs' );
+		remove_all_filters( 'sdcpb_write_dir' );
+		remove_all_filters( 'sdcpb_component_dirs' );
 
-		delete_transient( Sdc_Admin::INSTANCE_TRANSIENT );
+		delete_transient( Sdcpb_Admin::INSTANCE_TRANSIENT );
 		$_POST = array();
 
 		$this->remove_tree( $this->root );
@@ -84,10 +84,10 @@ class AdminTest extends Sdc_TestCase {
 	 * @param string $type Submitted type.
 	 */
 	public function test_validate_type_rejects_bad_types( $type ) {
-		$result = Sdc_Admin::validate_type( $type );
+		$result = Sdcpb_Admin::validate_type( $type );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_bad_type', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_bad_type', $result->get_error_code() );
 	}
 
 	/**
@@ -102,6 +102,7 @@ class AdminTest extends Sdc_TestCase {
 			'slash'        => array( 'a/b' ),
 			'space'        => array( 'hero 2' ),
 			'leading dash' => array( '-hero' ),
+			'underscore'   => array( 'hero_2' ),
 			'too long'     => array( str_repeat( 'a', 41 ) ),
 		);
 	}
@@ -110,10 +111,10 @@ class AdminTest extends Sdc_TestCase {
 	 * An empty type is its own error, not a format error.
 	 */
 	public function test_validate_type_rejects_empty() {
-		$result = Sdc_Admin::validate_type( '' );
+		$result = Sdcpb_Admin::validate_type( '' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_no_type', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_no_type', $result->get_error_code() );
 	}
 
 	/**
@@ -124,7 +125,7 @@ class AdminTest extends Sdc_TestCase {
 	 * @param string $type Valid type.
 	 */
 	public function test_validate_type_keeps_valid_types( $type ) {
-		$this->assertSame( $type, Sdc_Admin::validate_type( $type ) );
+		$this->assertSame( $type, Sdcpb_Admin::validate_type( $type ) );
 	}
 
 	/**
@@ -134,11 +135,9 @@ class AdminTest extends Sdc_TestCase {
 	 */
 	public function good_types() {
 		return array(
-			'simple'     => array( 'hero' ),
-			'dash'       => array( 'hero-2' ),
-			'underscore' => array( 'hero_2' ),
-			'digit'      => array( 'h2' ),
-			'max'        => array( str_repeat( 'a', 40 ) ),
+			'dash'  => array( 'hero-2' ),
+			'digit' => array( 'h2' ),
+			'max'   => array( str_repeat( 'a', 40 ) ),
 		);
 	}
 
@@ -148,58 +147,58 @@ class AdminTest extends Sdc_TestCase {
 	 * No fields is a valid, empty component.
 	 */
 	public function test_parse_fields_accepts_empty_input() {
-		$this->assertSame( array(), Sdc_Admin::parse_fields( '', 'teaser' ) );
-		$this->assertSame( array(), Sdc_Admin::parse_fields( "  \n ", 'teaser' ) );
+		$this->assertSame( array(), Sdcpb_Admin::parse_fields( '', 'teaser' ) );
+		$this->assertSame( array(), Sdcpb_Admin::parse_fields( "  \n ", 'teaser' ) );
 	}
 
 	/**
 	 * Broken JSON is reported as such.
 	 */
 	public function test_parse_fields_rejects_broken_json() {
-		$result = Sdc_Admin::parse_fields( '[{"name":"head",', 'teaser' );
+		$result = Sdcpb_Admin::parse_fields( '[{"name":"head",', 'teaser' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_fields_json', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_fields_json', $result->get_error_code() );
 	}
 
 	/**
 	 * A JSON object is not a field list.
 	 */
 	public function test_parse_fields_rejects_object_instead_of_list() {
-		$result = Sdc_Admin::parse_fields( '{"name":"head","type":"text"}', 'teaser' );
+		$result = Sdcpb_Admin::parse_fields( '{"name":"head","type":"text"}', 'teaser' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_fields_shape', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_fields_shape', $result->get_error_code() );
 	}
 
 	/**
 	 * Every field needs a name.
 	 */
 	public function test_parse_fields_rejects_field_without_name() {
-		$result = Sdc_Admin::parse_fields( '[{"type":"text"}]', 'teaser' );
+		$result = Sdcpb_Admin::parse_fields( '[{"type":"text"}]', 'teaser' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_fields_name', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_fields_name', $result->get_error_code() );
 	}
 
 	/**
 	 * Two fields on one level must not share a name.
 	 */
 	public function test_parse_fields_rejects_duplicate_names() {
-		$result = Sdc_Admin::parse_fields(
+		$result = Sdcpb_Admin::parse_fields(
 			'[{"name":"head","type":"text"},{"name":"head","type":"textarea"}]',
 			'teaser'
 		);
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_fields_duplicate', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_fields_duplicate', $result->get_error_code() );
 	}
 
 	/**
 	 * The same name on different levels is fine.
 	 */
 	public function test_parse_fields_allows_same_sub_name_on_another_level() {
-		$fields = Sdc_Admin::parse_fields(
+		$fields = Sdcpb_Admin::parse_fields(
 			'[{"name":"head","type":"text"},{"name":"list","type":"group","sub_fields":[{"name":"head","type":"text"}]}]',
 			'teaser'
 		);
@@ -212,10 +211,10 @@ class AdminTest extends Sdc_TestCase {
 	 * Every field needs a type.
 	 */
 	public function test_parse_fields_rejects_field_without_type() {
-		$result = Sdc_Admin::parse_fields( '[{"name":"head"}]', 'teaser' );
+		$result = Sdcpb_Admin::parse_fields( '[{"name":"head"}]', 'teaser' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_fields_type', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_fields_type', $result->get_error_code() );
 	}
 
 	/**
@@ -227,19 +226,19 @@ class AdminTest extends Sdc_TestCase {
 			$this->fail( 'The host field API is missing; the suite must run with ACF or SCF.' );
 		}
 
-		$this->assertEmpty( acf_get_field_type( 'sdc_no_such_type' ) );
+		$this->assertEmpty( acf_get_field_type( 'sdcpb_no_such_type' ) );
 
-		$result = Sdc_Admin::parse_fields( '[{"name":"head","type":"sdc_no_such_type"}]', 'teaser' );
+		$result = Sdcpb_Admin::parse_fields( '[{"name":"head","type":"sdcpb_no_such_type"}]', 'teaser' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_fields_type', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_fields_type', $result->get_error_code() );
 	}
 
 	/**
 	 * A valid field is normalized: prefixed key, label fallback, whitelist.
 	 */
 	public function test_parse_fields_normalizes_fields() {
-		$fields = Sdc_Admin::parse_fields(
+		$fields = Sdcpb_Admin::parse_fields(
 			wp_json_encode(
 				array(
 					array(
@@ -275,7 +274,7 @@ class AdminTest extends Sdc_TestCase {
 	 * A given label wins over the fallback.
 	 */
 	public function test_parse_fields_keeps_given_label() {
-		$fields = Sdc_Admin::parse_fields( '[{"name":"head","type":"text","label":"Überschrift"}]', 'teaser' );
+		$fields = Sdcpb_Admin::parse_fields( '[{"name":"head","type":"text","label":"Überschrift"}]', 'teaser' );
 
 		$this->assertSame( 'Überschrift', $fields[0]['label'] );
 	}
@@ -284,7 +283,7 @@ class AdminTest extends Sdc_TestCase {
 	 * Sub fields are validated and rekeyed like top level fields.
 	 */
 	public function test_parse_fields_rekeys_sub_fields() {
-		$fields = Sdc_Admin::parse_fields(
+		$fields = Sdcpb_Admin::parse_fields(
 			'[{"name":"list","type":"group","sub_fields":[{"name":"item","type":"text","bogus":1}]}]',
 			'teaser'
 		);
@@ -299,7 +298,7 @@ class AdminTest extends Sdc_TestCase {
 	 * Names are reduced to what the host accepts: a–z, 0–9, underscore.
 	 */
 	public function test_parse_fields_cleans_names() {
-		$fields = Sdc_Admin::parse_fields( '[{"name":"Head Line 2","type":"text"}]', 'teaser' );
+		$fields = Sdcpb_Admin::parse_fields( '[{"name":"Head Line 2","type":"text"}]', 'teaser' );
 
 		$this->assertIsArray( $fields );
 		$this->assertSame( 'headline2', $fields[0]['name'] );
@@ -312,50 +311,50 @@ class AdminTest extends Sdc_TestCase {
 	 * An import that is not JSON is refused.
 	 */
 	public function test_parse_definition_rejects_broken_json() {
-		$result = Sdc_Admin::parse_definition( 'not json' );
+		$result = Sdcpb_Admin::parse_definition( 'not json' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_import_json', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_import_json', $result->get_error_code() );
 	}
 
 	/**
 	 * The key has to carry the component prefix.
 	 */
 	public function test_parse_definition_rejects_foreign_key() {
-		$result = Sdc_Admin::parse_definition( '{"key":"group_other_thing","title":"X"}' );
+		$result = Sdcpb_Admin::parse_definition( '{"key":"group_other_thing","title":"X"}' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_import_key', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_import_key', $result->get_error_code() );
 	}
 
 	/**
 	 * A definition without a key is refused.
 	 */
 	public function test_parse_definition_rejects_missing_key() {
-		$result = Sdc_Admin::parse_definition( '{"title":"X"}' );
+		$result = Sdcpb_Admin::parse_definition( '{"title":"X"}' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_import_key', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_import_key', $result->get_error_code() );
 	}
 
 	/**
 	 * A definition without a title is refused.
 	 */
 	public function test_parse_definition_rejects_missing_title() {
-		$result = Sdc_Admin::parse_definition( '{"key":"group_sdc_component_teaser","title":"   "}' );
+		$result = Sdcpb_Admin::parse_definition( '{"key":"group_sdcpb_component_teaser","title":"   "}' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_import_title', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_import_title', $result->get_error_code() );
 	}
 
 	/**
 	 * The type inside the key is validated like a posted type.
 	 */
 	public function test_parse_definition_rejects_invalid_type_in_key() {
-		$result = Sdc_Admin::parse_definition( '{"key":"group_sdc_component_Teaser","title":"X"}' );
+		$result = Sdcpb_Admin::parse_definition( '{"key":"group_sdcpb_component_Teaser","title":"X"}' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_bad_type', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_bad_type', $result->get_error_code() );
 	}
 
 	/**
@@ -365,10 +364,10 @@ class AdminTest extends Sdc_TestCase {
 	public function test_parse_definition_rebuilds_a_valid_definition() {
 		$raw = wp_json_encode(
 			array(
-				'key'         => 'group_sdc_component_teaser',
-				'title'       => '  Teaser  ',
-				'sdc_version' => 0,
-				'fields'      => array(
+				'key'           => 'group_sdcpb_component_teaser',
+				'title'         => '  Teaser  ',
+				'sdcpb_version' => 0,
+				'fields'        => array(
 					array(
 						'key'  => 'field_foreign',
 						'name' => 'head',
@@ -378,23 +377,23 @@ class AdminTest extends Sdc_TestCase {
 			)
 		);
 
-		$parsed = Sdc_Admin::parse_definition( $raw );
+		$parsed = Sdcpb_Admin::parse_definition( $raw );
 
 		$this->assertIsArray( $parsed );
 		$this->assertSame( 'teaser', $parsed['type'] );
 
 		$definition = $parsed['definition'];
 
-		$this->assertSame( 'group_sdc_component_teaser', $definition['key'] );
+		$this->assertSame( 'group_sdcpb_component_teaser', $definition['key'] );
 		$this->assertSame( 'Teaser', $definition['title'] );
-		$this->assertSame( 1, $definition['sdc_version'] );
+		$this->assertSame( 1, $definition['sdcpb_version'] );
 		$this->assertTrue( $definition['active'] );
 		$this->assertSame( 'field_sdc_teaser_head', $definition['fields'][0]['key'] );
 		$this->assertSame(
 			array(
 				array(
 					array(
-						'param'    => 'sdc_component',
+						'param'    => 'sdcpb_component',
 						'operator' => '==',
 						'value'    => '1',
 					),
@@ -413,11 +412,11 @@ class AdminTest extends Sdc_TestCase {
 		$type = $this->fresh_type( 'callout' );
 
 		$_POST = array(
-			'sdc_type'        => $type,
-			'sdc_label'       => 'Callout',
-			'sdc_description' => 'Ein Hinweis.',
-			'sdc_icon'        => 'info',
-			'sdc_fields'      => '[{"name":"text","type":"text","required":1}]',
+			'sdcpb_type'        => $type,
+			'sdcpb_label'       => 'Callout',
+			'sdcpb_description' => 'Ein Hinweis.',
+			'sdcpb_icon'        => 'info',
+			'sdcpb_fields'      => '[{"name":"text","type":"text","required":1}]',
 		);
 
 		$this->assertTrue( $this->invoke( 'create' ) );
@@ -429,10 +428,10 @@ class AdminTest extends Sdc_TestCase {
 		$definition = json_decode( (string) file_get_contents( $file ), true );
 
 		$this->assertIsArray( $definition, 'Die geschriebene Datei ist gültiges JSON.' );
-		$this->assertSame( 'group_sdc_component_' . $type, $definition['key'] );
+		$this->assertSame( 'group_sdcpb_component_' . $type, $definition['key'] );
 		$this->assertSame( 'Callout', $definition['title'] );
-		$this->assertSame( 'Ein Hinweis.', $definition['sdc_description'] );
-		$this->assertSame( 'info', $definition['sdc_icon'] );
+		$this->assertSame( 'Ein Hinweis.', $definition['sdcpb_description'] );
+		$this->assertSame( 'info', $definition['sdcpb_icon'] );
 		$this->assertSame( 'field_sdc_' . $type . '_text', $definition['fields'][0]['key'] );
 		$this->assertSame( '1', (string) $definition['location'][0][0]['value'] );
 	}
@@ -444,15 +443,15 @@ class AdminTest extends Sdc_TestCase {
 		$type = $this->fresh_type( 'callout' );
 
 		$_POST = array(
-			'sdc_type'   => $type,
-			'sdc_label'  => 'Callout',
-			'sdc_fields' => '',
+			'sdcpb_type'   => $type,
+			'sdcpb_label'  => 'Callout',
+			'sdcpb_fields' => '',
 		);
 
 		$this->assertTrue( $this->invoke( 'create' ) );
 
-		$this->assertDirectoryDoesNotExist( WP_CONTENT_DIR . '/' . Sdc_Schema::USER_DIR . '/' . $type );
-		$this->assertFileDoesNotExist( Sdc_Schema::dir() . $type . '/definition.json' );
+		$this->assertDirectoryDoesNotExist( WP_CONTENT_DIR . '/' . Sdcpb_Schema::USER_DIR . '/' . $type );
+		$this->assertFileDoesNotExist( Sdcpb_Schema::dir() . $type . '/definition.json' );
 	}
 
 	/**
@@ -462,9 +461,9 @@ class AdminTest extends Sdc_TestCase {
 		$type = $this->fresh_type( 'callout' );
 
 		$_POST = array(
-			'sdc_type'   => $type,
-			'sdc_label'  => 'Callout',
-			'sdc_fields' => '',
+			'sdcpb_type'   => $type,
+			'sdcpb_label'  => 'Callout',
+			'sdcpb_fields' => '',
 		);
 
 		$this->assertTrue( $this->invoke( 'create' ) );
@@ -473,7 +472,7 @@ class AdminTest extends Sdc_TestCase {
 		$result = $this->invoke( 'create' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_type_exists', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_type_exists', $result->get_error_code() );
 	}
 
 	/**
@@ -481,15 +480,15 @@ class AdminTest extends Sdc_TestCase {
 	 */
 	public function test_create_refuses_a_shipped_type() {
 		$_POST = array(
-			'sdc_type'   => 'hero',
-			'sdc_label'  => 'Hero',
-			'sdc_fields' => '',
+			'sdcpb_type'   => 'hero',
+			'sdcpb_label'  => 'Hero',
+			'sdcpb_fields' => '',
 		);
 
 		$result = $this->invoke( 'create' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_type_exists', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_type_exists', $result->get_error_code() );
 	}
 
 	/**
@@ -505,9 +504,9 @@ class AdminTest extends Sdc_TestCase {
 		$this->assertTrue( wp_mkdir_p( $this->dir . '/' . $type ) );
 
 		$_POST = array(
-			'sdc_type'   => $type,
-			'sdc_label'  => 'Callout',
-			'sdc_fields' => '',
+			'sdcpb_type'   => $type,
+			'sdcpb_label'  => 'Callout',
+			'sdcpb_fields' => '',
 		);
 
 		$this->assertTrue( $this->invoke( 'create' ) );
@@ -544,7 +543,7 @@ class AdminTest extends Sdc_TestCase {
 	 * A component that stands on a page is counted, and refusing to delete
 	 * it without the checkbox comes from that count.
 	 *
-	 * The document is stored the way Sdc_Store stores it — a PHP array in
+	 * The document is stored the way Sdcpb_Store stores it — a PHP array in
 	 * one meta row. A counter that only understood JSON reported 0 and the
 	 * in-use guard never fired.
 	 */
@@ -554,7 +553,7 @@ class AdminTest extends Sdc_TestCase {
 
 		update_post_meta(
 			$post_id,
-			Sdc_Store::META_KEY,
+			Sdcpb_Store::META_KEY,
 			array(
 				'v'          => 1,
 				'components' => array(
@@ -574,7 +573,7 @@ class AdminTest extends Sdc_TestCase {
 			)
 		);
 
-		delete_transient( Sdc_Admin::INSTANCE_TRANSIENT );
+		delete_transient( Sdcpb_Admin::INSTANCE_TRANSIENT );
 
 		$counts = $this->invoke( 'instance_counts' );
 
@@ -594,7 +593,7 @@ class AdminTest extends Sdc_TestCase {
 
 		update_post_meta(
 			$post_id,
-			Sdc_Store::META_KEY,
+			Sdcpb_Store::META_KEY,
 			array(
 				'v'          => 1,
 				'components' => array(
@@ -613,7 +612,7 @@ class AdminTest extends Sdc_TestCase {
 			wp_save_post_revision( $post_id );
 		}
 
-		delete_transient( Sdc_Admin::INSTANCE_TRANSIENT );
+		delete_transient( Sdcpb_Admin::INSTANCE_TRANSIENT );
 
 		$counts = $this->invoke( 'instance_counts' );
 
@@ -634,7 +633,7 @@ class AdminTest extends Sdc_TestCase {
 
 		$inner = serialize_block(
 			array(
-				'blockName'    => Sdc_Block::PREFIX . $type,
+				'blockName'    => Sdcpb_Block::PREFIX . $type,
 				'attrs'        => array(),
 				'innerBlocks'  => array(),
 				'innerHTML'    => '',
@@ -648,7 +647,7 @@ class AdminTest extends Sdc_TestCase {
 				'attrs'        => array(),
 				'innerBlocks'  => array(
 					array(
-						'blockName'    => Sdc_Block::PREFIX . $type,
+						'blockName'    => Sdcpb_Block::PREFIX . $type,
 						'attrs'        => array(),
 						'innerBlocks'  => array(),
 						'innerHTML'    => '',
@@ -668,7 +667,7 @@ class AdminTest extends Sdc_TestCase {
 			)
 		);
 
-		delete_transient( Sdc_Admin::INSTANCE_TRANSIENT );
+		delete_transient( Sdcpb_Admin::INSTANCE_TRANSIENT );
 
 		$counts = $this->invoke( 'instance_counts' );
 
@@ -689,7 +688,7 @@ class AdminTest extends Sdc_TestCase {
 
 		update_post_meta(
 			$post_id,
-			Sdc_Store::META_KEY,
+			Sdcpb_Store::META_KEY,
 			array(
 				'v'          => 1,
 				'components' => array(
@@ -704,7 +703,7 @@ class AdminTest extends Sdc_TestCase {
 		);
 
 		// The page is placed, then the author removes the block again.
-		update_post_meta( $post_id, Sdc_Migration::META_KEY, Sdc_Migration::VERSION );
+		update_post_meta( $post_id, Sdcpb_Migration::META_KEY, Sdcpb_Migration::VERSION );
 		wp_update_post(
 			array(
 				'ID'           => $post_id,
@@ -712,7 +711,7 @@ class AdminTest extends Sdc_TestCase {
 			)
 		);
 
-		delete_transient( Sdc_Admin::INSTANCE_TRANSIENT );
+		delete_transient( Sdcpb_Admin::INSTANCE_TRANSIENT );
 
 		$counts = $this->invoke( 'instance_counts' );
 
@@ -761,7 +760,7 @@ class AdminTest extends Sdc_TestCase {
 	 * The nonce a form carries is one the handler accepts.
 	 *
 	 * Rendering and verifying happen in two places, so they can drift apart
-	 * silently — and did: the form wrote `sdc_pb_nonce`, the handler asked
+	 * silently — and did: the form wrote `sdcpb_nonce`, the handler asked
 	 * for `_wpnonce`, and every submit answered "the link you followed has
 	 * expired". This ties the two ends to the same constant.
 	 */
@@ -772,11 +771,11 @@ class AdminTest extends Sdc_TestCase {
 		$this->invoke( 'form_hidden', 'create' );
 		$html = (string) ob_get_clean();
 
-		$this->assertStringContainsString( 'name="' . Sdc_Admin::NONCE_FIELD . '"', $html );
+		$this->assertStringContainsString( 'name="' . Sdcpb_Admin::NONCE_FIELD . '"', $html );
 		$this->assertStringNotContainsString( 'name="_wpnonce"', $html );
 
-		$this->assertSame( 1, preg_match( '/name="' . Sdc_Admin::NONCE_FIELD . '" value="([^"]+)"/', $html, $m ) );
-		$this->assertSame( 1, wp_verify_nonce( $m[1], Sdc_Admin::NONCE_ACTION ) );
+		$this->assertSame( 1, preg_match( '/name="' . Sdcpb_Admin::NONCE_FIELD . '" value="([^"]+)"/', $html, $m ) );
+		$this->assertSame( 1, wp_verify_nonce( $m[1], Sdcpb_Admin::NONCE_ACTION ) );
 	}
 
 	/**
@@ -786,14 +785,14 @@ class AdminTest extends Sdc_TestCase {
 		$type = $this->fresh_type( 'callout' );
 
 		$_POST = array(
-			'sdc_type'  => $type,
-			'sdc_label' => '   ',
+			'sdcpb_type'  => $type,
+			'sdcpb_label' => '   ',
 		);
 
 		$result = $this->invoke( 'create' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_no_label', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_no_label', $result->get_error_code() );
 		$this->assertDirectoryDoesNotExist( $this->dir . '/' . $type );
 	}
 
@@ -804,8 +803,8 @@ class AdminTest extends Sdc_TestCase {
 		$type = $this->fresh_type( 'hero-copy' );
 
 		$_POST = array(
-			'sdc_source' => 'hero',
-			'sdc_type'   => $type,
+			'sdcpb_source' => 'hero',
+			'sdcpb_type'   => $type,
 		);
 
 		$this->assertTrue( $this->invoke( 'duplicate' ) );
@@ -817,11 +816,11 @@ class AdminTest extends Sdc_TestCase {
 		$definition = json_decode( (string) file_get_contents( $file ), true );
 
 		$this->assertIsArray( $definition );
-		$this->assertSame( 'group_sdc_component_' . $type, $definition['key'] );
+		$this->assertSame( 'group_sdcpb_component_' . $type, $definition['key'] );
 		$this->assertStringContainsString( '(Kopie)', $definition['title'] );
 		$this->assertNotEmpty( $definition['fields'] );
 
-		$source_fields = Sdc_Schema::fields( 'hero' );
+		$source_fields = Sdcpb_Schema::fields( 'hero' );
 		$this->assertCount( count( $source_fields ), $definition['fields'] );
 
 		foreach ( $definition['fields'] as $index => $field ) {
@@ -837,8 +836,8 @@ class AdminTest extends Sdc_TestCase {
 		$type = $this->fresh_type( 'hero-copy' );
 
 		$_POST = array(
-			'sdc_source' => 'hero',
-			'sdc_type'   => $type,
+			'sdcpb_source' => 'hero',
+			'sdcpb_type'   => $type,
 		);
 
 		$this->assertTrue( $this->invoke( 'duplicate' ) );
@@ -847,7 +846,7 @@ class AdminTest extends Sdc_TestCase {
 		$result = $this->invoke( 'duplicate' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_type_exists', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_type_exists', $result->get_error_code() );
 	}
 
 	/**
@@ -855,27 +854,27 @@ class AdminTest extends Sdc_TestCase {
 	 */
 	public function test_duplicate_refuses_an_unknown_source() {
 		$_POST = array(
-			'sdc_source' => 'nope',
-			'sdc_type'   => $this->fresh_type( 'nope-copy' ),
+			'sdcpb_source' => 'nope',
+			'sdcpb_type'   => $this->fresh_type( 'nope-copy' ),
 		);
 
 		$result = $this->invoke( 'duplicate' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_unknown_source', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_unknown_source', $result->get_error_code() );
 	}
 
 	/**
 	 * A component shipped with the plugin is not the screen's to delete.
 	 */
 	public function test_delete_refuses_a_component_outside_the_write_dir() {
-		$_POST = array( 'sdc_type' => 'hero' );
+		$_POST = array( 'sdcpb_type' => 'hero' );
 
 		$result = $this->invoke( 'delete' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_not_owned', $result->get_error_code() );
-		$this->assertFileExists( Sdc_Schema::dir() . 'hero/definition.json' );
+		$this->assertSame( 'sdcpb_not_owned', $result->get_error_code() );
+		$this->assertFileExists( Sdcpb_Schema::dir() . 'hero/definition.json' );
 	}
 
 	/**
@@ -885,9 +884,9 @@ class AdminTest extends Sdc_TestCase {
 		$type = $this->fresh_type( 'callout' );
 
 		$_POST = array(
-			'sdc_type'   => $type,
-			'sdc_label'  => 'Callout',
-			'sdc_fields' => '',
+			'sdcpb_type'   => $type,
+			'sdcpb_label'  => 'Callout',
+			'sdcpb_fields' => '',
 		);
 
 		$this->assertTrue( $this->invoke( 'create' ) );
@@ -898,7 +897,7 @@ class AdminTest extends Sdc_TestCase {
 		// A write that died before its rename leaves this behind.
 		$this->assertTrue( (bool) file_put_contents( $this->dir . '/' . $type . '/definition.json.tmp', '{' ) );
 
-		$_POST = array( 'sdc_type' => $type );
+		$_POST = array( 'sdcpb_type' => $type );
 
 		$this->assertTrue( $this->invoke( 'delete' ) );
 
@@ -910,12 +909,12 @@ class AdminTest extends Sdc_TestCase {
 	 * An unknown component cannot be deleted.
 	 */
 	public function test_delete_refuses_an_unknown_component() {
-		$_POST = array( 'sdc_type' => 'nope' );
+		$_POST = array( 'sdcpb_type' => 'nope' );
 
 		$result = $this->invoke( 'delete' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_unknown_component', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_unknown_component', $result->get_error_code() );
 	}
 
 	// Editing an existing component.
@@ -932,11 +931,11 @@ class AdminTest extends Sdc_TestCase {
 		$file = $this->create_component( $type );
 
 		$_POST = array(
-			'sdc_type'        => $type,
-			'sdc_label'       => 'Hinweis neu',
-			'sdc_description' => 'Neue Beschreibung.',
-			'sdc_icon'        => 'info',
-			'sdc_fields'      => '[{"name":"text","type":"textarea","label":"Text"},{"name":"source","type":"text","label":"Quelle"}]',
+			'sdcpb_type'        => $type,
+			'sdcpb_label'       => 'Hinweis neu',
+			'sdcpb_description' => 'Neue Beschreibung.',
+			'sdcpb_icon'        => 'info',
+			'sdcpb_fields'      => '[{"name":"text","type":"textarea","label":"Text"},{"name":"source","type":"text","label":"Quelle"}]',
 		);
 
 		$this->assertTrue( $this->invoke( 'update' ) );
@@ -944,10 +943,10 @@ class AdminTest extends Sdc_TestCase {
 		$definition = json_decode( (string) file_get_contents( $file ), true );
 
 		$this->assertIsArray( $definition, 'Die Datei ist nach dem Speichern gültiges JSON.' );
-		$this->assertSame( 'group_sdc_component_' . $type, $definition['key'], 'Der Gruppen-Key bleibt.' );
+		$this->assertSame( 'group_sdcpb_component_' . $type, $definition['key'], 'Der Gruppen-Key bleibt.' );
 		$this->assertSame( 'Hinweis neu', $definition['title'] );
-		$this->assertSame( 'Neue Beschreibung.', $definition['sdc_description'] );
-		$this->assertSame( 'info', $definition['sdc_icon'] );
+		$this->assertSame( 'Neue Beschreibung.', $definition['sdcpb_description'] );
+		$this->assertSame( 'info', $definition['sdcpb_icon'] );
 		$this->assertSame( 'field_sdc_' . $type . '_source', $definition['fields'][1]['key'] );
 		$this->assertCount( 1, glob( $this->dir . '/' . $type . '/definition.json*' ), 'Nur eine Datei im Ordner.' );
 		$this->assertFileDoesNotExist( $file . '.tmp', 'Kein .tmp-Rest nach dem Speichern.' );
@@ -967,15 +966,15 @@ class AdminTest extends Sdc_TestCase {
 		$base                    = json_decode( (string) file_get_contents( $file ), true );
 		$base['menu_order']      = 7;
 		$base['position']        = 'side';
-		$base['sdc_version']     = 3;
+		$base['sdcpb_version']   = 3;
 		$base['custom_property'] = 'bleibt';
 		$this->assertNotFalse( file_put_contents( $file, (string) wp_json_encode( $base ) ) );
 		$this->reload();
 
 		$_POST = array(
-			'sdc_type'   => $type,
-			'sdc_label'  => 'Anders',
-			'sdc_fields' => '',
+			'sdcpb_type'   => $type,
+			'sdcpb_label'  => 'Anders',
+			'sdcpb_fields' => '',
 		);
 
 		$this->assertTrue( $this->invoke( 'update' ) );
@@ -984,7 +983,7 @@ class AdminTest extends Sdc_TestCase {
 
 		$this->assertSame( 7, $definition['menu_order'] );
 		$this->assertSame( 'side', $definition['position'] );
-		$this->assertSame( 3, $definition['sdc_version'] );
+		$this->assertSame( 3, $definition['sdcpb_version'] );
 		$this->assertSame( 'bleibt', (string) $definition['custom_property'] );
 		$this->assertSame( 'Anders', $definition['title'] );
 	}
@@ -1009,9 +1008,9 @@ class AdminTest extends Sdc_TestCase {
 
 		// Same name, different label.
 		$_POST = array(
-			'sdc_type'   => $type,
-			'sdc_label'  => 'Callout',
-			'sdc_fields' => '[{"name":"text","type":"text","label":"Andere Beschriftung"}]',
+			'sdcpb_type'   => $type,
+			'sdcpb_label'  => 'Callout',
+			'sdcpb_fields' => '[{"name":"text","type":"text","label":"Andere Beschriftung"}]',
 		);
 
 		$this->assertTrue( $this->invoke( 'update' ) );
@@ -1048,9 +1047,9 @@ class AdminTest extends Sdc_TestCase {
 		$this->reload();
 
 		$_POST = array(
-			'sdc_type'   => $type,
-			'sdc_label'  => 'Callout',
-			'sdc_fields' => '[{"name":"text","type":"text","label":"Neue Beschriftung"},{"name":"list","type":"group","sub_fields":[{"name":"item","type":"text"}]}]',
+			'sdcpb_type'   => $type,
+			'sdcpb_label'  => 'Callout',
+			'sdcpb_fields' => '[{"name":"text","type":"text","label":"Neue Beschriftung"},{"name":"list","type":"group","sub_fields":[{"name":"item","type":"text"}]}]',
 		);
 
 		$this->assertTrue( $this->invoke( 'update' ) );
@@ -1081,20 +1080,20 @@ class AdminTest extends Sdc_TestCase {
 		$before = (string) file_get_contents( $file );
 
 		$_POST = array(
-			'sdc_type'   => $type,
-			'sdc_label'  => 'Callout',
-			'sdc_fields' => '[{"name":"text","type":"text","label":"Text"}]',
+			'sdcpb_type'   => $type,
+			'sdcpb_label'  => 'Callout',
+			'sdcpb_fields' => '[{"name":"text","type":"text","label":"Text"}]',
 		);
 
 		$result = $this->invoke( 'update' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_fields_removed', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_fields_removed', $result->get_error_code() );
 		$this->assertStringContainsString( 'source', $result->get_error_message() );
 		$this->assertSame( $before, (string) file_get_contents( $file ), 'Die Datei bleibt unverändert.' );
 
 		// With the checkbox the same edit goes through.
-		$_POST['sdc_confirm_fields'] = '1';
+		$_POST['sdcpb_confirm_fields'] = '1';
 
 		$this->assertTrue( $this->invoke( 'update' ) );
 
@@ -1118,15 +1117,15 @@ class AdminTest extends Sdc_TestCase {
 		);
 
 		$_POST = array(
-			'sdc_type'   => $type,
-			'sdc_label'  => 'Callout',
-			'sdc_fields' => '[{"name":"items","type":"group","label":"Einträge","sub_fields":[{"name":"q","type":"text","label":"Frage"}]}]',
+			'sdcpb_type'   => $type,
+			'sdcpb_label'  => 'Callout',
+			'sdcpb_fields' => '[{"name":"items","type":"group","label":"Einträge","sub_fields":[{"name":"q","type":"text","label":"Frage"}]}]',
 		);
 
 		$result = $this->invoke( 'update' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_fields_removed', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_fields_removed', $result->get_error_code() );
 		$this->assertStringContainsString( 'a', $result->get_error_message() );
 	}
 
@@ -1138,9 +1137,9 @@ class AdminTest extends Sdc_TestCase {
 		$file = $this->create_component( $type, '[{"name":"text","type":"text","label":"Text"}]' );
 
 		$_POST = array(
-			'sdc_type'   => $type,
-			'sdc_label'  => 'Callout',
-			'sdc_fields' => '[{"name":"text","type":"text","label":"Text"},{"name":"extra","type":"text","label":"Zusatz"}]',
+			'sdcpb_type'   => $type,
+			'sdcpb_label'  => 'Callout',
+			'sdcpb_fields' => '[{"name":"text","type":"text","label":"Text"},{"name":"extra","type":"text","label":"Zusatz"}]',
 		);
 
 		$this->assertTrue( $this->invoke( 'update' ) );
@@ -1157,19 +1156,19 @@ class AdminTest extends Sdc_TestCase {
 	 * overwrite the edit, so those are duplicable, not editable.
 	 */
 	public function test_update_refuses_a_component_outside_the_write_dir() {
-		$before = (string) file_get_contents( Sdc_Schema::dir() . 'hero/definition.json' );
+		$before = (string) file_get_contents( Sdcpb_Schema::dir() . 'hero/definition.json' );
 
 		$_POST = array(
-			'sdc_type'   => 'hero',
-			'sdc_label'  => 'Umgebaut',
-			'sdc_fields' => '',
+			'sdcpb_type'   => 'hero',
+			'sdcpb_label'  => 'Umgebaut',
+			'sdcpb_fields' => '',
 		);
 
 		$result = $this->invoke( 'update' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_outside_write_dir', $result->get_error_code() );
-		$this->assertSame( $before, (string) file_get_contents( Sdc_Schema::dir() . 'hero/definition.json' ), 'Die Plugin-Datei bleibt unverändert.' );
+		$this->assertSame( 'sdcpb_outside_write_dir', $result->get_error_code() );
+		$this->assertSame( $before, (string) file_get_contents( Sdcpb_Schema::dir() . 'hero/definition.json' ), 'Die Plugin-Datei bleibt unverändert.' );
 	}
 
 	/**
@@ -1177,15 +1176,15 @@ class AdminTest extends Sdc_TestCase {
 	 */
 	public function test_update_refuses_an_unknown_type() {
 		$_POST = array(
-			'sdc_type'   => $this->fresh_type( 'nope' ),
-			'sdc_label'  => 'Nichts',
-			'sdc_fields' => '',
+			'sdcpb_type'   => $this->fresh_type( 'nope' ),
+			'sdcpb_label'  => 'Nichts',
+			'sdcpb_fields' => '',
 		);
 
 		$result = $this->invoke( 'update' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_unknown_type', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_unknown_type', $result->get_error_code() );
 	}
 
 	/**
@@ -1197,24 +1196,24 @@ class AdminTest extends Sdc_TestCase {
 		$before = (string) file_get_contents( $file );
 
 		$_POST = array(
-			'sdc_type'   => $type,
-			'sdc_label'  => '',
-			'sdc_fields' => '',
+			'sdcpb_type'   => $type,
+			'sdcpb_label'  => '',
+			'sdcpb_fields' => '',
 		);
 
 		$result = $this->invoke( 'update' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_no_label', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_no_label', $result->get_error_code() );
 		$this->assertSame( $before, (string) file_get_contents( $file ) );
 
-		$_POST['sdc_label']  = 'Callout';
-		$_POST['sdc_fields'] = '[{"name":';
+		$_POST['sdcpb_label']  = 'Callout';
+		$_POST['sdcpb_fields'] = '[{"name":';
 
 		$result = $this->invoke( 'update' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_fields_json', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_fields_json', $result->get_error_code() );
 		$this->assertSame( $before, (string) file_get_contents( $file ) );
 	}
 
@@ -1239,11 +1238,11 @@ class AdminTest extends Sdc_TestCase {
 		$typed = '[{"name":"text","type":"textarea","label":"Neuer Text"}]';
 
 		$_POST = array(
-			'sdc_type'        => $type,
-			'sdc_label'       => 'Getippter Name',
-			'sdc_description' => 'Getippte Beschreibung',
-			'sdc_icon'        => 'info',
-			'sdc_fields'      => $typed,
+			'sdcpb_type'        => $type,
+			'sdcpb_label'       => 'Getippter Name',
+			'sdcpb_description' => 'Getippte Beschreibung',
+			'sdcpb_icon'        => 'info',
+			'sdcpb_fields'      => $typed,
 		);
 
 		$this->assertWPError( $this->invoke( 'update' ) );
@@ -1258,26 +1257,26 @@ class AdminTest extends Sdc_TestCase {
 
 		// What the form reads on the next request — under its own token.
 		$token = 'testtoken123';
-		set_transient( 'sdc_pb_draft_' . $token, $draft, 60 );
-		$_GET['sdc_detail'] = $token;
+		set_transient( 'sdcpb_draft_' . $token, $draft, 60 );
+		$_GET['sdcpb_detail'] = $token;
 
 		$read = $this->invoke( 'take_draft', $type );
 
-		unset( $_GET['sdc_detail'] );
-		delete_transient( 'sdc_pb_draft_' . $token );
+		unset( $_GET['sdcpb_detail'] );
+		delete_transient( 'sdcpb_draft_' . $token );
 
 		$this->assertIsArray( $read, 'Der Entwurf liegt bereit.' );
 		$this->assertSame( $typed, $read['fields'] );
 		$this->assertSame( 'Getippter Name', $read['label'] );
 
 		// A draft of another component is not applied to this one.
-		set_transient( 'sdc_pb_draft_' . $token, $draft, 60 );
-		$_GET['sdc_detail'] = $token;
+		set_transient( 'sdcpb_draft_' . $token, $draft, 60 );
+		$_GET['sdcpb_detail'] = $token;
 
 		$this->assertNull( $this->invoke( 'take_draft', $type . '-anders' ) );
 
-		unset( $_GET['sdc_detail'] );
-		delete_transient( 'sdc_pb_draft_' . $token );
+		unset( $_GET['sdcpb_detail'] );
+		delete_transient( 'sdcpb_draft_' . $token );
 	}
 
 	/**
@@ -1313,10 +1312,10 @@ class AdminTest extends Sdc_TestCase {
 	public function test_a_saved_edit_returns_to_its_form() {
 		$type = $this->fresh_type( 'teaser' );
 
-		$_POST = array( 'sdc_type' => $type );
+		$_POST = array( 'sdcpb_type' => $type );
 
 		$this->assertSame(
-			array( 'sdc_edit' => $type ),
+			array( 'sdcpb_edit' => $type ),
 			$this->invoke( 'success_args', 'update' ),
 			'Nach dem Speichern bleibt man in der Komponente.'
 		);
@@ -1329,7 +1328,7 @@ class AdminTest extends Sdc_TestCase {
 	 * deleted component — so a form target would be a detour.
 	 */
 	public function test_other_tasks_return_to_the_catalog() {
-		$_POST = array( 'sdc_type' => 'teaser' );
+		$_POST = array( 'sdcpb_type' => 'teaser' );
 
 		foreach ( array( 'create', 'duplicate', 'delete', 'import' ) as $task ) {
 			$this->assertSame( array(), $this->invoke( 'success_args', $task ), $task );
@@ -1344,7 +1343,7 @@ class AdminTest extends Sdc_TestCase {
 	 * an edit screen refusing to render.
 	 */
 	public function test_a_saved_edit_without_a_type_returns_to_the_catalog() {
-		$_POST = array( 'sdc_type' => '' );
+		$_POST = array( 'sdcpb_type' => '' );
 
 		$this->assertSame( array(), $this->invoke( 'success_args', 'update' ) );
 	}
@@ -1360,9 +1359,9 @@ class AdminTest extends Sdc_TestCase {
 	 */
 	private function create_component( $type, $fields = '' ) {
 		$_POST = array(
-			'sdc_type'   => $type,
-			'sdc_label'  => 'Callout',
-			'sdc_fields' => $fields,
+			'sdcpb_type'   => $type,
+			'sdcpb_label'  => 'Callout',
+			'sdcpb_fields' => $fields,
 		);
 
 		$this->assertTrue( $this->invoke( 'create' ) );
@@ -1394,7 +1393,7 @@ class AdminTest extends Sdc_TestCase {
 	 */
 	private function credit_html() {
 		ob_start();
-		Sdc_Admin::credit();
+		Sdcpb_Admin::credit();
 
 		return (string) ob_get_clean();
 	}
@@ -1410,10 +1409,10 @@ class AdminTest extends Sdc_TestCase {
 	public function test_credit_names_the_author_and_links_both_targets() {
 		$html = $this->credit_html();
 
-		$this->assertStringContainsString( 'href="' . Sdc_Admin::AUTHOR_URL . '"', $html );
-		$this->assertStringContainsString( esc_html( Sdc_Admin::AUTHOR_NAME ), $html );
-		$this->assertStringContainsString( esc_html( Sdc_Admin::AUTHOR_HOST ), $html );
-		$this->assertStringContainsString( 'href="' . Sdc_Admin::COFFEE_URL . '"', $html );
+		$this->assertStringContainsString( 'href="' . Sdcpb_Admin::AUTHOR_URL . '"', $html );
+		$this->assertStringContainsString( esc_html( Sdcpb_Admin::AUTHOR_NAME ), $html );
+		$this->assertStringContainsString( esc_html( Sdcpb_Admin::AUTHOR_HOST ), $html );
+		$this->assertStringContainsString( 'href="' . Sdcpb_Admin::COFFEE_URL . '"', $html );
 		$this->assertStringContainsString( esc_html__( 'Spendier mir einen Kaffee', 'sdc-page-builder' ), $html );
 	}
 
@@ -1456,9 +1455,9 @@ class AdminTest extends Sdc_TestCase {
 	 * and removing it must not leave an empty bordered box behind.
 	 */
 	public function test_credit_can_be_switched_off_completely() {
-		add_filter( 'sdc_pb_credit', '__return_empty_string' );
+		add_filter( 'sdcpb_credit', '__return_empty_string' );
 		$html = $this->credit_html();
-		remove_filter( 'sdc_pb_credit', '__return_empty_string' );
+		remove_filter( 'sdcpb_credit', '__return_empty_string' );
 
 		$this->assertSame( '', $html );
 	}
@@ -1470,22 +1469,22 @@ class AdminTest extends Sdc_TestCase {
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
 
 		ob_start();
-		Sdc_Admin::render();
+		Sdcpb_Admin::render();
 		$html = (string) ob_get_clean();
 
 		$this->assertStringContainsString( 'class="sdc-credit"', $html );
-		$this->assertStringContainsString( 'href="' . Sdc_Admin::COFFEE_URL . '"', $html );
+		$this->assertStringContainsString( 'href="' . Sdcpb_Admin::COFFEE_URL . '"', $html );
 	}
 
 	/**
-	 * Call a private static method of Sdc_Admin.
+	 * Call a private static method of Sdcpb_Admin.
 	 *
 	 * @param string $method Method name.
 	 * @param mixed  ...$args Arguments for the method.
 	 * @return mixed
 	 */
 	private function invoke( $method, ...$args ) {
-		$reflection = new ReflectionMethod( 'Sdc_Admin', $method );
+		$reflection = new ReflectionMethod( 'Sdcpb_Admin', $method );
 		$reflection->setAccessible( true );
 
 		return $reflection->invoke( null, ...$args );
@@ -1509,7 +1508,7 @@ class AdminTest extends Sdc_TestCase {
 	 * this suite just deleted would otherwise leak into the next test.
 	 */
 	private function reload_host() {
-		Sdc_Schema::flush();
+		Sdcpb_Schema::flush();
 
 		if ( function_exists( 'acf_get_store' ) ) {
 			foreach ( array( 'field-groups', 'fields' ) as $store ) {
@@ -1523,8 +1522,8 @@ class AdminTest extends Sdc_TestCase {
 		// The hook name comes from the host and cannot be renamed.
 		do_action( 'acf/include_fields' ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Hook defined by ACF/SCF.
 
-		Sdc_Schema::flush();
-		delete_transient( Sdc_Admin::INSTANCE_TRANSIENT );
+		Sdcpb_Schema::flush();
+		delete_transient( Sdcpb_Admin::INSTANCE_TRANSIENT );
 	}
 
 	/**

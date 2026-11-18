@@ -8,7 +8,7 @@
  * taken back over with one button.
  *
  * The type catalog (which types exist, which options each has) is not in this
- * file. It comes from `SDC_FIELD_EDITOR.types`, filled by `Sdc_Field_Editor`:
+ * file. It comes from `SDCPB_FIELD_EDITOR.types`, filled by `Sdcpb_Field_Editor`:
  * one list in PHP, so the picker and the accepted properties cannot drift.
  *
  * @package SdcPageBuilder
@@ -16,7 +16,7 @@
 ( function () {
 	'use strict';
 
-	var config = window.SDC_FIELD_EDITOR;
+	var config = window.SDCPB_FIELD_EDITOR;
 
 	if ( ! config || ! config.types ) {
 		return;
@@ -346,7 +346,7 @@
 		this.list = root.querySelector( '[data-sdc-fe-list]' );
 		this.emptyHint = root.querySelector( '[data-sdc-fe-empty]' );
 		this.errorBox = root.querySelector( '[data-sdc-fe-error]' );
-		this.textarea = root.querySelector( '#sdc_fields' );
+		this.textarea = root.querySelector( '#sdcpb_fields' );
 		this.applyButton = root.querySelector( '[data-sdc-fe-apply]' );
 
 		var picker = root.querySelector( '.sdc-fe__add' );

@@ -6,13 +6,13 @@
  */
 
 /**
- * Covers `Sdc_View_Editor`: the markup a user sees, and the three answers it
+ * Covers `Sdcpb_View_Editor`: the markup a user sees, and the three answers it
  * gives the save path — is this body valid, should anything be written at all,
  * and what exactly. The distinction that matters most is between "the form did
  * not carry a view" and "the form carried an empty view": the first must leave
  * an existing `render.php` alone, the second removes it.
  */
-class ViewEditorTest extends Sdc_TestCase {
+class ViewEditorTest extends Sdcpb_TestCase {
 
 	/**
 	 * Scratch root for the current test.
@@ -35,20 +35,20 @@ class ViewEditorTest extends Sdc_TestCase {
 		parent::set_up();
 
 		$this->root = untrailingslashit( get_temp_dir() ) . '/sdc-ve-' . wp_generate_password( 8, false );
-		$this->dir  = $this->root . '/' . Sdc_Schema::USER_DIR;
+		$this->dir  = $this->root . '/' . Sdcpb_Schema::USER_DIR;
 
 		$this->assertTrue( wp_mkdir_p( $this->dir ) );
 
 		$dir = $this->dir;
 
 		add_filter(
-			'sdc_pb_write_dir',
+			'sdcpb_write_dir',
 			static function () use ( $dir ) {
 				return $dir;
 			}
 		);
 		add_filter(
-			'sdc_pb_component_dirs',
+			'sdcpb_component_dirs',
 			static function () use ( $dir ) {
 				return array( $dir );
 			}
@@ -65,9 +65,9 @@ class ViewEditorTest extends Sdc_TestCase {
 	public function tear_down() {
 		$_POST = array();
 
-		remove_all_filters( 'sdc_pb_write_dir' );
-		remove_all_filters( 'sdc_pb_component_dirs' );
-		remove_all_filters( 'sdc_pb_can_edit_view' );
+		remove_all_filters( 'sdcpb_write_dir' );
+		remove_all_filters( 'sdcpb_component_dirs' );
+		remove_all_filters( 'sdcpb_can_edit_view' );
 
 		$this->remove_tree( $this->root );
 
@@ -86,8 +86,8 @@ class ViewEditorTest extends Sdc_TestCase {
 	public function test_the_panel_shows_a_textarea() {
 		$html = $this->panel( 'hero', array() );
 
-		$this->assertStringContainsString( 'name="sdc_view_body"', $html );
-		$this->assertStringContainsString( 'id="sdc_view_body"', $html );
+		$this->assertStringContainsString( 'name="sdcpb_view_body"', $html );
+		$this->assertStringContainsString( 'id="sdcpb_view_body"', $html );
 		$this->assertStringContainsString( 'Ansicht', $html );
 	}
 
@@ -112,13 +112,13 @@ class ViewEditorTest extends Sdc_TestCase {
 	 */
 	public function test_a_generated_view_opens_the_view_tab() {
 		$_POST = array(
-			'sdc_type'          => 'hero',
-			'sdc_generate_view' => '1',
+			'sdcpb_type'          => 'hero',
+			'sdcpb_generate_view' => '1',
 		);
 
 		$args = $this->invoke( 'success_args', 'update' );
 
-		$this->assertSame( 'view', $args['sdc_tab'] );
+		$this->assertSame( 'view', $args['sdcpb_tab'] );
 	}
 
 	/**
@@ -126,13 +126,13 @@ class ViewEditorTest extends Sdc_TestCase {
 	 */
 	public function test_a_scaffolded_stylesheet_opens_the_styles_tab() {
 		$_POST = array(
-			'sdc_type'         => 'hero',
-			'sdc_css_scaffold' => '1',
+			'sdcpb_type'         => 'hero',
+			'sdcpb_css_scaffold' => '1',
 		);
 
 		$args = $this->invoke( 'success_args', 'update' );
 
-		$this->assertSame( 'styles', $args['sdc_tab'] );
+		$this->assertSame( 'styles', $args['sdcpb_tab'] );
 	}
 
 	/**
@@ -140,11 +140,11 @@ class ViewEditorTest extends Sdc_TestCase {
 	 * the panel and saving would blank a view nobody touched.
 	 */
 	public function test_the_panel_shows_the_stored_body() {
-		$this->write_view( 'hero', '<p><?php sdc_text( \'heading\' ); ?></p>' );
+		$this->write_view( 'hero', '<p><?php sdcpb_text( \'heading\' ); ?></p>' );
 
 		$html = $this->panel( 'hero', array() );
 
-		$this->assertStringContainsString( 'sdc_text( &#039;heading&#039; )', $html );
+		$this->assertStringContainsString( 'sdcpb_text( &#039;heading&#039; )', $html );
 	}
 
 	/**
@@ -154,7 +154,7 @@ class ViewEditorTest extends Sdc_TestCase {
 	public function test_the_panel_lists_the_helpers() {
 		$html = $this->panel( 'hero', array() );
 
-		foreach ( Sdc_View::helpers() as $helper ) {
+		foreach ( Sdcpb_View::helpers() as $helper ) {
 			$this->assertStringContainsString( esc_html( $helper['signature'] ), $html );
 		}
 	}
@@ -166,8 +166,8 @@ class ViewEditorTest extends Sdc_TestCase {
 		$without = $this->panel( 'hero', array() );
 		$with    = $this->panel( 'hero', $this->text_fields() );
 
-		$this->assertStringNotContainsString( 'sdc_generate_view', $without );
-		$this->assertStringContainsString( 'sdc_generate_view', $with );
+		$this->assertStringNotContainsString( 'sdcpb_generate_view', $without );
+		$this->assertStringContainsString( 'sdcpb_generate_view', $with );
 	}
 
 	/**
@@ -176,7 +176,7 @@ class ViewEditorTest extends Sdc_TestCase {
 	 * cannot use.
 	 */
 	public function test_the_panel_is_absent_without_the_capability() {
-		add_filter( 'sdc_pb_can_edit_view', '__return_false' );
+		add_filter( 'sdcpb_can_edit_view', '__return_false' );
 
 		$this->assertSame( '', $this->panel( 'hero', $this->text_fields() ) );
 	}
@@ -191,14 +191,14 @@ class ViewEditorTest extends Sdc_TestCase {
 	 * What the user typed is what lands in the file.
 	 */
 	public function test_save_writes_the_posted_body() {
-		$_POST = array( Sdc_View_Editor::FIELD => '<b><?php sdc_text( \'heading\' ); ?></b>' );
+		$_POST = array( Sdcpb_View_Editor::FIELD => '<b><?php sdcpb_text( \'heading\' ); ?></b>' );
 
-		$this->assertTrue( Sdc_View_Editor::save( $this->dir, 'hero', $this->text_fields() ) );
+		$this->assertTrue( Sdcpb_View_Editor::save( $this->dir, 'hero', $this->text_fields() ) );
 
-		$file = Sdc_View::file( $this->dir, 'hero' );
+		$file = Sdcpb_View::file( $this->dir, 'hero' );
 
 		$this->assertFileExists( $file );
-		$this->assertStringContainsString( 'sdc_text( \'heading\' );', $this->body_of( $file ) );
+		$this->assertStringContainsString( 'sdcpb_text( \'heading\' );', $this->body_of( $file ) );
 	}
 
 	/**
@@ -207,10 +207,10 @@ class ViewEditorTest extends Sdc_TestCase {
 	public function test_an_empty_body_removes_the_view() {
 		$this->write_view( 'hero', '<p>alt</p>' );
 
-		$_POST = array( Sdc_View_Editor::FIELD => '' );
+		$_POST = array( Sdcpb_View_Editor::FIELD => '' );
 
-		$this->assertTrue( Sdc_View_Editor::save( $this->dir, 'hero', $this->text_fields() ) );
-		$this->assertFileDoesNotExist( Sdc_View::file( $this->dir, 'hero' ) );
+		$this->assertTrue( Sdcpb_View_Editor::save( $this->dir, 'hero', $this->text_fields() ) );
+		$this->assertFileDoesNotExist( Sdcpb_View::file( $this->dir, 'hero' ) );
 	}
 
 	/**
@@ -223,22 +223,22 @@ class ViewEditorTest extends Sdc_TestCase {
 	public function test_a_missing_field_leaves_the_view_alone() {
 		$this->write_view( 'hero', '<p>bleibt</p>' );
 
-		$_POST = array( 'sdc_label' => 'Held' );
+		$_POST = array( 'sdcpb_label' => 'Held' );
 
-		$this->assertTrue( Sdc_View_Editor::save( $this->dir, 'hero', $this->text_fields() ) );
-		$this->assertStringContainsString( '<p>bleibt</p>', $this->body_of( Sdc_View::file( $this->dir, 'hero' ) ) );
+		$this->assertTrue( Sdcpb_View_Editor::save( $this->dir, 'hero', $this->text_fields() ) );
+		$this->assertStringContainsString( '<p>bleibt</p>', $this->body_of( Sdcpb_View::file( $this->dir, 'hero' ) ) );
 	}
 
 	/**
 	 * A syntax error is refused and nothing is written.
 	 */
 	public function test_a_syntax_error_is_reported() {
-		$_POST = array( Sdc_View_Editor::FIELD => '<?php if ( ?>' );
+		$_POST = array( Sdcpb_View_Editor::FIELD => '<?php if ( ?>' );
 
-		$result = Sdc_View_Editor::validate( 'hero', $this->text_fields() );
+		$result = Sdcpb_View_Editor::validate( 'hero', $this->text_fields() );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_view_syntax', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_view_syntax', $result->get_error_code() );
 	}
 
 	/**
@@ -246,16 +246,16 @@ class ViewEditorTest extends Sdc_TestCase {
 	 */
 	public function test_the_generate_button_builds_the_body_from_fields() {
 		$_POST = array(
-			Sdc_View_Editor::FIELD    => '<p>wird ersetzt</p>',
-			Sdc_View_Editor::GENERATE => '1',
+			Sdcpb_View_Editor::FIELD    => '<p>wird ersetzt</p>',
+			Sdcpb_View_Editor::GENERATE => '1',
 		);
 
-		$this->assertTrue( Sdc_View_Editor::save( $this->dir, 'hero', $this->text_fields() ) );
+		$this->assertTrue( Sdcpb_View_Editor::save( $this->dir, 'hero', $this->text_fields() ) );
 
-		$body = $this->body_of( Sdc_View::file( $this->dir, 'hero' ) );
+		$body = $this->body_of( Sdcpb_View::file( $this->dir, 'hero' ) );
 
 		$this->assertStringNotContainsString( 'wird ersetzt', $body );
-		$this->assertStringContainsString( 'sdc_text( \'heading\' )', $body );
+		$this->assertStringContainsString( 'sdcpb_text( \'heading\' )', $body );
 	}
 
 	/**
@@ -264,11 +264,11 @@ class ViewEditorTest extends Sdc_TestCase {
 	 */
 	public function test_generate_ignores_the_textarea() {
 		$_POST = array(
-			Sdc_View_Editor::FIELD    => 'nicht verwenden',
-			Sdc_View_Editor::GENERATE => '1',
+			Sdcpb_View_Editor::FIELD    => 'nicht verwenden',
+			Sdcpb_View_Editor::GENERATE => '1',
 		);
 
-		$body = Sdc_View_Editor::posted_body( 'hero', $this->text_fields() );
+		$body = Sdcpb_View_Editor::posted_body( 'hero', $this->text_fields() );
 
 		$this->assertStringNotContainsString( 'nicht verwenden', $body );
 	}
@@ -289,10 +289,10 @@ class ViewEditorTest extends Sdc_TestCase {
 		$type = 've-' . strtolower( wp_generate_password( 6, false ) );
 
 		$_POST = array(
-			'sdc_type'      => $type,
-			'sdc_label'     => 'Panel',
-			'sdc_fields'    => wp_json_encode( $this->text_fields() ),
-			'sdc_view_body' => '<article><?php sdc_text( \'heading\' ); ?></article>',
+			'sdcpb_type'      => $type,
+			'sdcpb_label'     => 'Panel',
+			'sdcpb_fields'    => wp_json_encode( $this->text_fields() ),
+			'sdcpb_view_body' => '<article><?php sdcpb_text( \'heading\' ); ?></article>',
 		);
 
 		$this->assertTrue( $this->invoke( 'create' ) );
@@ -312,10 +312,10 @@ class ViewEditorTest extends Sdc_TestCase {
 		$type = 've-' . strtolower( wp_generate_password( 6, false ) );
 
 		$_POST = array(
-			'sdc_type'      => $type,
-			'sdc_label'     => 'Panel',
-			'sdc_fields'    => wp_json_encode( $this->text_fields() ),
-			'sdc_view_body' => '<?php if ( ?>',
+			'sdcpb_type'      => $type,
+			'sdcpb_label'     => 'Panel',
+			'sdcpb_fields'    => wp_json_encode( $this->text_fields() ),
+			'sdcpb_view_body' => '<?php if ( ?>',
 		);
 
 		$result = $this->invoke( 'create' );
@@ -347,20 +347,20 @@ class ViewEditorTest extends Sdc_TestCase {
 		$type = $this->fresh_type( 'held' );
 
 		$this->write_definition( $type, $this->text_fields() );
-		$this->write_view( $type, '<article><?php sdc_text( \'heading\' ); ?></article>' );
+		$this->write_view( $type, '<article><?php sdcpb_text( \'heading\' ); ?></article>' );
 		$this->reload_schema();
 
 		$html = $this->edit_form( $type );
 
-		$this->assertStringContainsString( 'name="sdc_view_body"', $html );
-		$this->assertStringContainsString( 'sdc_generate_view', $html );
-		$this->assertStringContainsString( 'sdc_text( &#039;heading&#039; )', $html );
+		$this->assertStringContainsString( 'name="sdcpb_view_body"', $html );
+		$this->assertStringContainsString( 'sdcpb_generate_view', $html );
+		$this->assertStringContainsString( 'sdcpb_text( &#039;heading&#039; )', $html );
 
 		// The panel sits inside the form and before its end: a form that
 		// stops early has no save button, which is how the TypeError showed.
 		$this->assertStringContainsString( '</form>', $html );
 		$this->assertStringContainsString( 'Komponente speichern', $html );
-		$this->assertLessThan( strpos( $html, '</form>' ), strpos( $html, 'sdc_view_body' ) );
+		$this->assertLessThan( strpos( $html, '</form>' ), strpos( $html, 'sdcpb_view_body' ) );
 	}
 
 	/**
@@ -374,8 +374,8 @@ class ViewEditorTest extends Sdc_TestCase {
 
 		$html = $this->edit_form( $type );
 
-		$this->assertStringContainsString( 'name="sdc_view_body"', $html );
-		$this->assertStringNotContainsString( 'sdc_generate_view', $html );
+		$this->assertStringContainsString( 'name="sdcpb_view_body"', $html );
+		$this->assertStringNotContainsString( 'sdcpb_generate_view', $html );
 		$this->assertStringContainsString( '</form>', $html );
 	}
 
@@ -422,7 +422,7 @@ class ViewEditorTest extends Sdc_TestCase {
 			$dir . '/definition.json',
 			(string) wp_json_encode(
 				array(
-					'key'    => Sdc_Schema::KEY_PREFIX . $type,
+					'key'    => Sdcpb_Schema::KEY_PREFIX . $type,
 					'title'  => 'Held',
 					'fields' => $fields,
 				)
@@ -434,7 +434,7 @@ class ViewEditorTest extends Sdc_TestCase {
 	 * Let the host read the component files again.
 	 */
 	private function reload_schema() {
-		Sdc_Schema::flush();
+		Sdcpb_Schema::flush();
 
 		if ( function_exists( 'acf_get_store' ) ) {
 			foreach ( array( 'field-groups', 'fields' ) as $store ) {
@@ -448,7 +448,7 @@ class ViewEditorTest extends Sdc_TestCase {
 		// The hook name comes from the host and cannot be renamed.
 		do_action( 'acf/include_fields' ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Hook defined by ACF/SCF.
 
-		Sdc_Schema::flush();
+		Sdcpb_Schema::flush();
 	}
 
 	/**
@@ -458,7 +458,7 @@ class ViewEditorTest extends Sdc_TestCase {
 	 * @return string HTML.
 	 */
 	private function edit_form( $type ) {
-		$method = new ReflectionMethod( 'Sdc_Admin', 'render_edit_form' );
+		$method = new ReflectionMethod( 'Sdcpb_Admin', 'render_edit_form' );
 		$method->setAccessible( true );
 
 		ob_start();
@@ -476,7 +476,7 @@ class ViewEditorTest extends Sdc_TestCase {
 	 */
 	private function panel( $type, array $fields ) {
 		ob_start();
-		Sdc_View_Editor::render( $type, $fields );
+		Sdcpb_View_Editor::render( $type, $fields );
 		return (string) ob_get_clean();
 	}
 
@@ -502,10 +502,10 @@ class ViewEditorTest extends Sdc_TestCase {
 	 * @param string $body Body.
 	 */
 	private function write_view( $type, $body ) {
-		$file = Sdc_View::file( $this->dir, $type );
+		$file = Sdcpb_View::file( $this->dir, $type );
 
 		$this->assertTrue( wp_mkdir_p( dirname( $file ) ) );
-		$this->assertNotFalse( file_put_contents( $file, Sdc_View::wrap( $type, $body ) ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Test fixture.
+		$this->assertNotFalse( file_put_contents( $file, Sdcpb_View::wrap( $type, $body ) ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Test fixture.
 	}
 
 	/**
@@ -515,18 +515,18 @@ class ViewEditorTest extends Sdc_TestCase {
 	 * @return string
 	 */
 	private function body_of( $file ) {
-		return Sdc_View::read( $file );
+		return Sdcpb_View::read( $file );
 	}
 
 	/**
-	 * Call a private static method of Sdc_Admin.
+	 * Call a private static method of Sdcpb_Admin.
 	 *
 	 * @param string $method Method name.
 	 * @param mixed  ...$args Arguments.
 	 * @return mixed
 	 */
 	private function invoke( $method, ...$args ) {
-		$reflection = new ReflectionMethod( 'Sdc_Admin', $method );
+		$reflection = new ReflectionMethod( 'Sdcpb_Admin', $method );
 		$reflection->setAccessible( true );
 
 		return $reflection->invoke( null, ...$args );

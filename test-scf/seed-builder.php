@@ -16,7 +16,7 @@ for ( $i = 0; $i < $count; $i++ ) {
 	$zeil = array();
 
 	for ( $r = 1; $r <= $n; $r++ ) {
-		$zeil[] = sdc_fixture_row( $slug, $r );
+		$zeil[] = sdcpb_fixture_row( $slug, $r );
 	}
 
 	$rows[] = array(
@@ -30,7 +30,7 @@ $post_id = wp_insert_post( array(
 	'post_status' => 'publish',
 	'post_type'   => 'page',
 ) );
-update_field( 'sdc_builder', $rows, $post_id );
+update_field( 'sdcpb_builder', $rows, $post_id );
 
 // Wie viele Subfeld-Werte stecken drin?
 $subfelder = array( 'faq' => 2, 'team' => 6, 'preise' => 7, 'feature' => 12 );

@@ -4,7 +4,7 @@ Tags: page builder, components, acf, custom fields, blocks
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.2.0
+Stable tag: 0.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://ko-fi.com/phoenixseo
@@ -25,8 +25,8 @@ Agencies and developers who build the same page patterns repeatedly (hero, FAQ, 
 
 = How it works =
 
-* Every component type is a field group with the key prefix `group_sdc_component_`. The plugin reads those groups from Advanced Custom Fields or Secure Custom Fields.
-* Each type becomes a block (`sdc/<type>`) whose attributes are the field values. Because the block renders on the server, the editor canvas shows the same markup a visitor gets — not a placeholder.
+* Every component type is a field group with the key prefix `group_sdcpb_component_`. The plugin reads those groups from Advanced Custom Fields or Secure Custom Fields.
+* Each type becomes a block (`sdcpb/<type>`) whose attributes are the field values. Because the block renders on the server, the editor canvas shows the same markup a visitor gets — not a placeholder.
 * The fields are edited in the block sidebar, one form per selected component. Clicking a component in the canvas selects it; the sidebar shows its fields.
 * Content lives in `post_content` as ordinary block markup, so revisions, autosaves, trash and the REST content API all work the way they do for any block.
 * Component styles are collected into one inline stylesheet in the head, versioned by content hash, so a page load costs one request fewer and aggressive HTML caching stays correct.
@@ -55,7 +55,7 @@ wp-content/themes/your-theme/sdc-components/hero/
     component.css                    styles (optional)
 ```
 
-The plugin also reads the parent theme and `wp-content/sdc-components/`, so components survive a theme switch when they live in `wp-content`. The `sdc_pb_component_dirs` filter adds other locations.
+The plugin also reads the parent theme and `wp-content/sdc-components/`, so components survive a theme switch when they live in `wp-content`. The `sdcpb_component_dirs` filter adds other locations.
 
 Do not add components to the plugin's own `schemas/` directory: it ships the `hero` and `faq` examples and is replaced on every update. It follows the same layout — `schemas/hero/definition.json`.
 
@@ -67,7 +67,7 @@ This plugin borrows the folder discipline, not the whole system. One difference 
 
 = Can I control the HTML of a component? =
 
-Yes, two ways. A `render.php` next to the component's JSON renders that component; it receives `$type`, `$data` (raw stored values) and `$component` (the document entry), and can call `Sdc_Frontend::component_fields_html( $type, $data )` to reuse the default field markup. The `sdc_pb_component_html` filter then has the last word over the finished HTML and can also drop a component by returning an empty string.
+Yes, two ways. A `render.php` next to the component's JSON renders that component; it receives `$type`, `$data` (raw stored values) and `$component` (the document entry), and can call `Sdcpb_Frontend::component_fields_html( $type, $data )` to reuse the default field markup. The `sdcpb_component_html` filter then has the last word over the finished HTML and can also drop a component by returning an empty string.
 
 Without either, the plugin renders generic markup (`div.sdc-component--<type>`, one span per field) that a theme styles with CSS.
 
@@ -88,7 +88,7 @@ No. The plugin uses ACF's field API for the field definitions. Secure Custom Fie
 
 = Where is the content stored? =
 
-In the post content, as blocks: one `<!-- wp:sdc/<type> -->` comment per component with its field values as attributes. Nothing is kept in a separate table, which is why native revisions, autosaves and the content API include it.
+In the post content, as blocks: one `<!-- wp:sdcpb/<type> -->` comment per component with its field values as attributes. Nothing is kept in a separate table, which is why native revisions, autosaves and the content API include it.
 
 = Can two components of the same type be on one page? =
 
@@ -124,10 +124,25 @@ component catalogue will be added in the next release.
 
 == Changelog ==
 
+= 0.2.1 =
+* Fixed: every declaration, option, transient, meta key, hook, block name and
+  component group key now carries the `sdcpb` prefix. Stored data from 0.2.0 is
+  moved to the new names automatically on the first request after updating —
+  documents, block delimiters and component JSON definitions — so existing pages
+  keep rendering. `wp sdc-pb rename --dry-run` shows what the move would touch.
+* Fixed: upload metadata is validated as scalar values and checked against
+  `UPLOAD_ERR_OK` before it is used, which removes a PHP 8 TypeError on a
+  malformed upload.
+* Fixed: file operations go through `wp_delete_file()` and `wp_is_writable()`
+  instead of `unlink()` and `is_writable()`.
+* Fixed: a forced component import reads its flag through `sanitize_key()`.
+* Removed: `load_plugin_textdomain()`. wordpress.org loads the text domain
+  itself, so the call only loaded the same catalogue a second time.
+
 = 0.2.0 =
 * New: the component screen carries a credit line with the author's site and a
   donation link. Sites that resell the plugin can remove it with the
-  `sdc_pb_credit` filter; it appears only on this plugin's own screen.
+  `sdcpb_credit` filter; it appears only on this plugin's own screen.
 * Fixed: converting a pre-block page to blocks could drop components. The
   conversion now adds each missing component instance instead of only flagging
   the page as converted, so a page never loses a component on its way from the

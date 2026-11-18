@@ -1,0 +1,70 @@
+{
+    "key": "group_sdcpb_component_stats",
+    "title": "Kennzahlen",
+    "sdcpb_description": "Drei bis vier Zahlen mit Beschriftung, als Definitionsliste ausgezeichnet.",
+    "sdcpb_icon": "chart-bar",
+    "sdcpb_version": 1,
+    "fields": [
+        {
+            "key": "field_sdc_stats_heading",
+            "label": "Überschrift",
+            "name": "heading",
+            "type": "text",
+            "instructions": "Optional. Für Lesegeräte ist die Überschrift die Beschriftung der Liste.",
+            "required": 0,
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_sdc_stats_items",
+            "label": "Kennzahlen",
+            "name": "items",
+            "type": "repeater",
+            "instructions": "Eine Kennzahl pro Zeile. Drei oder vier lesen sich gut, mehr wird eng.",
+            "required": 0,
+            "layout": "table",
+            "button_label": "Kennzahl hinzufügen",
+            "sub_fields": [
+                {
+                    "key": "field_sdc_stats_item_value",
+                    "label": "Wert",
+                    "name": "value",
+                    "type": "text",
+                    "instructions": "Zahl mit Einheit, zum Beispiel 12 Jahre oder 98 %.",
+                    "required": 1
+                },
+                {
+                    "key": "field_sdc_stats_item_label",
+                    "label": "Beschriftung",
+                    "name": "label",
+                    "type": "text",
+                    "required": 1
+                },
+                {
+                    "key": "field_sdc_stats_item_note",
+                    "label": "Fußnote",
+                    "name": "note",
+                    "type": "text",
+                    "instructions": "Optional. Etwa der Stand der Erhebung.",
+                    "required": 0
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "sdcpb_component",
+                "operator": "==",
+                "value": "1"
+            }
+        ]
+    ],
+    "menu_order": 50,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "active": true,
+    "description": ""
+}

@@ -1,0 +1,134 @@
+/**
+ * Testimonials: a scroll-snapping row of quote cards.
+ *
+ * `scroll-snap-type` does the work a slider library would otherwise do. The row
+ * is focusable so it can be scrolled with the arrow keys — a horizontally
+ * scrollable box that cannot be reached with the keyboard is a dead end.
+ */
+
+.sdc-testimonials {
+	--sdc-ts-card: clamp(16rem, 22rem, 24rem);
+	--sdc-ts-gap: 1rem;
+	--sdc-ts-radius: 0.75rem;
+	--sdc-ts-border: color-mix(in srgb, currentColor 15%, transparent);
+	--sdc-ts-surface: color-mix(in srgb, currentColor 4%, transparent);
+
+	margin: 0 0 2rem;
+}
+
+.sdc-testimonials__heading {
+	margin: 0 0 1.25rem;
+	font-size: clamp(1.4rem, 1.2rem + 0.8vw, 1.9rem);
+	line-height: 1.2;
+}
+
+.sdc-testimonials__row {
+	display: flex;
+	gap: var(--sdc-ts-gap);
+	overflow-x: auto;
+	overflow-y: hidden;
+	scroll-snap-type: x mandatory;
+	scroll-padding-inline: var(--sdc-ts-gap);
+	padding-block: 0.25rem;
+	padding-inline-end: var(--sdc-ts-gap);
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior-x: contain;
+}
+
+.sdc-testimonials__row:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 4px;
+	border-radius: 0.25rem;
+}
+
+/* A single card must not stretch to the full row width. */
+.sdc-testimonials__card {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 1rem;
+	flex: 0 0 min(100%, var(--sdc-ts-card));
+	scroll-snap-align: start;
+	margin: 0;
+	padding: 1.5rem;
+	border: 1px solid var(--sdc-ts-border);
+	border-radius: var(--sdc-ts-radius);
+	background: var(--sdc-ts-surface);
+}
+
+.sdc-testimonials__quote {
+	margin: 0;
+	font-size: 1.0625rem;
+	line-height: 1.6;
+}
+
+.sdc-testimonials__quote p {
+	margin: 0;
+}
+
+.sdc-testimonials__quote p::before {
+	content: "„";
+}
+
+.sdc-testimonials__quote p::after {
+	content: "“";
+}
+
+.sdc-testimonials__caption {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	font-size: 0.9375rem;
+}
+
+.sdc-testimonials__photo {
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 50%;
+	object-fit: cover;
+	flex: none;
+}
+
+.sdc-testimonials__initials {
+	display: grid;
+	place-items: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 50%;
+	background: color-mix(in srgb, currentColor 12%, transparent);
+	font-weight: 600;
+	line-height: 1;
+	flex: none;
+}
+
+.sdc-testimonials__person {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.sdc-testimonials__name {
+	font-weight: 600;
+}
+
+.sdc-testimonials__role {
+	opacity: 0.75;
+}
+
+/* Scrollbars are styling, not structure: hiding them keeps the row clean while
+   the row stays scrollable by wheel, trackpad, touch and keyboard. */
+.sdc-testimonials__row {
+	scrollbar-width: thin;
+}
+
+@media (max-width: 30rem) {
+	.sdc-testimonials {
+		--sdc-ts-card: 100%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sdc-testimonials__row {
+		scroll-behavior: auto;
+	}
+}

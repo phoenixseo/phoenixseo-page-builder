@@ -2,7 +2,7 @@
 /**
  * What the inspector learns about a component's fields.
  *
- * `Sdc_Block::schema()` is the only path the editor has to a field's shape: it
+ * `Sdcpb_Block::schema()` is the only path the editor has to a field's shape: it
  * gets a type, a name and whatever attributes the control needs. A container
  * that arrives without its sub-shape is not "less detailed" — the editor picks
  * a control by type, falls back to a text input, and writes a string where the
@@ -14,7 +14,7 @@
 /**
  * Component fields describe their containers completely.
  */
-class InspectorSchemaTest extends Sdc_TestCase {
+class InspectorSchemaTest extends Sdcpb_TestCase {
 
 	/**
 	 * Directories added by a test, removed again in tear_down().
@@ -29,21 +29,21 @@ class InspectorSchemaTest extends Sdc_TestCase {
 	public function set_up() {
 		parent::set_up();
 
-		Sdc_Schema::flush();
+		Sdcpb_Schema::flush();
 	}
 
 	/**
 	 * Remove the fixture directories and leave no filter or cache behind.
 	 */
 	public function tear_down() {
-		remove_all_filters( 'sdc_pb_component_dirs' );
+		remove_all_filters( 'sdcpb_component_dirs' );
 
 		foreach ( $this->temp_dirs as $dir ) {
 			$this->remove_tree( $dir );
 		}
 
 		$this->temp_dirs = array();
-		Sdc_Schema::flush();
+		Sdcpb_Schema::flush();
 
 		parent::tear_down();
 	}
@@ -58,14 +58,14 @@ class InspectorSchemaTest extends Sdc_TestCase {
 	 *
 	 * @param string $type   Component type.
 	 * @param array  $fields Field definitions.
-	 * @return string The directory to filter `sdc_pb_component_dirs` with.
+	 * @return string The directory to filter `sdcpb_component_dirs` with.
 	 */
 	private function make_component( $type, array $fields ) {
 		if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 			$this->markTestSkipped( 'ACF is not loaded.' );
 		}
 
-		$key = Sdc_Schema::KEY_PREFIX . $type;
+		$key = Sdcpb_Schema::KEY_PREFIX . $type;
 
 		acf_add_local_field_group(
 			array(
@@ -85,7 +85,7 @@ class InspectorSchemaTest extends Sdc_TestCase {
 		);
 
 		$base = untrailingslashit( get_temp_dir() ) . '/sdc-inspector-' . wp_generate_password( 8, false );
-		$dir  = $base . '/' . Sdc_Schema::USER_DIR . '/' . $type;
+		$dir  = $base . '/' . Sdcpb_Schema::USER_DIR . '/' . $type;
 
 		$this->assertTrue( mkdir( $dir, 0777, true ) );
 
@@ -93,7 +93,7 @@ class InspectorSchemaTest extends Sdc_TestCase {
 
 		$this->temp_dirs[] = $base;
 
-		return $base . '/' . Sdc_Schema::USER_DIR;
+		return $base . '/' . Sdcpb_Schema::USER_DIR;
 	}
 
 	/**
@@ -160,15 +160,15 @@ class InspectorSchemaTest extends Sdc_TestCase {
 		);
 
 		add_filter(
-			'sdc_pb_component_dirs',
+			'sdcpb_component_dirs',
 			static function () use ( $dirs ) {
 				return array( $dirs );
 			}
 		);
 
-		Sdc_Schema::flush();
+		Sdcpb_Schema::flush();
 
-		$schema = Sdc_Block::schema();
+		$schema = Sdcpb_Block::schema();
 
 		$this->assertArrayHasKey( 'fcprobe', $schema, 'The fixture component was not discovered' );
 		$this->assertArrayHasKey( 'fields', $schema['fcprobe'] );
@@ -213,15 +213,15 @@ class InspectorSchemaTest extends Sdc_TestCase {
 		);
 
 		add_filter(
-			'sdc_pb_component_dirs',
+			'sdcpb_component_dirs',
 			static function () use ( $dirs ) {
 				return array( $dirs );
 			}
 		);
 
-		Sdc_Schema::flush();
+		Sdcpb_Schema::flush();
 
-		$fields = Sdc_Block::schema()['groupprobe']['fields'];
+		$fields = Sdcpb_Block::schema()['groupprobe']['fields'];
 
 		$this->assertSame( 'contact_name', $fields[0]['sub_fields'][0]['name'] );
 		$this->assertArrayNotHasKey( 'sub_fields', $fields[1], 'A leaf field must not claim sub-fields' );

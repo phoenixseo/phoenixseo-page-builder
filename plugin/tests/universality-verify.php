@@ -34,18 +34,18 @@
 $fails   = 0;
 $checked = 0;
 $check   = function ( $label, $ok, $note = '' ) use ( &$fails, &$checked ) {
-	$checked++;
+	++$checked;
 	if ( ! $ok ) {
-		$fails++;
+		++$fails;
 	}
 	printf( "%s %s%s\n", $ok ? 'PASS' : 'FAIL', $label, '' !== $note ? " — $note" : '' );
 };
 
-printf( "Host: %s %s\n", Sdc_Field_Adapter::host(), Sdc_Field_Adapter::host_version() );
-echo "Schema-Verzeichnis: " . Sdc_Schema::dir() . "\n\n";
+printf( "Host: %s %s\n", Sdcpb_Field_Adapter::host(), Sdcpb_Field_Adapter::host_version() );
+echo 'Schema-Verzeichnis: ' . Sdcpb_Schema::dir() . "\n\n";
 
 wp_set_current_user( 1 );
-Sdc_Schema::flush();
+Sdcpb_Schema::flush();
 
 // ------------------------------------------------------------ 1. Katalog/REST
 
@@ -130,7 +130,11 @@ $payload = array(
 			'data'   => array(
 				'heading' => $sentinel['faq_heading'],
 				'items'   => array(
-					array( '_id' => 'r_m3b_1', 'q' => $sentinel['faq_q'], 'a' => $sentinel['faq_a'] ),
+					array(
+						'_id' => 'r_m3b_1',
+						'q'   => $sentinel['faq_q'],
+						'a'   => $sentinel['faq_a'],
+					),
 				),
 			),
 		),
@@ -160,8 +164,8 @@ $check( 'POST /sdc-pb/v1/pages/{id} antwortet 200', 200 === $save_response->get_
 
 // Rücklesen aus dem Store, NICHT aus der Antwort: ein 200 belegt nur, dass
 // der Handler lief, nicht dass die Werte ankamen.
-Sdc_Schema::flush();
-$stored = Sdc_Store::get_data( $page_id );
+Sdcpb_Schema::flush();
+$stored = Sdcpb_Store::get_data( $page_id );
 
 $check( 'gespeichert: 2 Komponenten', 2 === count( $stored['components'] ), count( $stored['components'] ) . '' );
 
@@ -180,7 +184,7 @@ $check( 'hero: CTA-URL-Sentinel im Store', $sentinel['hero_url'] === ( $stored_h
 
 echo "\n== 3. Frontend-Rendering ==\n";
 
-$html = Sdc_Frontend::render_post( $page_id );
+$html = Sdcpb_Frontend::render_post( $page_id );
 $check( 'Ausgabe nicht leer', strlen( $html ) > 200, strlen( $html ) . ' Bytes' );
 
 $check( 'hero rendert mit eigener Typ-Klasse', false !== strpos( $html, 'sdc-component--hero' ) );
@@ -242,7 +246,14 @@ echo "\n== 4. HTTP-Pfad (the_content-Filter) ==\n";
 // Test gegen Attrappen; stattdessen wird die echte Seite über HTTP geholt.
 // Der Abruf läuft vom Host aus (die Adresse ist die des Docker-Ports).
 $probe_url = get_permalink( $page_id );
-$context   = stream_context_create( array( 'http' => array( 'timeout' => 15, 'ignore_errors' => true ) ) );
+$context   = stream_context_create(
+	array(
+		'http' => array(
+			'timeout'       => 15,
+			'ignore_errors' => true,
+		),
+	)
+);
 $http_body = @file_get_contents( $probe_url, false, $context );
 $http_ok   = is_string( $http_body );
 $http_head = $http_ok && isset( $http_response_header[0] ) ? $http_response_header[0] : '(kein Abruf)';
@@ -275,7 +286,7 @@ if ( $http_ok ) {
 			if ( ! preg_match( '/<div\b|<\/div>/', $http_body, $m, PREG_OFFSET_CAPTURE, $pos ) ) {
 				break;
 			}
-			$token = $m[0][0];
+			$token  = $m[0][0];
 			$depth += ( '</div>' === $token ) ? -1 : 1;
 			$pos    = $m[0][1] + strlen( $token );
 			if ( 0 === $depth ) {
@@ -311,36 +322,49 @@ $unknown_field = array(
 	'key'   => 'field_probe_unknown',
 	'name'  => 'mystery',
 	'label' => 'Unbekannt',
-	'type'  => 'sdc_there_is_no_such_type',
+	'type'  => 'sdcpb_there_is_no_such_type',
 );
 $unknown_data  = array( 'mystery' => 'Wert mit <b>Markup</b> 0815' );
 
 $fatal_before = 0;
-$probe_html   = Sdc_Frontend::render_fields_probe( array( $unknown_field ), $unknown_data, 1 );
+$probe_html   = Sdcpb_Frontend::render_fields_probe( array( $unknown_field ), $unknown_data, 1 );
 
 $check( 'unbekannter Feldtyp: kein Fatal', true, 'Skript läuft weiter' );
 $check( 'unbekannter Feldtyp: Wert erscheint als Text', false !== strpos( $probe_html, 'Wert mit' ) && false !== strpos( $probe_html, '0815' ) );
 $check( 'unbekannter Feldtyp: Markup escaped', false === strpos( $probe_html, '<b>Markup</b>' ) && false !== strpos( $probe_html, '&lt;b&gt;Markup&lt;/b&gt;' ) );
-$check( 'unbekannter Feldtyp: Feld-Wrapper vorhanden', false !== strpos( $probe_html, 'sdc-field--sdc_there_is_no_such_type' ) );
+$check( 'unbekannter Feldtyp: Feld-Wrapper vorhanden', false !== strpos( $probe_html, 'sdc-field--sdcpb_there_is_no_such_type' ) );
 
 // Ein unbekannter Typ im Komponenten-Katalog (nicht Feldtyp): die Komponente
 // wird nicht gespeichert, REST lehnt ab. Das ist gewollt (kein stiller Verlust).
 $bad_request = new WP_REST_Request( 'POST', '/sdc-pb/v1/pages/' . $page_id );
 $bad_request->set_header( 'Content-Type', 'application/json' );
-$bad_request->set_body( wp_json_encode( array( 'components' => array( array( '_id' => 'c_x', 'type' => 'gibtesnicht', 'schema' => 'gibtesnicht@1', 'data' => array() ) ) ) ) );
+$bad_request->set_body(
+	wp_json_encode(
+		array(
+			'components' => array(
+				array(
+					'_id'    => 'c_x',
+					'type'   => 'gibtesnicht',
+					'schema' => 'gibtesnicht@1',
+					'data'   => array(),
+				),
+			),
+		)
+	)
+);
 $bad_response = rest_do_request( $bad_request );
 $check( 'unbekannter Komponententyp: REST lehnt mit 400 ab', 400 === $bad_response->get_status(), $bad_response->get_status() . '' );
 
 // Das gespeicherte Dokument darf davon unberührt sein.
-Sdc_Schema::flush();
-$after_bad = Sdc_Store::get_data( $page_id );
+Sdcpb_Schema::flush();
+$after_bad = Sdcpb_Store::get_data( $page_id );
 $check( 'abgelehnter Save hat das Dokument nicht verändert', 2 === count( $after_bad['components'] ) && $sentinel['hero_head'] === ( $after_bad['components'][1]['data']['heading'] ?? null ), count( $after_bad['components'] ) . ' Komponenten' );
 
 // ------------------------------------------------------ 6. Schema-Versionen
 
 echo "\n== 6. Universitalität: kein typ-spezifischer Code ==\n";
 
-$plugin_dir = SDC_PB_DIR;
+$plugin_dir = SDCPB_DIR;
 $code_dirs  = array( 'includes', 'assets' );
 
 $grep_hits = array();
@@ -411,11 +435,11 @@ if ( ! empty( $faq_hits ) ) {
 
 echo "\n== 7. Schema-Versionierung ==\n";
 
-$check( 'faq unverändert bei faq@1', 'faq@1' === Sdc_Schema::version_string( 'faq' ), Sdc_Schema::version_string( 'faq' ) );
-$check( 'hero führt hero@1', 'hero@1' === Sdc_Schema::version_string( 'hero' ), Sdc_Schema::version_string( 'hero' ) );
+$check( 'faq unverändert bei faq@1', 'faq@1' === Sdcpb_Schema::version_string( 'faq' ), Sdcpb_Schema::version_string( 'faq' ) );
+$check( 'hero führt hero@1', 'hero@1' === Sdcpb_Schema::version_string( 'hero' ), Sdcpb_Schema::version_string( 'hero' ) );
 
-$faq_json = json_decode( (string) file_get_contents( Sdc_Schema::dir() . 'faq/definition.json' ), true );
-$check( 'FAQ-Schemadatei unverändert lesbar', is_array( $faq_json ) && 'group_sdc_component_faq' === ( $faq_json['key'] ?? '' ) );
+$faq_json = json_decode( (string) file_get_contents( Sdcpb_Schema::dir() . 'faq/definition.json' ), true );
+$check( 'FAQ-Schemadatei unverändert lesbar', is_array( $faq_json ) && 'group_sdcpb_component_faq' === ( $faq_json['key'] ?? '' ) );
 $check( 'FAQ-Schema hat weiterhin 2 Felder', is_array( $faq_json ) && 2 === count( $faq_json['fields'] ?? array() ), is_array( $faq_json ) ? count( $faq_json['fields'] ?? array() ) . '' : 'unlesbar' );
 
 // ------------------------------------------------------------- aufräumen

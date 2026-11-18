@@ -1,7 +1,7 @@
 /**
  * SDC components as blocks — one block type per component.
  *
- * The server registers `sdc/faq`, `sdc/hero`, … and hands this file the field
+ * The server registers `sdcpb/faq`, `sdcpb/hero`, … and hands this file the field
  * schema. The inspector is built from it, and the canvas shows the component's
  * real frontend markup via `ServerSideRender`. No build step: plain
  * `wp.element.createElement`, so the file ships as it is.
@@ -33,9 +33,9 @@
 ( function () {
 	'use strict';
 
-	var config = window.SDC_BLOCK || {};
+	var config = window.SDCPB_BLOCK || {};
 	var schema = config.components || {};
-	var prefix = config.prefix || 'sdc/';
+	var prefix = config.prefix || 'sdcpb/';
 
 	// The slug the server registered the category under, so both sides cannot
 	// drift apart on a typo the inserter would answer with an empty category.
@@ -47,10 +47,10 @@
 	 * and a second copy of the logic here would be the silent fallback that
 	 * drifts — so this is a hard error, not a catch.
 	 */
-	var rowsApi = window.SDCBlockRows;
+	var rowsApi = window.SDCPBBlockRows;
 
 	if ( ! rowsApi || typeof rowsApi.setLayout !== 'function' ) {
-		throw new Error( 'SDC-Block: assets/inspector-rows.js fehlt (window.SDCBlockRows).' );
+		throw new Error( 'SDCPB-Block: assets/inspector-rows.js fehlt (window.SDCPBBlockRows).' );
 	}
 
 	/*
@@ -58,10 +58,10 @@
 	 * array. Same rule as above: without it the picker cannot tell a stored
 	 * URL from an ID, and an ID read as a URL renders `<img src="42">`.
 	 */
-	var mediaApi = window.SDCMediaField;
+	var mediaApi = window.SDCPBMediaField;
 
 	if ( ! mediaApi || typeof mediaApi.idOf !== 'function' ) {
-		throw new Error( 'SDC-Block: assets/media-field.js fehlt (window.SDCMediaField).' );
+		throw new Error( 'SDCPB-Block: assets/media-field.js fehlt (window.SDCPBMediaField).' );
 	}
 
 	if ( ! window.wp || ! wp.blocks || ! wp.blocks.registerBlockType || ! wp.element ) {
@@ -1171,7 +1171,7 @@
 	 */
 	function registerLegacy() {
 		registerBlock( {
-			name: 'sdc/component',
+			name: 'sdcpb/component',
 			title: __( 'SDC-Komponente (alt)', 'sdc-page-builder' ),
 			description: __( 'Komponente aus einer früheren Fassung.', 'sdc-page-builder' ),
 			icon: 'layout',

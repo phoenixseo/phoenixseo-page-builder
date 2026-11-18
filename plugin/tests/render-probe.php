@@ -6,10 +6,10 @@
  * Hier wird gemessen, was der Wirt damit tut — nicht vermutet.
  */
 
-echo 'Host: ' . Sdc_Field_Adapter::host() . ' ' . Sdc_Field_Adapter::host_version() . "\n\n";
+echo 'Host: ' . Sdcpb_Field_Adapter::host() . ' ' . Sdcpb_Field_Adapter::host_version() . "\n\n";
 
 // 1. Welcher Typ steht im Schema, was liefert der Wirt?
-$fields = Sdc_Schema::fields( 'faq' );
+$fields = Sdcpb_Schema::fields( 'faq' );
 echo "== Schema-Felder (was wir definiert haben) ==\n";
 foreach ( $fields as $f ) {
 	echo "  {$f['name']}: type={$f['type']}\n";
@@ -27,8 +27,8 @@ foreach ( array( 'text', 'textarea', 'image', 'select', 'group', 'flexible_conte
 
 // 3. Was passiert beim Rendern?
 echo "\n== Rendern des repeater-Feldes ==\n";
-$group = Sdc_Field_Adapter::get_field_group( 'group_sdc_component_faq' );
-$raw   = Sdc_Field_Adapter::get_fields( $group );
+$group = Sdcpb_Field_Adapter::get_field_group( 'group_sdcpb_component_faq' );
+$raw   = Sdcpb_Field_Adapter::get_fields( $group );
 foreach ( $raw as $rf ) {
 	printf( "  %-10s type=%-12s key=%s\n", $rf['name'], $rf['type'], $rf['key'] );
 }
@@ -72,7 +72,7 @@ ob_start();
 try {
 	acf_render_field( $text_field );
 	$h = ob_get_clean();
-	echo 'HTML-Länge: ' . strlen( $h ) . " Bytes, <input: " . ( false !== strpos( $h, '<input' ) ? 'ja' : 'NEIN' ) . "\n";
+	echo 'HTML-Länge: ' . strlen( $h ) . ' Bytes, <input: ' . ( false !== strpos( $h, '<input' ) ? 'ja' : 'NEIN' ) . "\n";
 } catch ( Throwable $e ) {
 	ob_end_clean();
 	echo 'AUSNAHME: ' . $e->getMessage() . "\n";

@@ -1,0 +1,177 @@
+{
+    "key": "group_sdcpb_component_series",
+    "title": "Serie",
+    "sdcpb_description": "Eine Serie mit Staffeln und Folgen, Poster und den Angaben, die eine Serienseite braucht.",
+    "sdcpb_icon": "video-alt2",
+    "sdcpb_version": 1,
+    "fields": [
+        {
+            "key": "field_sdc_series_poster",
+            "label": "Poster",
+            "name": "poster",
+            "type": "image",
+            "instructions": "Hochformat, mindestens 600 px hoch.",
+            "required": 0,
+            "return_format": "array",
+            "preview_size": "medium"
+        },
+        {
+            "key": "field_sdc_series_title",
+            "label": "Titel",
+            "name": "title",
+            "type": "text",
+            "required": 1
+        },
+        {
+            "key": "field_sdc_series_original_title",
+            "label": "Originaltitel",
+            "name": "original_title",
+            "type": "text",
+            "instructions": "Nur ausfüllen, wenn er sich vom deutschen Titel unterscheidet.",
+            "required": 0
+        },
+        {
+            "key": "field_sdc_series_first_year",
+            "label": "Erstes Jahr",
+            "name": "first_year",
+            "type": "number",
+            "instructions": "Jahr der ersten Folge.",
+            "required": 0,
+            "min": 1920,
+            "max": 2100,
+            "step": 1
+        },
+        {
+            "key": "field_sdc_series_last_year",
+            "label": "Letztes Jahr",
+            "name": "last_year",
+            "type": "number",
+            "instructions": "Leer lassen, solange die Serie läuft. Die Ansicht schreibt dann „seit“ statt einer Spanne.",
+            "required": 0,
+            "min": 1920,
+            "max": 2100,
+            "step": 1
+        },
+        {
+            "key": "field_sdc_series_creator",
+            "label": "Idee",
+            "name": "creator",
+            "type": "text",
+            "instructions": "Wer die Serie erfunden hat, nicht wer sie produziert hat.",
+            "required": 0
+        },
+        {
+            "key": "field_sdc_series_network",
+            "label": "Sender oder Dienst",
+            "name": "network",
+            "type": "text",
+            "required": 0
+        },
+        {
+            "key": "field_sdc_series_genre",
+            "label": "Genre",
+            "name": "genre",
+            "type": "text",
+            "instructions": "Mehrere durch Komma trennen.",
+            "required": 0
+        },
+        {
+            "key": "field_sdc_series_rating",
+            "label": "Bewertung",
+            "name": "rating",
+            "type": "number",
+            "instructions": "Von 0 bis 10, eine Nachkommastelle.",
+            "required": 0,
+            "min": 0,
+            "max": 10,
+            "step": 0.1
+        },
+        {
+            "key": "field_sdc_series_seasons",
+            "label": "Staffeln",
+            "name": "seasons",
+            "type": "repeater",
+            "instructions": "Eine Zeile pro Staffel, die Reihenfolge ist die Reihenfolge der Ausstrahlung.",
+            "required": 0,
+            "layout": "table",
+            "button_label": "Staffel hinzufügen",
+            "sub_fields": [
+                {
+                    "key": "field_sdc_series_season_number",
+                    "label": "Staffel",
+                    "name": "number",
+                    "type": "number",
+                    "instructions": "Die Nummer, unter der die Staffel läuft. Leer nummeriert die Ansicht fortlaufend.",
+                    "required": 0,
+                    "min": 1,
+                    "max": 100,
+                    "step": 1
+                },
+                {
+                    "key": "field_sdc_series_season_year",
+                    "label": "Jahr",
+                    "name": "year",
+                    "type": "number",
+                    "instructions": "Jahr der Erstausstrahlung dieser Staffel.",
+                    "required": 0,
+                    "min": 1920,
+                    "max": 2100,
+                    "step": 1
+                },
+                {
+                    "key": "field_sdc_series_season_episodes",
+                    "label": "Folgen",
+                    "name": "episodes",
+                    "type": "repeater",
+                    "instructions": "Die Reihenfolge hier ist die Reihenfolge der Ausstrahlung. Die Folgennummer vergibt die Ansicht.",
+                    "required": 0,
+                    "layout": "table",
+                    "button_label": "Folge hinzufügen",
+                    "sub_fields": [
+                        {
+                            "key": "field_sdc_series_episode_title",
+                            "label": "Titel",
+                            "name": "title",
+                            "type": "text",
+                            "required": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "field_sdc_series_synopsis",
+            "label": "Worum es geht",
+            "name": "synopsis",
+            "type": "textarea",
+            "instructions": "Drei bis fünf Sätze, ohne Spoiler.",
+            "required": 0,
+            "rows": 5
+        },
+        {
+            "key": "field_sdc_series_link",
+            "label": "Link",
+            "name": "link",
+            "type": "link",
+            "instructions": "Optional. Trailer oder Streaming.",
+            "required": 0,
+            "return_format": "array"
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "sdcpb_component",
+                "operator": "==",
+                "value": "1"
+            }
+        ]
+    ],
+    "menu_order": 90,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "active": true,
+    "description": ""
+}

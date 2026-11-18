@@ -27,33 +27,33 @@ $fails = 0;
  */
 $check = function ( $label, $ok, $note = '' ) use ( &$fails ) {
 	if ( ! $ok ) {
-		$fails++;
+		++$fails;
 	}
 	printf( "%s %s%s\n", $ok ? 'PASS' : 'FAIL', $label, '' !== $note ? " — $note" : '' );
 };
 
 echo "== 1. Host ==\n";
-$check( 'Feld-Plugin erkannt', Sdc_Field_Adapter::is_available(), Sdc_Field_Adapter::host() . ' ' . Sdc_Field_Adapter::host_version() );
+$check( 'Feld-Plugin erkannt', Sdcpb_Field_Adapter::is_available(), Sdcpb_Field_Adapter::host() . ' ' . Sdcpb_Field_Adapter::host_version() );
 
 echo "\n== 2. Schemas ==\n";
-$components = Sdc_Schema::components();
+$components = Sdcpb_Schema::components();
 $check( 'mindestens eine Komponente gefunden', count( $components ) > 0, implode( ', ', array_keys( $components ) ) );
 
-$faq = Sdc_Schema::get( 'faq' );
+$faq = Sdcpb_Schema::get( 'faq' );
 $check( 'FAQ-Komponente vorhanden', null !== $faq );
 if ( $faq ) {
 	$check( 'FAQ hat 2 Felder', 2 === count( $faq['fields'] ), count( $faq['fields'] ) . ' Felder' );
-	$check( 'Schema-Version lesbar', 'faq@1' === Sdc_Schema::version_string( 'faq' ), Sdc_Schema::version_string( 'faq' ) );
+	$check( 'Schema-Version lesbar', 'faq@1' === Sdcpb_Schema::version_string( 'faq' ), Sdcpb_Schema::version_string( 'faq' ) );
 }
 
 // The component group must not show up as a normal metabox anywhere.
 $visible = 0;
-foreach ( Sdc_Field_Adapter::get_field_groups() as $group ) {
-	if ( 0 === strpos( (string) $group['key'], Sdc_Schema::KEY_PREFIX ) && ! empty( $group['location'] ) ) {
+foreach ( Sdcpb_Field_Adapter::get_field_groups() as $group ) {
+	if ( 0 === strpos( (string) $group['key'], Sdcpb_Schema::KEY_PREFIX ) && ! empty( $group['location'] ) ) {
 		foreach ( $group['location'] as $ruleset ) {
 			foreach ( $ruleset as $rule ) {
-				if ( 'sdc_component' !== $rule['param'] ) {
-					$visible++;
+				if ( 'sdcpb_component' !== $rule['param'] ) {
+					++$visible;
 				}
 			}
 		}
@@ -78,8 +78,14 @@ for ( $i = 0; $i < $count; $i++ ) {
 		'data' => array(
 			'heading' => "Häufige Fragen $i",
 			'items'   => array(
-				array( 'q' => "Frage $i.1", 'a' => 'Antwort mit Umlauten: äöüß' ),
-				array( 'q' => "Frage $i.2", 'a' => str_repeat( 'Antworttext. ', 10 ) ),
+				array(
+					'q' => "Frage $i.1",
+					'a' => 'Antwort mit Umlauten: äöüß',
+				),
+				array(
+					'q' => "Frage $i.2",
+					'a' => str_repeat( 'Antworttext. ', 10 ),
+				),
 			),
 		),
 	);
@@ -88,7 +94,7 @@ for ( $i = 0; $i < $count; $i++ ) {
 global $wpdb;
 $before_q = $wpdb->num_queries;
 $t0       = microtime( true );
-$saved    = Sdc_Store::save_data( $post_id, array( 'components' => $payload ) );
+$saved    = Sdcpb_Store::save_data( $post_id, array( 'components' => $payload ) );
 $ms       = ( microtime( true ) - $t0 ) * 1000;
 $queries  = $wpdb->num_queries - $before_q;
 
@@ -97,11 +103,11 @@ $check( 'jede Komponente hat eine _id', count( array_unique( array_column( $save
 $check( 'Save unter 100 ms', $ms < 100, sprintf( '%.1f ms / %d Queries', $ms, $queries ) );
 
 $meta_rows = (int) $wpdb->get_var(
-	$wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s", $post_id, Sdc_Store::META_KEY )
+	$wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s", $post_id, Sdcpb_Store::META_KEY )
 );
-$all_rows = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->postmeta} WHERE post_id = %d", $post_id ) );
-$bytes    = (int) $wpdb->get_var(
-	$wpdb->prepare( "SELECT LENGTH(meta_value) FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s", $post_id, Sdc_Store::META_KEY )
+$all_rows  = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->postmeta} WHERE post_id = %d", $post_id ) );
+$bytes     = (int) $wpdb->get_var(
+	$wpdb->prepare( "SELECT LENGTH(meta_value) FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s", $post_id, Sdcpb_Store::META_KEY )
 );
 $check( 'genau EINE Meta-Zeile für das Dokument', 1 === $meta_rows, "$meta_rows Zeile(n), $all_rows postmeta-Zeilen gesamt, $bytes Bytes" );
 
@@ -109,16 +115,24 @@ echo "\n== 4. Unbekannter Typ wird abgewiesen ==\n";
 $rejected = false;
 try {
 	$req = new WP_REST_Request( 'POST', '/sdc-pb/v1/pages/' . $post_id );
-	$req->set_param( 'components', array( array( 'type' => 'gibt_es_nicht', 'data' => array() ) ) );
-	$res = Sdc_Rest::save_page( $req );
-	$rejected = is_wp_error( $res ) && 'sdc_unknown_component' === $res->get_error_code();
+	$req->set_param(
+		'components',
+		array(
+			array(
+				'type' => 'gibt_es_nicht',
+				'data' => array(),
+			),
+		)
+	);
+	$res      = Sdcpb_Rest::save_page( $req );
+	$rejected = is_wp_error( $res ) && 'sdcpb_unknown_component' === $res->get_error_code();
 } catch ( Throwable $e ) {
 	$rejected = false;
 }
 $check( 'REST lehnt unbekannten Typ ab', $rejected );
 
 echo "\n== 5. Roundtrip ==\n";
-$back = Sdc_Store::get_data( $post_id );
+$back = Sdcpb_Store::get_data( $post_id );
 $check( 'gleiche Anzahl nach dem Lesen', count( $back['components'] ) === $count );
 $check( 'IDs stabil', array_column( $back['components'], '_id' ) === array_column( $saved['components'], '_id' ) );
 $check(
@@ -126,7 +140,7 @@ $check(
 	$back['components'][0]['data']['items'][0]['a'] === 'Antwort mit Umlauten: äöüß',
 	$back['components'][0]['data']['items'][0]['a']
 );
-$check( 'Formatversion gesetzt', Sdc_Store::FORMAT_VERSION === $back['v'], 'v=' . $back['v'] );
+$check( 'Formatversion gesetzt', Sdcpb_Store::FORMAT_VERSION === $back['v'], 'v=' . $back['v'] );
 
 echo "\n== 6. Revisionen ==\n";
 // `wp_save_post_revision()` returns null when the post fields are unchanged —
@@ -134,13 +148,13 @@ echo "\n== 6. Revisionen ==\n";
 // records the snapshot regardless.
 $rev_id = _wp_put_post_revision( get_post( $post_id ), true );
 $check( 'Revision angelegt', is_int( $rev_id ) && $rev_id > 0, "revision $rev_id" );
-$rev_meta = $rev_id ? get_post_meta( $rev_id, Sdc_Store::META_KEY, true ) : null;
+$rev_meta = $rev_id ? get_post_meta( $rev_id, Sdcpb_Store::META_KEY, true ) : null;
 $check( 'Revision enthält das Dokument', ! empty( $rev_meta ) && is_array( $rev_meta ) );
 $keys = apply_filters( 'wp_post_revision_meta_keys', array(), 'page' );
-$check( 'Meta-Key ist für Revisionen registriert', in_array( Sdc_Store::META_KEY, (array) $keys, true ) );
+$check( 'Meta-Key ist für Revisionen registriert', in_array( Sdcpb_Store::META_KEY, (array) $keys, true ) );
 
 echo "\n== 7. REST-Katalog ==\n";
-$res  = Sdc_Rest::get_components();
+$res  = Sdcpb_Rest::get_components();
 $data = $res->get_data();
 $check( 'Katalog liefert Komponenten', ! empty( $data['components'] ), count( $data['components'] ) . ' Komponenten, host=' . $data['host'] );
 

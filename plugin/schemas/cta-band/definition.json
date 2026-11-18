@@ -1,0 +1,86 @@
+{
+    "key": "group_sdcpb_component_cta-band",
+    "title": "Handlungsband",
+    "sdcpb_description": "Farbiges Band mit einer Aussage und bis zu zwei Handlungsaufrufen.",
+    "sdcpb_icon": "megaphone",
+    "sdcpb_version": 1,
+    "fields": [
+        {
+            "key": "field_sdc_cta-band_eyebrow",
+            "label": "Vorzeile",
+            "name": "eyebrow",
+            "type": "text",
+            "instructions": "Optional. Kleine Zeile über der Aussage.",
+            "required": 0,
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_sdc_cta-band_heading",
+            "label": "Aussage",
+            "name": "heading",
+            "type": "text",
+            "instructions": "Ein Satz, der eine Handlung nahelegt.",
+            "required": 1,
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_sdc_cta-band_text",
+            "label": "Text",
+            "name": "text",
+            "type": "textarea",
+            "instructions": "Optional. Höchstens zwei Sätze.",
+            "required": 0,
+            "rows": 2
+        },
+        {
+            "key": "field_sdc_cta-band_primary",
+            "label": "Erster Link",
+            "name": "primary",
+            "type": "link",
+            "instructions": "Der wichtigere der beiden Wege.",
+            "required": 0,
+            "return_format": "array"
+        },
+        {
+            "key": "field_sdc_cta-band_secondary",
+            "label": "Zweiter Link",
+            "name": "secondary",
+            "type": "link",
+            "instructions": "Optional. Wird als ruhiger Textlink gesetzt.",
+            "required": 0,
+            "return_format": "array"
+        },
+        {
+            "key": "field_sdc_cta-band_tone",
+            "label": "Farbton",
+            "name": "tone",
+            "type": "select",
+            "instructions": "Drei Varianten, die das Stylesheet des Themes überschreiben kann.",
+            "required": 0,
+            "default_value": "brand",
+            "choices": {
+                "brand": "Marke",
+                "dark": "Dunkel",
+                "light": "Hell"
+            }
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "sdcpb_component",
+                "operator": "==",
+                "value": "1"
+            }
+        ]
+    ],
+    "menu_order": 60,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "active": true,
+    "description": ""
+}

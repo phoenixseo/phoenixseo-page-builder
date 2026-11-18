@@ -6,7 +6,7 @@
  *   wp eval-file rest-roundtrip.php <post-id> <body.json> <nonce>
  *
  * Prints status + response, then verifies persistence against the store:
- * the document read back, the number of `_sdc_data` meta rows, and whether a
+ * the document read back, the number of `_sdcpb_data` meta rows, and whether a
  * revision was created. Everything is re-read from the database, not from the
  * REST response.
  *
@@ -50,7 +50,7 @@ $revisions_before = count( wp_get_post_revisions( $post_id, array( 'fields' => '
 
 wp_set_current_user( 1 );
 
-$request = new WP_REST_Request( 'POST', '/' . Sdc_Rest::NAMESPACE_V1 . '/pages/' . $post_id );
+$request = new WP_REST_Request( 'POST', '/' . Sdcpb_Rest::NAMESPACE_V1 . '/pages/' . $post_id );
 $request->set_header( 'content-type', 'application/json' );
 $request->set_header( 'X-WP-Nonce', $nonce );
 $request->set_body( $body );
@@ -60,15 +60,17 @@ $data     = $response->get_data();
 $status   = $response->get_status();
 
 echo "rest status: $status\n";
-echo 'rest body: ' . wp_json_encode( array(
-	'v'          => $data['v'] ?? null,
-	'components' => isset( $data['components'] ) && is_array( $data['components'] ) ? array_map(
-		static function ( $c ) {
-			return $c['_id'] ?? '?';
-		},
-		$data['components']
-	) : null,
-) ) . "\n";
+echo 'rest body: ' . wp_json_encode(
+	array(
+		'v'          => $data['v'] ?? null,
+		'components' => isset( $data['components'] ) && is_array( $data['components'] ) ? array_map(
+			static function ( $c ) {
+				return $c['_id'] ?? '?';
+			},
+			$data['components']
+		) : null,
+	)
+) . "\n";
 
 if ( 200 !== $status ) {
 	echo 'rest error: ' . wp_json_encode( $data ) . "\n";
@@ -78,7 +80,7 @@ if ( 200 !== $status ) {
 // ---- read back from the database, not from the response -------------------
 
 $sent     = $payload['components'];
-$stored   = Sdc_Store::get_data( $post_id );
+$stored   = Sdcpb_Store::get_data( $post_id );
 $stored_c = isset( $stored['components'] ) ? $stored['components'] : array();
 
 echo 'sent components:   ' . count( $sent ) . "\n";
@@ -97,13 +99,19 @@ $meta_rows = (int) $wpdb->get_var(
 	$wpdb->prepare(
 		"SELECT COUNT(*) FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s",
 		$post_id,
-		Sdc_Store::META_KEY
+		Sdcpb_Store::META_KEY
 	)
 );
-echo "meta rows for " . Sdc_Store::META_KEY . ": $meta_rows\n";
+echo 'meta rows for ' . Sdcpb_Store::META_KEY . ": $meta_rows\n";
 
 $revisions_after = count( wp_get_post_revisions( $post_id, array( 'fields' => 'ids' ) ) );
-$latest          = wp_get_post_revisions( $post_id, array( 'numberposts' => 1, 'fields' => 'ids' ) );
+$latest          = wp_get_post_revisions(
+	$post_id,
+	array(
+		'numberposts' => 1,
+		'fields'      => 'ids',
+	)
+);
 $latest_id       = $latest ? (int) current( $latest ) : 0;
 
 echo "revisions before: $revisions_before\n";
@@ -112,7 +120,7 @@ echo "latest revision:  $latest_id (" . ( $latest_id ? get_the_title( $latest_id
 
 // ---- REST read of the same route ------------------------------------------
 
-$read = new WP_REST_Request( 'GET', '/' . Sdc_Rest::NAMESPACE_V1 . '/pages/' . $post_id );
+$read = new WP_REST_Request( 'GET', '/' . Sdcpb_Rest::NAMESPACE_V1 . '/pages/' . $post_id );
 $read->set_header( 'X-WP-Nonce', $nonce );
 $read_response = rest_do_request( $read );
 $read_data     = $read_response->get_data();

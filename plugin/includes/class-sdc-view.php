@@ -5,11 +5,11 @@
  * The builder can render a component from its field definitions alone, but
  * that output is generic by design — it knows a field is a textarea, not that
  * this textarea is a quotation. A view is where the markup of one component
- * type lives. `Sdc_Frontend` already looks for `render.php` before it falls
+ * type lives. `Sdcpb_Frontend` already looks for `render.php` before it falls
  * back to the generic output; this class supplies everything around that
  * lookup:
  *
- *   - the runtime helpers a view calls (`sdc_text()`, `sdc_each()` …), so a
+ *   - the runtime helpers a view calls (`sdcpb_text()`, `sdcpb_each()` …), so a
  *     view writes escaped output by default instead of remembering to;
  *   - the read/write path, so the view is editable in the admin without FTP;
  *   - `lint()`, which rejects a syntax error *before* the file lands on disk;
@@ -21,12 +21,12 @@
  *
  *   1. A view is code. Whoever may edit it may run anything on the server, so
  *      editing is gated on `manage_options` and can be switched off entirely
- *      with `SDC_PB_ALLOW_VIEW_EDIT` (false) or the `sdc_pb_can_edit_view`
+ *      with `SDCPB_ALLOW_VIEW_EDIT` (false) or the `sdcpb_can_edit_view`
  *      filter.
  *   2. An empty view means "use the generic output". Deleting the file is
  *      therefore the way back, and never leaves a component without markup.
  *
- * The helpers are global functions with the plugin's `sdc_` prefix: they are
+ * The helpers are global functions with the plugin's `sdcpb_` prefix: they are
  * called from view files, where a class name would be noise.
  *
  * @package SdcPageBuilder
@@ -37,7 +37,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Read, write, lint, generate and support component views.
  */
-class Sdc_View {
+class Sdcpb_View {
 
 	/**
 	 * File name of a component's view, inside its component directory.
@@ -61,7 +61,7 @@ class Sdc_View {
 	/**
 	 * Maximum container nesting the generator produces.
 	 *
-	 * Mirrors `Sdc_Renderer::MAX_DEPTH`: deeper structures cannot be edited
+	 * Mirrors `Sdcpb_Renderer::MAX_DEPTH`: deeper structures cannot be edited
 	 * in the builder, so generating a view for them would advertise a depth
 	 * the rest of the plugin refuses.
 	 */
@@ -73,7 +73,7 @@ class Sdc_View {
 	 * A view reads `$data` as a local variable, but the helpers take no
 	 * arguments, so they need to know which component is being rendered. A
 	 * stack rather than a single value: a view may render another component
-	 * through `Sdc_Frontend::component_fields_html()`.
+	 * through `Sdcpb_Frontend::component_fields_html()`.
 	 *
 	 * @var array[] Each entry: array( 'type' => string, 'data' => array ).
 	 */
@@ -188,12 +188,13 @@ class Sdc_View {
 	}
 
 	/**
-	 * The stylesheet of a component, wherever the site keeps it.
+	 * The stylesheet of a component, wherever it lives.
 	 *
-	 * Same lookup order as `Sdc_Schema::template()`: a child theme overrides
-	 * the parent theme, and both override `wp-content/sdc-components/`. The
-	 * first directory that has a `component.css` for this type wins, so the
-	 * markup and its styles come from the same component directory.
+	 * Same lookup order as `Sdcpb_Schema::template()`, because it is the same
+	 * list: a child theme overrides the parent theme, both override
+	 * `wp-content/sdc-components/`, and the plugin's shipped examples come
+	 * last. The first directory that has a `component.css` for this type wins,
+	 * so the markup and its styles come from the same component directory.
 	 *
 	 * @param string $type Component type.
 	 * @return string Absolute path, or an empty string when there is none.
@@ -205,7 +206,7 @@ class Sdc_View {
 			return '';
 		}
 
-		foreach ( Sdc_Schema::user_dirs() as $dir ) {
+		foreach ( Sdcpb_Schema::lookup_dirs() as $dir ) {
 			$file = self::style_file( $dir, $type );
 
 			if ( '' !== $file && is_readable( $file ) ) {
@@ -266,7 +267,7 @@ class Sdc_View {
 	 * than loud — the reason they are worth doing at all:
 	 *
 	 * 1. `</style` ends the inline `<style>` element, because the CSS is
-	 *    delivered inlined (see `Sdc_Block::styles()`). Everything after it is
+	 *    delivered inlined (see `Sdcpb_Block::styles()`). Everything after it is
 	 *    then parsed as HTML: the rest of the page loses its styles at best,
 	 *    and a hand-written payload would be markup on the page.
 	 * 2. An unterminated comment swallows the CSS of every component that
@@ -291,14 +292,14 @@ class Sdc_View {
 
 		if ( false !== stripos( $css, '</style' ) ) {
 			return new WP_Error(
-				'sdc_style_tag',
+				'sdcpb_style_tag',
 				__( 'Die Styles enthalten „</style“. Das beendet das <style>-Element, in dem die Komponenten-Styles ausgeliefert werden — der Rest der Seite würde als HTML gelesen. Schreib den Selektor anders, dann speichert es.', 'sdc-page-builder' )
 			);
 		}
 
 		if ( false !== strpos( $css, '<?' ) ) {
 			return new WP_Error(
-				'sdc_style_php',
+				'sdcpb_style_php',
 				__( 'Das hier ist CSS, kein PHP: „<?“ wird als Text ausgegeben und nicht ausgeführt. Für Markup ist die Ansicht (render.php) zuständig.', 'sdc-page-builder' )
 			);
 		}
@@ -309,7 +310,7 @@ class Sdc_View {
 
 		if ( false !== strpos( $bare, '/*' ) ) {
 			return new WP_Error(
-				'sdc_style_comment',
+				'sdcpb_style_comment',
 				__( 'Ein Kommentar ist nicht geschlossen (/* ohne */). Alles danach bliebe auf der Seite ungestylt, weil alle Komponenten-Styles in einem gemeinsamen <style>-Element stehen.', 'sdc-page-builder' )
 			);
 		}
@@ -319,7 +320,7 @@ class Sdc_View {
 
 		if ( $open !== $close ) {
 			return new WP_Error(
-				'sdc_style_braces',
+				'sdcpb_style_braces',
 				sprintf(
 					/* translators: 1: number of opening braces, 2: number of closing braces. */
 					__( 'Die Klammern passen nicht: %1$d geöffnet, %2$d geschlossen. Eine Regel bleibt damit offen und der Browser verwirft, was folgt.', 'sdc-page-builder' ),
@@ -400,7 +401,7 @@ class Sdc_View {
 		$file = self::style_file( $dir, $type );
 
 		if ( '' === $file ) {
-			return new WP_Error( 'sdc_style_type', __( 'Dieser Komponententyp ist kein gültiger Dateiname.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_style_type', __( 'Dieser Komponententyp ist kein gültiger Dateiname.', 'sdc-page-builder' ) );
 		}
 
 		$code  = self::normalize_style( $css );
@@ -411,10 +412,10 @@ class Sdc_View {
 		}
 
 		if ( '' === $code ) {
-			return self::discard( $file, 'sdc_style' );
+			return self::discard( $file, 'sdcpb_style' );
 		}
 
-		return self::put( $file, $code, 'sdc_style' );
+		return self::put( $file, $code, 'sdcpb_style' );
 	}
 
 	/**
@@ -422,7 +423,7 @@ class Sdc_View {
 	 *
 	 * Looser than `can_edit()`, and on purpose: a view is PHP and runs with
 	 * the site's privileges, a stylesheet is data. Whoever may manage the site
-	 * may write CSS for it — so the constant that gates PHP (`SDC_PB_ALLOW_VIEW_EDIT`)
+	 * may write CSS for it — so the constant that gates PHP (`SDCPB_ALLOW_VIEW_EDIT`)
 	 * is not consulted here, and a site can allow styles while keeping views
 	 * to itself.
 	 *
@@ -430,7 +431,7 @@ class Sdc_View {
 	 * @return bool
 	 */
 	public static function can_edit_style( $type = '' ) {
-		$can = current_user_can( Sdc_Admin::CAPABILITY );
+		$can = current_user_can( Sdcpb_Admin::CAPABILITY );
 
 		/**
 		 * Filters whether component styles may be edited in the admin.
@@ -438,7 +439,7 @@ class Sdc_View {
 		 * @param bool   $can  Whether editing is allowed.
 		 * @param string $type Component type.
 		 */
-		return (bool) apply_filters( 'sdc_pb_can_edit_style', $can, (string) $type );
+		return (bool) apply_filters( 'sdcpb_can_edit_style', $can, (string) $type );
 	}
 
 	/**
@@ -580,7 +581,7 @@ class Sdc_View {
 			. " * Ansicht der Komponente \"%s\".\n"
 			. " *\n"
 			. " * Verwaltet über den Komponenten-Screen. Verfügbar sind \$type, \$data,\n"
-			. " * \$component sowie die sdc_*-Helfer (siehe Sdc_View::helpers()).\n"
+			. " * \$component sowie die sdcpb_*-Helfer (siehe Sdcpb_View::helpers()).\n"
 			. " */\n"
 			. self::BODY_MARKER . " ?>\n";
 
@@ -615,7 +616,7 @@ class Sdc_View {
 			token_get_all( '<?php ?>' . $code, TOKEN_PARSE );
 		} catch ( ParseError $error ) {
 			return new WP_Error(
-				'sdc_view_syntax',
+				'sdcpb_view_syntax',
 				sprintf(
 					/* translators: 1: line number, 2: parser message. */
 					__( 'Die Ansicht hat einen PHP-Syntaxfehler in Zeile %1$d: %2$s', 'sdc-page-builder' ),
@@ -625,7 +626,7 @@ class Sdc_View {
 			);
 		} catch ( Throwable $error ) {
 			return new WP_Error(
-				'sdc_view_syntax',
+				'sdcpb_view_syntax',
 				sprintf(
 					/* translators: %s: parser message. */
 					__( 'Die Ansicht ließ sich nicht prüfen: %s', 'sdc-page-builder' ),
@@ -652,7 +653,7 @@ class Sdc_View {
 		$file = self::file( $dir, $type );
 
 		if ( '' === $file ) {
-			return new WP_Error( 'sdc_view_type', __( 'Dieser Komponententyp ist kein gültiger Dateiname.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_view_type', __( 'Dieser Komponententyp ist kein gültiger Dateiname.', 'sdc-page-builder' ) );
 		}
 
 		$code  = self::normalize( $body );
@@ -663,10 +664,10 @@ class Sdc_View {
 		}
 
 		if ( '' === $code ) {
-			return self::discard( $file, 'sdc_view' );
+			return self::discard( $file, 'sdcpb_view' );
 		}
 
-		return self::put( $file, self::wrap( $type, $code ), 'sdc_view' );
+		return self::put( $file, self::wrap( $type, $code ), 'sdcpb_view' );
 	}
 
 	/**
@@ -679,7 +680,7 @@ class Sdc_View {
 	 *
 	 * @param string $file     Absolute path.
 	 * @param string $contents File contents.
-	 * @param string $prefix   Error code prefix: `sdc_view` or `sdc_style`.
+	 * @param string $prefix   Error code prefix: `sdcpb_view` or `sdcpb_style`.
 	 * @return true|WP_Error
 	 */
 	private static function put( $file, $contents, $prefix ) {
@@ -700,7 +701,7 @@ class Sdc_View {
 		$done = file_put_contents( $tmp, $contents ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Writing a component file; WP_Filesystem would ask for credentials in the admin.
 
 		if ( false === $done || ! @rename( $tmp, $file ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.rename_rename -- Same-directory rename; a failure is reported here.
-			@unlink( $tmp ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.unlink_unlink -- Removing the temporary file of a failed write.
+			wp_delete_file( $tmp );
 			return new WP_Error(
 				$prefix . '_write_failed',
 				sprintf(
@@ -718,7 +719,7 @@ class Sdc_View {
 	 * Remove a component file.
 	 *
 	 * @param string $file   Absolute path.
-	 * @param string $prefix Error code prefix: `sdc_view` or `sdc_style`.
+	 * @param string $prefix Error code prefix: `sdcpb_view` or `sdcpb_style`.
 	 * @return true|WP_Error
 	 */
 	private static function discard( $file, $prefix ) {
@@ -726,7 +727,9 @@ class Sdc_View {
 			return true;
 		}
 
-		if ( ! @unlink( $file ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.unlink_unlink -- Removing a component file; a failure is reported here.
+		wp_delete_file( $file );
+
+		if ( file_exists( $file ) ) {
 			return new WP_Error(
 				$prefix . '_delete_failed',
 				sprintf(
@@ -745,15 +748,15 @@ class Sdc_View {
 	 *
 	 * A view is PHP that the server executes on every page load. That is the
 	 * same trust level as the theme editor, so the gate is the same one:
-	 * `manage_options`. `SDC_PB_ALLOW_VIEW_EDIT` switched to false removes the
+	 * `manage_options`. `SDCPB_ALLOW_VIEW_EDIT` switched to false removes the
 	 * capability from the code base; the filter is the per-site answer.
 	 *
 	 * @param string $type Component type, for a type-specific decision.
 	 * @return bool
 	 */
 	public static function can_edit( $type = '' ) {
-		$allowed = ! defined( 'SDC_PB_ALLOW_VIEW_EDIT' ) || (bool) SDC_PB_ALLOW_VIEW_EDIT;
-		$can     = $allowed && current_user_can( Sdc_Admin::CAPABILITY );
+		$allowed = ! defined( 'SDCPB_ALLOW_VIEW_EDIT' ) || (bool) SDCPB_ALLOW_VIEW_EDIT;
+		$can     = $allowed && current_user_can( Sdcpb_Admin::CAPABILITY );
 
 		/**
 		 * Filters whether views may be edited in the admin.
@@ -761,15 +764,15 @@ class Sdc_View {
 		 * @param bool   $can  Whether editing is allowed.
 		 * @param string $type Component type.
 		 */
-		return (bool) apply_filters( 'sdc_pb_can_edit_view', $can, (string) $type );
+		return (bool) apply_filters( 'sdcpb_can_edit_view', $can, (string) $type );
 	}
 
 	/**
 	 * Resolve a field value, by dotted path, from a context.
 	 *
 	 * Dotted paths are how a group's sub-field is reachable without the view
-	 * having to write `$data['cta']['title']` by hand: `sdc_text( 'cta.title' )`.
-	 * Field names are `[a-z0-9_]` (`Sdc_Admin::clean_name()`), so a dot is
+	 * having to write `$data['cta']['title']` by hand: `sdcpb_text( 'cta.title' )`.
+	 * Field names are `[a-z0-9_]` (`Sdcpb_Admin::clean_name()`), so a dot is
 	 * always a path separator and never part of a name.
 	 *
 	 * @param string     $key     Field name or dotted path.
@@ -896,7 +899,7 @@ class Sdc_View {
 	 * @param string $size  Image size for an ID without a URL.
 	 * @param bool   $any   Accept attachments that have no image source. A file
 	 *                      field stores a PDF as an ID; `wp_get_attachment_image_src()`
-	 *                      answers false for it, so `sdc_file()` printed nothing.
+	 *                      answers false for it, so `sdcpb_file()` printed nothing.
 	 * @return array{url:string,alt:string,title:string,id:int,width:int,height:int}|null
 	 */
 	public static function attachment_parts( $value, $size = 'large', $any = false ) {
@@ -964,59 +967,59 @@ class Sdc_View {
 	public static function helpers() {
 		return array(
 			array(
-				'signature'   => "sdc_text( 'name' )",
+				'signature'   => "sdcpb_text( 'name' )",
 				'description' => __( 'Feldwert als Text, HTML escapt. Mehrfachauswahl wird mit Komma verbunden.', 'sdc-page-builder' ),
 			),
 			array(
-				'signature'   => "sdc_html( 'name' )",
+				'signature'   => "sdcpb_html( 'name' )",
 				'description' => __( 'Feldwert als HTML, durch wp_kses_post. Für formatierbaren Text und Textareas mit Absätzen.', 'sdc-page-builder' ),
 			),
 			array(
-				'signature'   => "sdc_attr( 'name' )",
+				'signature'   => "sdcpb_attr( 'name' )",
 				'description' => __( 'Feldwert für ein Attribut, escapt. Für eigene Tags statt der Helfer unten.', 'sdc-page-builder' ),
 			),
 			array(
-				'signature'   => "sdc_url( 'name' )",
+				'signature'   => "sdcpb_url( 'name' )",
 				'description' => __( 'Feldwert als Adresse, escapt und auf http(s)/relative Ziele geprüft.', 'sdc-page-builder' ),
 			),
 			array(
-				'signature'   => "sdc_image( 'name', 'large' )",
+				'signature'   => "sdcpb_image( 'name', 'large' )",
 				'description' => __( 'Bild-Tag mit Adresse, Alt-Text und Maßen. Nimmt Anhang-Array, ID oder Adresse.', 'sdc-page-builder' ),
 			),
 			array(
-				'signature'   => "sdc_image_url( 'name', 'full' )",
+				'signature'   => "sdcpb_image_url( 'name', 'full' )",
 				'description' => __( 'Nur die Adresse des Bildes, escapt — für srcset, JSON-LD oder ein eigenes Tag. Nimmt Anhang-Array, ID oder Adresse.', 'sdc-page-builder' ),
 			),
 			array(
-				'signature'   => "sdc_image_style( 'name', 'full' )",
+				'signature'   => "sdcpb_image_style( 'name', 'full' )",
 				'description' => __( 'Setzt das Bild als CSS-Variable an das Element: style="--sdc-image:url(…)". Ohne Bild erscheint kein Attribut. In der CSS-Datei dann background-image: var( --sdc-image, none ).', 'sdc-page-builder' ),
 			),
 			array(
-				'signature'   => "sdc_link( 'name' )",
+				'signature'   => "sdcpb_link( 'name' )",
 				'description' => __( 'Verweis-Tag mit Beschriftung aus dem Feld. Drittes Argument setzt die Beschriftung.', 'sdc-page-builder' ),
 			),
 			array(
-				'signature'   => "sdc_file( 'name' )",
+				'signature'   => "sdcpb_file( 'name' )",
 				'description' => __( 'Verweis auf eine Datei, mit deren Titel als Beschriftung.', 'sdc-page-builder' ),
 			),
 			array(
-				'signature'   => "sdc_has( 'name' )",
+				'signature'   => "sdcpb_has( 'name' )",
 				'description' => __( 'Wahr, wenn das Feld einen Wert hat. Für bedingte Blöcke.', 'sdc-page-builder' ),
 			),
 			array(
-				'signature'   => "sdc_value( 'name' )",
+				'signature'   => "sdcpb_value( 'name' )",
 				'description' => __( 'Rohwert ohne Ausgabe, für eigene Logik. Punkte sprechen Unterfelder an: cta.title.', 'sdc-page-builder' ),
 			),
 			array(
-				'signature'   => "sdc_each( 'name', function ( \$row ) { … } )",
-				'description' => __( 'Schleife über die Zeilen einer Wiederholung. Hilferufe darin bekommen $row als letztes Argument: sdc_text( \'q\', $row ), sdc_image( \'bild\', \'large\', array(), $row ).', 'sdc-page-builder' ),
+				'signature'   => "sdcpb_each( 'name', function ( \$row ) { … } )",
+				'description' => __( 'Schleife über die Zeilen einer Wiederholung. Hilferufe darin bekommen $row als letztes Argument: sdcpb_text( \'q\', $row ), sdcpb_image( \'bild\', \'large\', array(), $row ).', 'sdc-page-builder' ),
 			),
 			array(
-				'signature'   => 'sdc_fields()',
+				'signature'   => 'sdcpb_fields()',
 				'description' => __( 'Die Standardausgabe aller Felder dieser Komponente, wenn nur das Drumherum eigen sein soll.', 'sdc-page-builder' ),
 			),
 			array(
-				'signature'   => 'sdc_class( … )',
+				'signature'   => 'sdcpb_class( … )',
 				'description' => __( 'Baut eine Klassenliste aus nicht-leeren Teilen, escapt für ein class-Attribut.', 'sdc-page-builder' ),
 			),
 		);
@@ -1051,7 +1054,7 @@ class Sdc_View {
 
 		$body = self::scaffold_fields( $fields, $slug, '', '' );
 
-		return $head . ( '' === $body ? "<?php sdc_fields(); ?>\n" : $body );
+		return $head . ( '' === $body ? "<?php sdcpb_fields(); ?>\n" : $body );
 	}
 
 	/**
@@ -1121,12 +1124,12 @@ class Sdc_View {
 		 * Where the row goes depends on the helper's signature: the data
 		 * source is the *last* parameter, so a helper that takes options in
 		 * between needs those passed explicitly. Writing `, $row` after the
-		 * existing arguments put the row into `$attr` of `sdc_image()` and
-		 * into `$text` of `sdc_link()` — the field then resolved against the
+		 * existing arguments put the row into `$attr` of `sdcpb_image()` and
+		 * into `$text` of `sdcpb_link()` — the field then resolved against the
 		 * component instead of the row and rendered nothing.
 		 */
 		$state = '' === $context ? '' : $context;
-		$tail  = '' === $state ? '' : ', ' . $state;        // For sdc_text/… : second parameter.
+		$tail  = '' === $state ? '' : ', ' . $state;        // For sdcpb_text/… : second parameter.
 		$image = '' === $state ? '' : ', array(), ' . $state;
 		$file  = '' === $state ? '' : ", '', " . $state;
 		$link  = '' === $state ? '' : ", '', " . $state;
@@ -1143,7 +1146,7 @@ class Sdc_View {
 			 * `$row` as the outer variable and print its (undefined) value
 			 * instead of the loop parameter the generated code needs.
 			 */
-			return '<?php sdc_each( ' . $key . ', function ( $row ) { ?>' . "\n"
+			return '<?php sdcpb_each( ' . $key . ', function ( $row ) { ?>' . "\n"
 				. '<div class="' . $css . '">' . "\n"
 				. $inner
 				. '</div>' . "\n"
@@ -1161,37 +1164,37 @@ class Sdc_View {
 		}
 
 		if ( 'true_false' === $type ) {
-			return "<?php if ( sdc_has( {$key}{$tail} ) ) : ?>\n"
+			return "<?php if ( sdcpb_has( {$key}{$tail} ) ) : ?>\n"
 				. '<span class="' . $css . '">' . esc_html__( 'Ja', 'sdc-page-builder' ) . '</span>' . "\n"
 				. "<?php endif; ?>\n";
 		}
 
 		if ( 'image' === $type ) {
 			return '<figure class="' . $css . '">' . "\n"
-				. "	<?php sdc_image( {$key}, 'large'{$image} ); ?>\n"
+				. "	<?php sdcpb_image( {$key}, 'large'{$image} ); ?>\n"
 				. "</figure>\n";
 		}
 
 		if ( 'file' === $type ) {
 			return '<p class="' . $css . '">' . "\n"
-				. "	<?php sdc_file( {$key}{$file} ); ?>\n"
+				. "	<?php sdcpb_file( {$key}{$file} ); ?>\n"
 				. "</p>\n";
 		}
 
 		if ( 'link' === $type ) {
 			return '<p class="' . $css . '">' . "\n"
-				. "	<?php sdc_link( {$key}, 'button'{$link} ); ?>\n"
+				. "	<?php sdcpb_link( {$key}, 'button'{$link} ); ?>\n"
 				. "</p>\n";
 		}
 
 		if ( 'wysiwyg' === $type || 'textarea' === $type ) {
 			return '<div class="' . $css . '">' . "\n"
-				. "	<?php sdc_html( {$key}{$tail} ); ?>\n"
+				. "	<?php sdcpb_html( {$key}{$tail} ); ?>\n"
 				. "</div>\n";
 		}
 
 		return '<p class="' . $css . '">' . "\n"
-			. "	<?php sdc_text( {$key}{$tail} ); ?>\n"
+			. "	<?php sdcpb_text( {$key}{$tail} ); ?>\n"
 			. "</p>\n";
 	}
 }
@@ -1201,70 +1204,70 @@ class Sdc_View {
  *
  * All of them echo and all of them escape: a view that forgets to escape is
  * the normal outcome when escaping is opt-in, so the shortest way to write a
- * field is also the safe one. `sdc_value()` is the way out when a view needs
+ * field is also the safe one. `sdcpb_value()` is the way out when a view needs
  * the raw value.
  *
  * Every helper takes the data source as its last argument, defaulting to the
- * component being rendered. Inside `sdc_each()` that default would be the
+ * component being rendered. Inside `sdcpb_each()` that default would be the
  * component, not the row — hence the generated views pass `$row` explicitly.
  */
 
-if ( ! function_exists( 'sdc_text' ) ) {
+if ( ! function_exists( 'sdcpb_text' ) ) {
 	/**
 	 * Echo a field value as escaped text.
 	 *
 	 * @param string     $key     Field name or dotted path.
 	 * @param array|null $context Data array; null means the current component.
 	 */
-	function sdc_text( $key, $context = null ) {
-		echo esc_html( Sdc_View::to_text( Sdc_View::resolve( $key, $context ) ) );
+	function sdcpb_text( $key, $context = null ) {
+		echo esc_html( Sdcpb_View::to_text( Sdcpb_View::resolve( $key, $context ) ) );
 	}
 }
 
-if ( ! function_exists( 'sdc_attr' ) ) {
+if ( ! function_exists( 'sdcpb_attr' ) ) {
 	/**
 	 * Echo a field value as an escaped attribute value.
 	 *
 	 * @param string     $key     Field name or dotted path.
 	 * @param array|null $context Data array; null means the current component.
 	 */
-	function sdc_attr( $key, $context = null ) {
-		echo esc_attr( Sdc_View::to_text( Sdc_View::resolve( $key, $context ) ) );
+	function sdcpb_attr( $key, $context = null ) {
+		echo esc_attr( Sdcpb_View::to_text( Sdcpb_View::resolve( $key, $context ) ) );
 	}
 }
 
-if ( ! function_exists( 'sdc_url' ) ) {
+if ( ! function_exists( 'sdcpb_url' ) ) {
 	/**
 	 * Echo a field value as an escaped URL.
 	 *
 	 * @param string     $key     Field name or dotted path.
 	 * @param array|null $context Data array; null means the current component.
 	 */
-	function sdc_url( $key, $context = null ) {
-		$value = Sdc_View::resolve( $key, $context );
+	function sdcpb_url( $key, $context = null ) {
+		$value = Sdcpb_View::resolve( $key, $context );
 
 		if ( is_array( $value ) ) {
-			$parts = Sdc_View::link_parts( $value );
+			$parts = Sdcpb_View::link_parts( $value );
 			$value = null === $parts ? '' : $parts['url'];
 		}
 
-		echo esc_url( Sdc_View::to_text( $value ) );
+		echo esc_url( Sdcpb_View::to_text( $value ) );
 	}
 }
 
-if ( ! function_exists( 'sdc_html' ) ) {
+if ( ! function_exists( 'sdcpb_html' ) ) {
 	/**
 	 * Echo a field value as HTML that survives `wp_kses_post`.
 	 *
 	 * @param string     $key     Field name or dotted path.
 	 * @param array|null $context Data array; null means the current component.
 	 */
-	function sdc_html( $key, $context = null ) {
-		echo wp_kses_post( Sdc_View::to_text( Sdc_View::resolve( $key, $context ) ) );
+	function sdcpb_html( $key, $context = null ) {
+		echo wp_kses_post( Sdcpb_View::to_text( Sdcpb_View::resolve( $key, $context ) ) );
 	}
 }
 
-if ( ! function_exists( 'sdc_has' ) ) {
+if ( ! function_exists( 'sdcpb_has' ) ) {
 	/**
 	 * Whether a field has a value worth rendering.
 	 *
@@ -1276,8 +1279,8 @@ if ( ! function_exists( 'sdc_has' ) ) {
 	 * @param array|null $context Data array; null means the current component.
 	 * @return bool
 	 */
-	function sdc_has( $key, $context = null ) {
-		$value = Sdc_View::resolve( $key, $context );
+	function sdcpb_has( $key, $context = null ) {
+		$value = Sdcpb_View::resolve( $key, $context );
 
 		if ( is_array( $value ) ) {
 			return array() !== $value;
@@ -1287,11 +1290,11 @@ if ( ! function_exists( 'sdc_has' ) ) {
 			return false;
 		}
 
-		return '' !== trim( Sdc_View::to_text( $value ) );
+		return '' !== trim( Sdcpb_View::to_text( $value ) );
 	}
 }
 
-if ( ! function_exists( 'sdc_value' ) ) {
+if ( ! function_exists( 'sdcpb_value' ) ) {
 	/**
 	 * A raw field value, not printed.
 	 *
@@ -1300,14 +1303,14 @@ if ( ! function_exists( 'sdc_value' ) ) {
 	 * @param mixed      $fallback Returned when the field does not exist.
 	 * @return mixed
 	 */
-	function sdc_value( $key, $context = null, $fallback = null ) {
-		$value = Sdc_View::resolve( $key, $context );
+	function sdcpb_value( $key, $context = null, $fallback = null ) {
+		$value = Sdcpb_View::resolve( $key, $context );
 
 		return null === $value ? $fallback : $value;
 	}
 }
 
-if ( ! function_exists( 'sdc_image' ) ) {
+if ( ! function_exists( 'sdcpb_image' ) ) {
 	/**
 	 * Echo an `<img>` for an image field.
 	 *
@@ -1316,8 +1319,8 @@ if ( ! function_exists( 'sdc_image' ) ) {
 	 * @param array      $attr    Extra attributes, e.g. `array( 'class' => 'hero__img' )`.
 	 * @param array|null $context Data array; null means the current component.
 	 */
-	function sdc_image( $key, $size = 'large', array $attr = array(), $context = null ) {
-		$parts = Sdc_View::attachment_parts( Sdc_View::resolve( $key, $context ), $size );
+	function sdcpb_image( $key, $size = 'large', array $attr = array(), $context = null ) {
+		$parts = Sdcpb_View::attachment_parts( Sdcpb_View::resolve( $key, $context ), $size );
 
 		if ( null === $parts ) {
 			return;
@@ -1347,17 +1350,17 @@ if ( ! function_exists( 'sdc_image' ) ) {
 	}
 }
 
-if ( ! function_exists( 'sdc_image_url' ) ) {
+if ( ! function_exists( 'sdcpb_image_url' ) ) {
 	/**
 	 * Echo the URL of an image field.
 	 *
-	 * The counterpart of `sdc_image()` for everything that is not a tag:
+	 * The counterpart of `sdcpb_image()` for everything that is not a tag:
 	 * `srcset`, JSON-LD, a `<picture>` source, an inline style. It reads the
 	 * same three value forms, so a view never has to care whether the field
 	 * holds an attachment ID, an address or an attachment array.
 	 *
-	 * Use this, never `sdc_url()`: an image field written by its chooser
-	 * holds an ID, and `sdc_url()` would print that ID — `url(151)` in a
+	 * Use this, never `sdcpb_url()`: an image field written by its chooser
+	 * holds an ID, and `sdcpb_url()` would print that ID — `url(151)` in a
 	 * stylesheet is not an error either, it is an image that silently does
 	 * not appear.
 	 *
@@ -1368,8 +1371,8 @@ if ( ! function_exists( 'sdc_image_url' ) ) {
 	 * @param string     $size    Image size, used when the value is an ID.
 	 * @param array|null $context Data array; null means the current component.
 	 */
-	function sdc_image_url( $key, $size = 'large', $context = null ) {
-		$parts = Sdc_View::attachment_parts( Sdc_View::resolve( $key, $context ), $size );
+	function sdcpb_image_url( $key, $size = 'large', $context = null ) {
+		$parts = Sdcpb_View::attachment_parts( Sdcpb_View::resolve( $key, $context ), $size );
 
 		if ( null === $parts ) {
 			return;
@@ -1379,7 +1382,7 @@ if ( ! function_exists( 'sdc_image_url' ) ) {
 	}
 }
 
-if ( ! function_exists( 'sdc_image_style' ) ) {
+if ( ! function_exists( 'sdcpb_image_style' ) ) {
 	/**
 	 * Echo a `style` attribute that hands an image field to the stylesheet.
 	 *
@@ -1387,7 +1390,7 @@ if ( ! function_exists( 'sdc_image_style' ) ) {
 	 * in as a custom property on the element, and the stylesheet decides what
 	 * to do with it:
 	 *
-	 *     <div class="hero"<?php sdc_image_style( 'bgimage', 'full' ); ?>>
+	 *     <div class="hero"<?php sdcpb_image_style( 'bgimage', 'full' ); ?>>
 	 *
 	 *     .hero { background-image: var( --sdc-image, none ); }
 	 *
@@ -1403,8 +1406,8 @@ if ( ! function_exists( 'sdc_image_style' ) ) {
 	 * @param string     $property Custom property name.
 	 * @param array|null $context  Data array; null means the current component.
 	 */
-	function sdc_image_style( $key, $size = 'large', $property = '--sdc-image', $context = null ) {
-		$parts = Sdc_View::attachment_parts( Sdc_View::resolve( $key, $context ), $size );
+	function sdcpb_image_style( $key, $size = 'large', $property = '--sdc-image', $context = null ) {
+		$parts = Sdcpb_View::attachment_parts( Sdcpb_View::resolve( $key, $context ), $size );
 
 		if ( null === $parts ) {
 			return;
@@ -1428,7 +1431,7 @@ if ( ! function_exists( 'sdc_image_style' ) ) {
 	}
 }
 
-if ( ! function_exists( 'sdc_link' ) ) {
+if ( ! function_exists( 'sdcpb_link' ) ) {
 	/**
 	 * Echo an `<a>` for a link field.
 	 *
@@ -1437,8 +1440,8 @@ if ( ! function_exists( 'sdc_link' ) ) {
 	 * @param string     $text      Optional label; the field's title is the default.
 	 * @param array|null $context   Data array; null means the current component.
 	 */
-	function sdc_link( $key, $css_class = '', $text = '', $context = null ) {
-		$parts = Sdc_View::link_parts( Sdc_View::resolve( $key, $context ) );
+	function sdcpb_link( $key, $css_class = '', $text = '', $context = null ) {
+		$parts = Sdcpb_View::link_parts( Sdcpb_View::resolve( $key, $context ) );
 
 		if ( null === $parts ) {
 			return;
@@ -1460,7 +1463,7 @@ if ( ! function_exists( 'sdc_link' ) ) {
 	}
 }
 
-if ( ! function_exists( 'sdc_file' ) ) {
+if ( ! function_exists( 'sdcpb_file' ) ) {
 	/**
 	 * Echo an `<a>` for a file field.
 	 *
@@ -1468,8 +1471,8 @@ if ( ! function_exists( 'sdc_file' ) ) {
 	 * @param string     $css_class Optional class attribute.
 	 * @param array|null $context   Data array; null means the current component.
 	 */
-	function sdc_file( $key, $css_class = '', $context = null ) {
-		$parts = Sdc_View::attachment_parts( Sdc_View::resolve( $key, $context ), 'full', true );
+	function sdcpb_file( $key, $css_class = '', $context = null ) {
+		$parts = Sdcpb_View::attachment_parts( Sdcpb_View::resolve( $key, $context ), 'full', true );
 
 		if ( null === $parts ) {
 			return;
@@ -1486,20 +1489,20 @@ if ( ! function_exists( 'sdc_file' ) ) {
 	}
 }
 
-if ( ! function_exists( 'sdc_each' ) ) {
+if ( ! function_exists( 'sdcpb_each' ) ) {
 	/**
 	 * Loop over the rows of a repeater field.
 	 *
 	 * The callback receives the row array and its index. Helpers inside it need
-	 * the row as their second argument — `sdc_text( 'q', $row )` — because the
+	 * the row as their second argument — `sdcpb_text( 'q', $row )` — because the
 	 * default context is the component, not the row.
 	 *
 	 * @param string     $key      Field name or dotted path.
 	 * @param callable   $callback Receives ( array $row, int $index ).
 	 * @param array|null $context  Data array; null means the current component.
 	 */
-	function sdc_each( $key, $callback, $context = null ) {
-		$rows = Sdc_View::resolve( $key, $context );
+	function sdcpb_each( $key, $callback, $context = null ) {
+		$rows = Sdcpb_View::resolve( $key, $context );
 
 		if ( ! is_array( $rows ) || ! $rows || ! is_callable( $callback ) ) {
 			return;
@@ -1514,29 +1517,29 @@ if ( ! function_exists( 'sdc_each' ) ) {
 	}
 }
 
-if ( ! function_exists( 'sdc_fields' ) ) {
+if ( ! function_exists( 'sdcpb_fields' ) ) {
 	/**
 	 * Echo the generic markup of the current component's fields.
 	 */
-	function sdc_fields() {
-		$type = Sdc_View::type();
-		$data = Sdc_View::data();
+	function sdcpb_fields() {
+		$type = Sdcpb_View::type();
+		$data = Sdcpb_View::data();
 
 		if ( '' === $type || null === $data ) {
 			return;
 		}
 
-		echo Sdc_Frontend::component_fields_html( $type, $data ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The frontend builder escapes every leaf it prints.
+		echo Sdcpb_Frontend::component_fields_html( $type, $data ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The frontend builder escapes every leaf it prints.
 	}
 }
 
-if ( ! function_exists( 'sdc_class' ) ) {
+if ( ! function_exists( 'sdcpb_class' ) ) {
 	/**
 	 * Echo a class attribute from the parts that are not empty.
 	 *
 	 * @param string ...$classes Class names; empty ones are dropped.
 	 */
-	function sdc_class( ...$classes ) {
+	function sdcpb_class( ...$classes ) {
 		$out = array();
 
 		foreach ( $classes as $class ) {

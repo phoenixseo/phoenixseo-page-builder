@@ -334,7 +334,7 @@
 		layoutForRow: layoutForRow,
 	};
 
-	root.SDCBlockRows = api;
+	root.SDCPBBlockRows = api;
 
 	if ( typeof module === 'object' && module.exports ) {
 		module.exports = api;

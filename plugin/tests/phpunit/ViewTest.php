@@ -6,17 +6,17 @@
  */
 
 /**
- * Covers `Sdc_View` and the `sdc_*` helpers: the path rules, the body round
+ * Covers `Sdcpb_View` and the `sdcpb_*` helpers: the path rules, the body round
  * trip through the admin, `lint()` as the gate in front of the disk, the
  * context the helpers read from, and the two places that consume all of it —
- * `Sdc_Frontend` rendering a component, and the stylesheet enqueue.
+ * `Sdcpb_Frontend` rendering a component, and the stylesheet enqueue.
  *
  * The fixtures live in their own scratch directory under the system temp dir
  * and are removed in `tear_down()`; the one exception is the stylesheet test,
  * which has to sit under a root WordPress knows a URL for and cleans up after
  * itself.
  */
-class ViewTest extends Sdc_TestCase {
+class ViewTest extends Sdcpb_TestCase {
 
 	/**
 	 * Scratch root for the current test.
@@ -53,13 +53,13 @@ class ViewTest extends Sdc_TestCase {
 		parent::set_up();
 
 		$this->root       = untrailingslashit( get_temp_dir() ) . '/sdc-view-' . wp_generate_password( 8, false );
-		$this->components = $this->root . '/' . Sdc_Schema::USER_DIR;
+		$this->components = $this->root . '/' . Sdcpb_Schema::USER_DIR;
 
 		$this->assertTrue( wp_mkdir_p( $this->components ) );
 
 		// A test that dies mid-render must not poison the next one.
-		while ( null !== Sdc_View::context() ) {
-			Sdc_View::pop();
+		while ( null !== Sdcpb_View::context() ) {
+			Sdcpb_View::pop();
 		}
 	}
 
@@ -67,13 +67,13 @@ class ViewTest extends Sdc_TestCase {
 	 * Remove the scratch directories and the filters this suite installed.
 	 */
 	public function tear_down() {
-		while ( null !== Sdc_View::context() ) {
-			Sdc_View::pop();
+		while ( null !== Sdcpb_View::context() ) {
+			Sdcpb_View::pop();
 		}
 
-		remove_all_filters( 'sdc_pb_component_dirs' );
-		remove_all_filters( 'sdc_pb_component_style_src' );
-		remove_all_filters( 'sdc_pb_can_edit_view' );
+		remove_all_filters( 'sdcpb_component_dirs' );
+		remove_all_filters( 'sdcpb_component_style_src' );
+		remove_all_filters( 'sdcpb_can_edit_view' );
 
 		foreach ( array_reverse( $this->content_dirs ) as $dir ) {
 			$this->remove_dir( $dir );
@@ -107,7 +107,7 @@ class ViewTest extends Sdc_TestCase {
 	public function test_file_path_is_the_component_directory_plus_render_php() {
 		$this->assertSame(
 			'/srv/components/hero/render.php',
-			Sdc_View::file( '/srv/components/', 'hero' )
+			Sdcpb_View::file( '/srv/components/', 'hero' )
 		);
 	}
 
@@ -115,17 +115,17 @@ class ViewTest extends Sdc_TestCase {
 	 * A type is a path segment, so anything with a separator is refused.
 	 */
 	public function test_file_rejects_a_type_with_path_parts() {
-		$this->assertSame( '', Sdc_View::file( '/srv/components', '../../etc/passwd' ) );
-		$this->assertSame( '', Sdc_View::file( '/srv/components', 'hero/../../x' ) );
-		$this->assertSame( '', Sdc_View::file( '/srv/components', '' ) );
-		$this->assertSame( '', Sdc_View::file( '/srv/components', 'mit leerzeichen' ) );
+		$this->assertSame( '', Sdcpb_View::file( '/srv/components', '../../etc/passwd' ) );
+		$this->assertSame( '', Sdcpb_View::file( '/srv/components', 'hero/../../x' ) );
+		$this->assertSame( '', Sdcpb_View::file( '/srv/components', '' ) );
+		$this->assertSame( '', Sdcpb_View::file( '/srv/components', 'mit leerzeichen' ) );
 	}
 
 	/**
 	 * Without a root directory there is no path to build.
 	 */
 	public function test_file_needs_a_directory() {
-		$this->assertSame( '', Sdc_View::file( '', 'hero' ) );
+		$this->assertSame( '', Sdcpb_View::file( '', 'hero' ) );
 	}
 
 	/**
@@ -134,9 +134,9 @@ class ViewTest extends Sdc_TestCase {
 	public function test_style_file_sits_next_to_the_view() {
 		$this->assertSame(
 			'/srv/components/hero/component.css',
-			Sdc_View::style_file( '/srv/components', 'hero' )
+			Sdcpb_View::style_file( '/srv/components', 'hero' )
 		);
-		$this->assertSame( '', Sdc_View::style_file( '/srv/components', '../x' ) );
+		$this->assertSame( '', Sdcpb_View::style_file( '/srv/components', '../x' ) );
 	}
 
 	/**
@@ -150,7 +150,7 @@ class ViewTest extends Sdc_TestCase {
 
 		$this->use_components();
 
-		$this->assertSame( $css, Sdc_View::style( 'hero' ) );
+		$this->assertSame( $css, Sdcpb_View::style( 'hero' ) );
 	}
 
 	/**
@@ -159,9 +159,67 @@ class ViewTest extends Sdc_TestCase {
 	public function test_style_returns_empty_without_a_stylesheet() {
 		$this->use_components();
 
-		$this->assertSame( '', Sdc_View::style( 'hero' ) );
-		$this->assertSame( '', Sdc_View::style( '../hero' ) );
-		$this->assertSame( '', Sdc_View::style( '' ) );
+		$this->assertSame( '', Sdcpb_View::style( 'hero' ) );
+		$this->assertSame( '', Sdcpb_View::style( '../hero' ) );
+		$this->assertSame( '', Sdcpb_View::style( '' ) );
+	}
+
+	/**
+	 * A stylesheet that ships with the plugin is found, and a site copy wins.
+	 *
+	 * Same list as `Sdcpb_Schema::template()`, same order: the plugin's own
+	 * components are the fallback, so an example that ships with `render.php`
+	 * and `component.css` also carries its styles — and a site that overrides
+	 * the component takes over both files.
+	 */
+	public function test_style_falls_back_to_the_plugin_directory() {
+		$type   = 'sdc-tmp-' . strtolower( wp_generate_password( 8, false ) );
+		$plugin = Sdcpb_Schema::dir() . $type;
+		$ours   = $this->components . '/' . $type;
+
+		$this->assertTrue( wp_mkdir_p( $plugin ) );
+		$this->assertTrue( wp_mkdir_p( $ours ) );
+
+		$this->use_components();
+
+		try {
+			file_put_contents( $plugin . '/component.css', '.plugin{color:red}' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Test fixture.
+
+			$this->assertSame( $plugin . '/component.css', Sdcpb_View::style( $type ) );
+
+			file_put_contents( $ours . '/component.css', '.site{color:blue}' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Test fixture.
+
+			$this->assertSame( $ours . '/component.css', Sdcpb_View::style( $type ) );
+		} finally {
+			unlink( $plugin . '/component.css' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink -- Test fixture cleanup.
+			rmdir( $plugin );
+		}
+	}
+
+	/**
+	 * Every shipped example that carries a view is found with its styles.
+	 *
+	 * The end-to-end version of the two tests above, run against the files
+	 * that actually ship: a component whose `render.php` sits next to its
+	 * `definition.json` in the plugin has to be rendered from there, and its
+	 * `component.css` has to be the one that gets inlined.
+	 */
+	public function test_shipped_examples_are_found_with_their_view_and_styles() {
+		$root  = untrailingslashit( Sdcpb_Schema::dir() );
+		$found = 0;
+
+		foreach ( array_keys( Sdcpb_Schema::components() ) as $type ) {
+			if ( ! file_exists( $root . '/' . $type . '/render.php' ) ) {
+				continue;
+			}
+
+			++$found;
+
+			$this->assertSame( $root . '/' . $type . '/render.php', Sdcpb_Schema::template( $type ) );
+			$this->assertSame( $root . '/' . $type . '/component.css', Sdcpb_View::style( $type ) );
+		}
+
+		$this->assertGreaterThan( 0, $found, 'No shipped example carries a view.' );
 	}
 
 	/*
@@ -174,73 +232,73 @@ class ViewTest extends Sdc_TestCase {
 	 * The wrapper writes a header, the marker, and then the body as a template.
 	 */
 	public function test_wrap_marks_the_body_and_holds_a_docblock() {
-		$code = Sdc_View::wrap( 'hero', '<p><?php sdc_text( \'heading\' ); ?></p>' );
+		$code = Sdcpb_View::wrap( 'hero', '<p><?php sdcpb_text( \'heading\' ); ?></p>' );
 
 		$this->assertStringStartsWith( '<?php', $code );
 		$this->assertStringContainsString( 'Ansicht der Komponente "hero"', $code );
-		$this->assertStringContainsString( Sdc_View::BODY_MARKER . ' ?>', $code );
-		$this->assertStringEndsWith( '<p><?php sdc_text( \'heading\' ); ?></p>' . "\n", $code );
+		$this->assertStringContainsString( Sdcpb_View::BODY_MARKER . ' ?>', $code );
+		$this->assertStringEndsWith( '<p><?php sdcpb_text( \'heading\' ); ?></p>' . "\n", $code );
 	}
 
 	/**
 	 * A type cannot break out of the header comment it is printed into.
 	 */
 	public function test_wrap_neutralises_a_closing_comment_in_the_type() {
-		$code = Sdc_View::wrap( 'he*/ro', '<p>x</p>' );
+		$code = Sdcpb_View::wrap( 'he*/ro', '<p>x</p>' );
 
 		// The header's closing comment and the marker's — nothing else.
 		$this->assertSame( 2, substr_count( $code, '*/' ) );
-		$this->assertSame( true, Sdc_View::lint( Sdc_View::body_of( $code ) ) );
+		$this->assertSame( true, Sdcpb_View::lint( Sdcpb_View::body_of( $code ) ) );
 	}
 
 	/**
 	 * Reading a file returns everything below the marker, not the header.
 	 */
 	public function test_body_of_reads_everything_below_the_marker() {
-		$code = "<?php\n/**\n * Header.\n */\n" . Sdc_View::BODY_MARKER . " ?>\n<p>Inhalt</p>\n";
+		$code = "<?php\n/**\n * Header.\n */\n" . Sdcpb_View::BODY_MARKER . " ?>\n<p>Inhalt</p>\n";
 
-		$this->assertSame( "<p>Inhalt</p>\n", Sdc_View::body_of( $code ) );
+		$this->assertSame( "<p>Inhalt</p>\n", Sdcpb_View::body_of( $code ) );
 	}
 
 	/**
 	 * A hand-written file has no marker; its body starts after the open tag.
 	 */
 	public function test_body_of_falls_back_to_the_opening_tag() {
-		$this->assertSame( "<p>Hand</p>\n", Sdc_View::body_of( "<?php\n<p>Hand</p>\n" ) );
+		$this->assertSame( "<p>Hand</p>\n", Sdcpb_View::body_of( "<?php\n<p>Hand</p>\n" ) );
 	}
 
 	/**
 	 * Pasting a whole file into the editor must not paste its header twice.
 	 */
 	public function test_normalize_strips_bom_and_pasted_header() {
-		$body = "\xEF\xBB\xBF<?php\n/**\n * Ansicht.\n */\n" . Sdc_View::BODY_MARKER . "\n<p>x</p>";
+		$body = "\xEF\xBB\xBF<?php\n/**\n * Ansicht.\n */\n" . Sdcpb_View::BODY_MARKER . "\n<p>x</p>";
 
-		$normalized = Sdc_View::normalize( $body );
+		$normalized = Sdcpb_View::normalize( $body );
 
 		$this->assertSame( "<p>x</p>\n", $normalized );
-		$this->assertSame( 1, substr_count( Sdc_View::wrap( 'hero', $normalized ), Sdc_View::BODY_MARKER ) );
+		$this->assertSame( 1, substr_count( Sdcpb_View::wrap( 'hero', $normalized ), Sdcpb_View::BODY_MARKER ) );
 	}
 
 	/**
 	 * The round trip through the file system keeps the body byte for byte.
 	 */
 	public function test_read_returns_the_body_of_a_written_file() {
-		$body = "<div class=\"hero\">\n\t<?php sdc_text( 'heading' ); ?>\n</div>";
+		$body = "<div class=\"hero\">\n\t<?php sdcpb_text( 'heading' ); ?>\n</div>";
 
-		$this->assertTrue( Sdc_View::write( $this->components, 'hero', $body ) );
+		$this->assertTrue( Sdcpb_View::write( $this->components, 'hero', $body ) );
 
-		$file = Sdc_View::file( $this->components, 'hero' );
+		$file = Sdcpb_View::file( $this->components, 'hero' );
 
 		$this->assertFileExists( $file );
-		$this->assertSame( $body . "\n", Sdc_View::read( $file ) );
+		$this->assertSame( $body . "\n", Sdcpb_View::read( $file ) );
 	}
 
 	/**
 	 * A missing file reads as an empty body, not as a warning.
 	 */
 	public function test_read_returns_empty_for_a_missing_file() {
-		$this->assertSame( '', Sdc_View::read( $this->components . '/nichts/render.php' ) );
-		$this->assertSame( '', Sdc_View::read( '' ) );
+		$this->assertSame( '', Sdcpb_View::read( $this->components . '/nichts/render.php' ) );
+		$this->assertSame( '', Sdcpb_View::read( '' ) );
 	}
 
 	/*
@@ -253,27 +311,27 @@ class ViewTest extends Sdc_TestCase {
 	 * A normal view is markup with PHP islands, exactly like a theme file.
 	 */
 	public function test_lint_accepts_a_template_with_php_islands() {
-		$body = "<article>\n<?php if ( sdc_has( 'heading' ) ) : ?>\n<h2><?php sdc_text( 'heading' ); ?></h2>\n<?php endif; ?>\n</article>";
+		$body = "<article>\n<?php if ( sdcpb_has( 'heading' ) ) : ?>\n<h2><?php sdcpb_text( 'heading' ); ?></h2>\n<?php endif; ?>\n</article>";
 
-		$this->assertTrue( Sdc_View::lint( $body ) );
+		$this->assertTrue( Sdcpb_View::lint( $body ) );
 	}
 
 	/**
 	 * An empty body is valid: it is the way back to the generic output.
 	 */
 	public function test_lint_accepts_an_empty_body() {
-		$this->assertTrue( Sdc_View::lint( '' ) );
-		$this->assertTrue( Sdc_View::lint( "   \n\t" ) );
+		$this->assertTrue( Sdcpb_View::lint( '' ) );
+		$this->assertTrue( Sdcpb_View::lint( "   \n\t" ) );
 	}
 
 	/**
 	 * A syntax error is refused, with the line the author has to look at.
 	 */
 	public function test_lint_rejects_a_syntax_error_with_its_line() {
-		$result = Sdc_View::lint( "<p>ok</p>\n<?php if ( : ?>\n" );
+		$result = Sdcpb_View::lint( "<p>ok</p>\n<?php if ( : ?>\n" );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_view_syntax', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_view_syntax', $result->get_error_code() );
 		$this->assertStringContainsString( 'Zeile 2', $result->get_error_message() );
 	}
 
@@ -282,7 +340,7 @@ class ViewTest extends Sdc_TestCase {
 	 * expression, so a leading `?>` is not an error.
 	 */
 	public function test_lint_accepts_a_body_that_closes_php_first() {
-		$this->assertTrue( Sdc_View::lint( "?>\n<p>x</p>\n<?php echo 'y';" ) );
+		$this->assertTrue( Sdcpb_View::lint( "?>\n<p>x</p>\n<?php echo 'y';" ) );
 	}
 
 	/*
@@ -295,58 +353,58 @@ class ViewTest extends Sdc_TestCase {
 	 * Writing a view creates the component directory it belongs in.
 	 */
 	public function test_write_creates_the_component_directory() {
-		$result = Sdc_View::write( $this->components, 'neu', '<p>neu</p>' );
+		$result = Sdcpb_View::write( $this->components, 'neu', '<p>neu</p>' );
 
 		$this->assertTrue( $result );
 		$this->assertDirectoryExists( $this->components . '/neu' );
-		$this->assertSame( "<p>neu</p>\n", Sdc_View::read( $this->components . '/neu/render.php' ) );
+		$this->assertSame( "<p>neu</p>\n", Sdcpb_View::read( $this->components . '/neu/render.php' ) );
 	}
 
 	/**
 	 * A second save replaces the body instead of appending to it.
 	 */
 	public function test_write_replaces_an_existing_view() {
-		Sdc_View::write( $this->components, 'hero', '<p>alt</p>' );
-		Sdc_View::write( $this->components, 'hero', '<p>neu</p>' );
+		Sdcpb_View::write( $this->components, 'hero', '<p>alt</p>' );
+		Sdcpb_View::write( $this->components, 'hero', '<p>neu</p>' );
 
-		$this->assertSame( "<p>neu</p>\n", Sdc_View::read( Sdc_View::file( $this->components, 'hero' ) ) );
+		$this->assertSame( "<p>neu</p>\n", Sdcpb_View::read( Sdcpb_View::file( $this->components, 'hero' ) ) );
 	}
 
 	/**
 	 * A body with a syntax error never reaches the disk.
 	 */
 	public function test_write_refuses_a_syntax_error_and_writes_nothing() {
-		$result = Sdc_View::write( $this->components, 'hero', '<?php if ( ; ?>' );
+		$result = Sdcpb_View::write( $this->components, 'hero', '<?php if ( ; ?>' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_view_syntax', $result->get_error_code() );
-		$this->assertFileDoesNotExist( Sdc_View::file( $this->components, 'hero' ) );
+		$this->assertSame( 'sdcpb_view_syntax', $result->get_error_code() );
+		$this->assertFileDoesNotExist( Sdcpb_View::file( $this->components, 'hero' ) );
 	}
 
 	/**
 	 * An empty body deletes the view: no view means the generic output.
 	 */
 	public function test_write_with_an_empty_body_removes_the_view() {
-		$file = Sdc_View::file( $this->components, 'hero' );
+		$file = Sdcpb_View::file( $this->components, 'hero' );
 
-		$this->assertTrue( Sdc_View::write( $this->components, 'hero', '<p>x</p>' ) );
+		$this->assertTrue( Sdcpb_View::write( $this->components, 'hero', '<p>x</p>' ) );
 		$this->assertFileExists( $file );
 
-		$this->assertTrue( Sdc_View::write( $this->components, 'hero', '' ) );
+		$this->assertTrue( Sdcpb_View::write( $this->components, 'hero', '' ) );
 		$this->assertFileDoesNotExist( $file );
 
 		// Deleting a view that is already gone is not an error.
-		$this->assertTrue( Sdc_View::write( $this->components, 'hero', '' ) );
+		$this->assertTrue( Sdcpb_View::write( $this->components, 'hero', '' ) );
 	}
 
 	/**
 	 * A type that is not a file name is refused before anything is written.
 	 */
 	public function test_write_rejects_a_type_with_path_parts() {
-		$result = Sdc_View::write( $this->components, '../boese', '<p>x</p>' );
+		$result = Sdcpb_View::write( $this->components, '../boese', '<p>x</p>' );
 
 		$this->assertWPError( $result );
-		$this->assertSame( 'sdc_view_type', $result->get_error_code() );
+		$this->assertSame( 'sdcpb_view_type', $result->get_error_code() );
 	}
 
 	/*
@@ -359,41 +417,41 @@ class ViewTest extends Sdc_TestCase {
 	 * The stack exists because a view may render another component.
 	 */
 	public function test_push_pop_returns_to_the_previous_context() {
-		Sdc_View::push( 'hero', array( 'heading' => 'Außen' ) );
-		Sdc_View::push( 'faq', array( 'heading' => 'Innen' ) );
+		Sdcpb_View::push( 'hero', array( 'heading' => 'Außen' ) );
+		Sdcpb_View::push( 'faq', array( 'heading' => 'Innen' ) );
 
-		$this->assertSame( 'faq', Sdc_View::type() );
-		$this->assertSame( array( 'heading' => 'Innen' ), Sdc_View::data() );
+		$this->assertSame( 'faq', Sdcpb_View::type() );
+		$this->assertSame( array( 'heading' => 'Innen' ), Sdcpb_View::data() );
 
-		Sdc_View::pop();
+		Sdcpb_View::pop();
 
-		$this->assertSame( 'hero', Sdc_View::type() );
-		$this->assertSame( array( 'heading' => 'Außen' ), Sdc_View::data() );
+		$this->assertSame( 'hero', Sdcpb_View::type() );
+		$this->assertSame( array( 'heading' => 'Außen' ), Sdcpb_View::data() );
 
-		Sdc_View::pop();
+		Sdcpb_View::pop();
 
-		$this->assertNull( Sdc_View::context() );
+		$this->assertNull( Sdcpb_View::context() );
 	}
 
 	/**
 	 * Outside a render there is no component, and the helpers print nothing.
 	 */
 	public function test_context_is_empty_outside_a_render() {
-		$this->assertNull( Sdc_View::context() );
-		$this->assertNull( Sdc_View::data() );
-		$this->assertSame( '', Sdc_View::type() );
-		$this->assertSame( '', $this->capture( 'sdc_text', 'heading' ) );
-		$this->assertNull( Sdc_View::resolve( 'heading' ) );
+		$this->assertNull( Sdcpb_View::context() );
+		$this->assertNull( Sdcpb_View::data() );
+		$this->assertSame( '', Sdcpb_View::type() );
+		$this->assertSame( '', $this->capture( 'sdcpb_text', 'heading' ) );
+		$this->assertNull( Sdcpb_View::resolve( 'heading' ) );
 	}
 
 	/**
 	 * Dotted paths reach a group's sub-field.
 	 */
 	public function test_resolve_reads_dotted_paths() {
-		Sdc_View::push( 'hero', array( 'cta' => array( 'title' => 'Mehr erfahren' ) ) );
+		Sdcpb_View::push( 'hero', array( 'cta' => array( 'title' => 'Mehr erfahren' ) ) );
 
-		$this->assertSame( 'Mehr erfahren', Sdc_View::resolve( 'cta.title' ) );
-		$this->assertSame( array( 'title' => 'Mehr erfahren' ), Sdc_View::resolve( 'cta' ) );
+		$this->assertSame( 'Mehr erfahren', Sdcpb_View::resolve( 'cta.title' ) );
+		$this->assertSame( array( 'title' => 'Mehr erfahren' ), Sdcpb_View::resolve( 'cta' ) );
 	}
 
 	/**
@@ -405,21 +463,21 @@ class ViewTest extends Sdc_TestCase {
 			'cta'     => array( 'title' => 'y' ),
 		);
 
-		$this->assertNull( Sdc_View::resolve( 'nichts', $data ) );
-		$this->assertNull( Sdc_View::resolve( 'cta.url', $data ) );
-		$this->assertNull( Sdc_View::resolve( 'heading.deep', $data ) );
-		$this->assertNull( Sdc_View::resolve( '', $data ) );
-		$this->assertNull( Sdc_View::resolve( 'heading', 'kein array' ) );
+		$this->assertNull( Sdcpb_View::resolve( 'nichts', $data ) );
+		$this->assertNull( Sdcpb_View::resolve( 'cta.url', $data ) );
+		$this->assertNull( Sdcpb_View::resolve( 'heading.deep', $data ) );
+		$this->assertNull( Sdcpb_View::resolve( '', $data ) );
+		$this->assertNull( Sdcpb_View::resolve( 'heading', 'kein array' ) );
 	}
 
 	/**
 	 * An explicit context wins over the component being rendered.
 	 */
 	public function test_resolve_prefers_the_given_context() {
-		Sdc_View::push( 'hero', array( 'heading' => 'Komponente' ) );
+		Sdcpb_View::push( 'hero', array( 'heading' => 'Komponente' ) );
 
-		$this->assertSame( 'Zeile', Sdc_View::resolve( 'heading', array( 'heading' => 'Zeile' ) ) );
-		$this->assertSame( 'Zeile', $this->capture( 'sdc_text', 'heading', array( 'heading' => 'Zeile' ) ) );
+		$this->assertSame( 'Zeile', Sdcpb_View::resolve( 'heading', array( 'heading' => 'Zeile' ) ) );
+		$this->assertSame( 'Zeile', $this->capture( 'sdcpb_text', 'heading', array( 'heading' => 'Zeile' ) ) );
 	}
 
 	/*
@@ -432,13 +490,13 @@ class ViewTest extends Sdc_TestCase {
 	 * Text output has one shape, whatever the field returned.
 	 */
 	public function test_to_text_flattens_arrays_and_bools() {
-		$this->assertSame( 'Text', Sdc_View::to_text( 'Text' ) );
-		$this->assertSame( '42', Sdc_View::to_text( 42 ) );
-		$this->assertSame( '1', Sdc_View::to_text( true ) );
-		$this->assertSame( '', Sdc_View::to_text( false ) );
-		$this->assertSame( '', Sdc_View::to_text( null ) );
-		$this->assertSame( '', Sdc_View::to_text( new stdClass() ) );
-		$this->assertSame( 'a, b', Sdc_View::to_text( array( 'a', 'b' ) ) );
+		$this->assertSame( 'Text', Sdcpb_View::to_text( 'Text' ) );
+		$this->assertSame( '42', Sdcpb_View::to_text( 42 ) );
+		$this->assertSame( '1', Sdcpb_View::to_text( true ) );
+		$this->assertSame( '', Sdcpb_View::to_text( false ) );
+		$this->assertSame( '', Sdcpb_View::to_text( null ) );
+		$this->assertSame( '', Sdcpb_View::to_text( new stdClass() ) );
+		$this->assertSame( 'a, b', Sdcpb_View::to_text( array( 'a', 'b' ) ) );
 	}
 
 	/**
@@ -454,9 +512,9 @@ class ViewTest extends Sdc_TestCase {
 			'Gelb',
 		);
 
-		$this->assertSame( 'Rot, Grün, Blau, https://example.org/x, Gelb', Sdc_View::choices_text( $value ) );
-		$this->assertSame( 'einzeln', Sdc_View::choices_text( 'einzeln' ) );
-		$this->assertSame( '', Sdc_View::choices_text( null ) );
+		$this->assertSame( 'Rot, Grün, Blau, https://example.org/x, Gelb', Sdcpb_View::choices_text( $value ) );
+		$this->assertSame( 'einzeln', Sdcpb_View::choices_text( 'einzeln' ) );
+		$this->assertSame( '', Sdcpb_View::choices_text( null ) );
 	}
 
 	/**
@@ -470,7 +528,7 @@ class ViewTest extends Sdc_TestCase {
 				'title'  => 'Los',
 				'target' => '_blank',
 			),
-			Sdc_View::link_parts(
+			Sdcpb_View::link_parts(
 				array(
 					'url'    => 'https://example.org/ziel',
 					'title'  => 'Los',
@@ -485,12 +543,12 @@ class ViewTest extends Sdc_TestCase {
 				'title'  => '',
 				'target' => '',
 			),
-			Sdc_View::link_parts( 'https://example.org/ziel' )
+			Sdcpb_View::link_parts( 'https://example.org/ziel' )
 		);
 
-		$this->assertNull( Sdc_View::link_parts( '' ) );
-		$this->assertNull( Sdc_View::link_parts( array( 'title' => 'ohne Ziel' ) ) );
-		$this->assertNull( Sdc_View::link_parts( null ) );
+		$this->assertNull( Sdcpb_View::link_parts( '' ) );
+		$this->assertNull( Sdcpb_View::link_parts( array( 'title' => 'ohne Ziel' ) ) );
+		$this->assertNull( Sdcpb_View::link_parts( null ) );
 	}
 
 	/**
@@ -506,7 +564,7 @@ class ViewTest extends Sdc_TestCase {
 			)
 		);
 
-		$parts = Sdc_View::attachment_parts(
+		$parts = Sdcpb_View::attachment_parts(
 			array(
 				'ID'  => $id,
 				'url' => 'https://example.org/bild.jpg',
@@ -523,15 +581,15 @@ class ViewTest extends Sdc_TestCase {
 	 * A plain URL is an image value too; nothing usable is null.
 	 */
 	public function test_attachment_parts_accepts_a_url_and_rejects_nothing() {
-		$parts = Sdc_View::attachment_parts( 'https://example.org/bild.jpg' );
+		$parts = Sdcpb_View::attachment_parts( 'https://example.org/bild.jpg' );
 
 		$this->assertSame( 'https://example.org/bild.jpg', $parts['url'] );
 		$this->assertSame( 0, $parts['id'] );
 		$this->assertSame( '', $parts['alt'] );
 
-		$this->assertNull( Sdc_View::attachment_parts( '' ) );
-		$this->assertNull( Sdc_View::attachment_parts( null ) );
-		$this->assertNull( Sdc_View::attachment_parts( 0 ) );
+		$this->assertNull( Sdcpb_View::attachment_parts( '' ) );
+		$this->assertNull( Sdcpb_View::attachment_parts( null ) );
+		$this->assertNull( Sdcpb_View::attachment_parts( 0 ) );
 	}
 
 	/*
@@ -544,7 +602,7 @@ class ViewTest extends Sdc_TestCase {
 	 * The documented helper list is the helper list that exists.
 	 */
 	public function test_helpers_list_matches_the_registered_functions() {
-		$helpers = Sdc_View::helpers();
+		$helpers = Sdcpb_View::helpers();
 
 		$this->assertCount( 14, $helpers );
 
@@ -558,20 +616,20 @@ class ViewTest extends Sdc_TestCase {
 
 		$this->assertSame(
 			array(
-				'sdc_text',
-				'sdc_html',
-				'sdc_attr',
-				'sdc_url',
-				'sdc_image',
-				'sdc_image_url',
-				'sdc_image_style',
-				'sdc_link',
-				'sdc_file',
-				'sdc_has',
-				'sdc_value',
-				'sdc_each',
-				'sdc_fields',
-				'sdc_class',
+				'sdcpb_text',
+				'sdcpb_html',
+				'sdcpb_attr',
+				'sdcpb_url',
+				'sdcpb_image',
+				'sdcpb_image_url',
+				'sdcpb_image_style',
+				'sdcpb_link',
+				'sdcpb_file',
+				'sdcpb_has',
+				'sdcpb_value',
+				'sdcpb_each',
+				'sdcpb_fields',
+				'sdcpb_class',
 			),
 			$names
 		);
@@ -585,11 +643,11 @@ class ViewTest extends Sdc_TestCase {
 	 * Text is escaped, not printed raw.
 	 */
 	public function test_sdc_text_escapes_the_value() {
-		Sdc_View::push( 'hero', array( 'heading' => 'H <b>fett</b> & "Anführungszeichen"' ) );
+		Sdcpb_View::push( 'hero', array( 'heading' => 'H <b>fett</b> & "Anführungszeichen"' ) );
 
 		$this->assertSame(
 			'H &lt;b&gt;fett&lt;/b&gt; &amp; &quot;Anführungszeichen&quot;',
-			$this->capture( 'sdc_text', 'heading' )
+			$this->capture( 'sdcpb_text', 'heading' )
 		);
 	}
 
@@ -597,9 +655,9 @@ class ViewTest extends Sdc_TestCase {
 	 * An attribute value escapes quotes, so it cannot end the attribute.
 	 */
 	public function test_sdc_attr_escapes_quotes() {
-		Sdc_View::push( 'hero', array( 'id' => 'a" onmouseover="alert(1)' ) );
+		Sdcpb_View::push( 'hero', array( 'id' => 'a" onmouseover="alert(1)' ) );
 
-		$out = $this->capture( 'sdc_attr', 'id' );
+		$out = $this->capture( 'sdcpb_attr', 'id' );
 
 		$this->assertStringNotContainsString( '" onmouseover="', $out );
 		$this->assertStringContainsString( '&quot;', $out );
@@ -609,7 +667,7 @@ class ViewTest extends Sdc_TestCase {
 	 * A URL field is printed through `esc_url`, which drops foreign schemes.
 	 */
 	public function test_sdc_url_drops_unsafe_schemes() {
-		Sdc_View::push(
+		Sdcpb_View::push(
 			'hero',
 			array(
 				'cta'     => array( 'url' => 'https://example.org/ziel?mit=query' ),
@@ -618,18 +676,18 @@ class ViewTest extends Sdc_TestCase {
 			)
 		);
 
-		$this->assertSame( 'https://example.org/ziel?mit=query', $this->capture( 'sdc_url', 'cta' ) );
-		$this->assertStringNotContainsString( 'javascript', $this->capture( 'sdc_url', 'boese' ) );
-		$this->assertSame( '/kontakt', $this->capture( 'sdc_url', 'relativ' ) );
+		$this->assertSame( 'https://example.org/ziel?mit=query', $this->capture( 'sdcpb_url', 'cta' ) );
+		$this->assertStringNotContainsString( 'javascript', $this->capture( 'sdcpb_url', 'boese' ) );
+		$this->assertSame( '/kontakt', $this->capture( 'sdcpb_url', 'relativ' ) );
 	}
 
 	/**
 	 * Formatting that a post may carry survives; a script tag does not.
 	 */
 	public function test_sdc_html_survives_kses() {
-		Sdc_View::push( 'hero', array( 'body' => '<p>Absatz mit <b>fett</b></p><script>alert(1)</script>' ) );
+		Sdcpb_View::push( 'hero', array( 'body' => '<p>Absatz mit <b>fett</b></p><script>alert(1)</script>' ) );
 
-		$out = $this->capture( 'sdc_html', 'body' );
+		$out = $this->capture( 'sdcpb_html', 'body' );
 
 		$this->assertStringContainsString( '<p>Absatz mit <b>fett</b></p>', $out );
 		$this->assertStringNotContainsString( '<script', $out );
@@ -639,7 +697,7 @@ class ViewTest extends Sdc_TestCase {
 	 * `0` is a value: a select with the option 0 is not an empty field.
 	 */
 	public function test_sdc_has_treats_zero_as_a_value() {
-		Sdc_View::push(
+		Sdcpb_View::push(
 			'hero',
 			array(
 				'null'      => '0',
@@ -650,30 +708,30 @@ class ViewTest extends Sdc_TestCase {
 			)
 		);
 
-		$this->assertTrue( sdc_has( 'null' ) );
-		$this->assertFalse( sdc_has( 'leer' ) );
-		$this->assertFalse( sdc_has( 'falsch' ) );
-		$this->assertTrue( sdc_has( 'liste' ) );
-		$this->assertFalse( sdc_has( 'leerliste' ) );
-		$this->assertFalse( sdc_has( 'fehlt' ) );
+		$this->assertTrue( sdcpb_has( 'null' ) );
+		$this->assertFalse( sdcpb_has( 'leer' ) );
+		$this->assertFalse( sdcpb_has( 'falsch' ) );
+		$this->assertTrue( sdcpb_has( 'liste' ) );
+		$this->assertFalse( sdcpb_has( 'leerliste' ) );
+		$this->assertFalse( sdcpb_has( 'fehlt' ) );
 	}
 
 	/**
-	 * `sdc_value()` is the way out of the escaping, so it returns raw data.
+	 * `sdcpb_value()` is the way out of the escaping, so it returns raw data.
 	 */
 	public function test_sdc_value_returns_raw_values_and_fallbacks() {
-		Sdc_View::push( 'hero', array( 'items' => array( 'a', 'b' ) ) );
+		Sdcpb_View::push( 'hero', array( 'items' => array( 'a', 'b' ) ) );
 
-		$this->assertSame( array( 'a', 'b' ), sdc_value( 'items' ) );
-		$this->assertSame( 'Ersatz', sdc_value( 'fehlt', null, 'Ersatz' ) );
-		$this->assertNull( sdc_value( 'fehlt' ) );
+		$this->assertSame( array( 'a', 'b' ), sdcpb_value( 'items' ) );
+		$this->assertSame( 'Ersatz', sdcpb_value( 'fehlt', null, 'Ersatz' ) );
+		$this->assertNull( sdcpb_value( 'fehlt' ) );
 	}
 
 	/**
 	 * An image becomes one `<img>` with the attributes a tag needs.
 	 */
 	public function test_sdc_image_builds_one_img_tag() {
-		Sdc_View::push(
+		Sdcpb_View::push(
 			'hero',
 			array(
 				'photo' => array(
@@ -683,7 +741,7 @@ class ViewTest extends Sdc_TestCase {
 			)
 		);
 
-		$out = $this->capture( 'sdc_image', 'photo', 'large', array( 'class' => 'hero__img' ) );
+		$out = $this->capture( 'sdcpb_image', 'photo', 'large', array( 'class' => 'hero__img' ) );
 
 		$this->assertStringStartsWith( '<img ', $out );
 		$this->assertStringContainsString( 'src="https://example.org/bild.jpg"', $out );
@@ -695,7 +753,7 @@ class ViewTest extends Sdc_TestCase {
 		// The attribute list cannot replace the source.
 		$this->assertStringNotContainsString(
 			'boese.jpg',
-			$this->capture( 'sdc_image', 'photo', 'large', array( 'src' => 'boese.jpg' ) )
+			$this->capture( 'sdcpb_image', 'photo', 'large', array( 'src' => 'boese.jpg' ) )
 		);
 	}
 
@@ -703,25 +761,25 @@ class ViewTest extends Sdc_TestCase {
 	 * An empty image field prints nothing at all, not an empty tag.
 	 */
 	public function test_sdc_image_prints_nothing_without_a_source() {
-		Sdc_View::push( 'hero', array( 'photo' => '' ) );
+		Sdcpb_View::push( 'hero', array( 'photo' => '' ) );
 
-		$this->assertSame( '', $this->capture( 'sdc_image', 'photo' ) );
-		$this->assertSame( '', $this->capture( 'sdc_image', 'fehlt' ) );
+		$this->assertSame( '', $this->capture( 'sdcpb_image', 'photo' ) );
+		$this->assertSame( '', $this->capture( 'sdcpb_image', 'fehlt' ) );
 	}
 
 	/**
 	 * The URL helper prints the address, not the tag — and resolves an ID.
 	 *
 	 * This is the helper a background image needs: the chooser stores an
-	 * attachment ID, `sdc_url()` would print that ID, and `url(151)` in a
+	 * attachment ID, `sdcpb_url()` would print that ID, and `url(151)` in a
 	 * stylesheet is a background that silently does not appear.
 	 */
 	public function test_sdc_image_url_resolves_an_attachment_id() {
 		$id = $this->attachment_fixture( 'image/png', 'hintergrund.png', 'Hintergrund' );
 
-		Sdc_View::push( 'hero', array( 'bg' => (string) $id ) );
+		Sdcpb_View::push( 'hero', array( 'bg' => (string) $id ) );
 
-		$out = $this->capture( 'sdc_image_url', 'bg', 'full' );
+		$out = $this->capture( 'sdcpb_image_url', 'bg', 'full' );
 		$src = wp_get_attachment_image_src( $id, 'full' );
 
 		$this->assertSame( esc_url( (string) $src[0] ), $out );
@@ -733,7 +791,7 @@ class ViewTest extends Sdc_TestCase {
 	 * An address is passed through, an unsafe scheme is not.
 	 */
 	public function test_sdc_image_url_reads_a_plain_address() {
-		Sdc_View::push(
+		Sdcpb_View::push(
 			'hero',
 			array(
 				'bg'    => 'https://example.org/bild.jpg',
@@ -741,9 +799,9 @@ class ViewTest extends Sdc_TestCase {
 			)
 		);
 
-		$this->assertSame( 'https://example.org/bild.jpg', $this->capture( 'sdc_image_url', 'bg' ) );
-		$this->assertStringNotContainsString( 'javascript', $this->capture( 'sdc_image_url', 'boese' ) );
-		$this->assertSame( '', $this->capture( 'sdc_image_url', 'fehlt' ) );
+		$this->assertSame( 'https://example.org/bild.jpg', $this->capture( 'sdcpb_image_url', 'bg' ) );
+		$this->assertStringNotContainsString( 'javascript', $this->capture( 'sdcpb_image_url', 'boese' ) );
+		$this->assertSame( '', $this->capture( 'sdcpb_image_url', 'fehlt' ) );
 	}
 
 	/**
@@ -754,9 +812,9 @@ class ViewTest extends Sdc_TestCase {
 	 * do with it.
 	 */
 	public function test_sdc_image_style_writes_a_custom_property() {
-		Sdc_View::push( 'hero', array( 'bg' => 'https://example.org/bild.jpg' ) );
+		Sdcpb_View::push( 'hero', array( 'bg' => 'https://example.org/bild.jpg' ) );
 
-		$out = $this->capture( 'sdc_image_style', 'bg' );
+		$out = $this->capture( 'sdcpb_image_style', 'bg' );
 
 		$this->assertSame(
 			' style="--sdc-image:url(\'https://example.org/bild.jpg\')"',
@@ -765,7 +823,7 @@ class ViewTest extends Sdc_TestCase {
 
 		$this->assertSame(
 			' style="--herobg:url(\'https://example.org/bild.jpg\')"',
-			$this->capture( 'sdc_image_style', 'bg', 'full', '--herobg' )
+			$this->capture( 'sdcpb_image_style', 'bg', 'full', '--herobg' )
 		);
 	}
 
@@ -776,10 +834,10 @@ class ViewTest extends Sdc_TestCase {
 	 * the browser request the document as an image.
 	 */
 	public function test_sdc_image_style_prints_nothing_without_an_image() {
-		Sdc_View::push( 'hero', array( 'bg' => '' ) );
+		Sdcpb_View::push( 'hero', array( 'bg' => '' ) );
 
-		$this->assertSame( '', $this->capture( 'sdc_image_style', 'bg' ) );
-		$this->assertSame( '', $this->capture( 'sdc_image_style', 'fehlt' ) );
+		$this->assertSame( '', $this->capture( 'sdcpb_image_style', 'bg' ) );
+		$this->assertSame( '', $this->capture( 'sdcpb_image_style', 'fehlt' ) );
 	}
 
 	/**
@@ -790,9 +848,9 @@ class ViewTest extends Sdc_TestCase {
 	 * into markup, and `onload=` is the reason to care.
 	 */
 	public function test_sdc_image_style_refuses_a_property_name_that_breaks_out() {
-		Sdc_View::push( 'hero', array( 'bg' => 'https://example.org/bild.jpg' ) );
+		Sdcpb_View::push( 'hero', array( 'bg' => 'https://example.org/bild.jpg' ) );
 
-		$out = $this->capture( 'sdc_image_style', 'bg', 'full', '--x" onload="alert(1)' );
+		$out = $this->capture( 'sdcpb_image_style', 'bg', 'full', '--x" onload="alert(1)' );
 
 		// Two quotes, both ours: the attribute cannot be closed from inside.
 		$this->assertStringNotContainsString( ' onload=', $out );
@@ -804,7 +862,7 @@ class ViewTest extends Sdc_TestCase {
 	 * A link takes its label from the field and opens safely in a new tab.
 	 */
 	public function test_sdc_link_uses_the_field_title() {
-		Sdc_View::push(
+		Sdcpb_View::push(
 			'hero',
 			array(
 				'cta' => array(
@@ -815,7 +873,7 @@ class ViewTest extends Sdc_TestCase {
 			)
 		);
 
-		$out = $this->capture( 'sdc_link', 'cta', 'button' );
+		$out = $this->capture( 'sdcpb_link', 'cta', 'button' );
 
 		$this->assertStringContainsString( 'href="https://example.org/ziel"', $out );
 		$this->assertStringContainsString( 'class="button"', $out );
@@ -824,30 +882,30 @@ class ViewTest extends Sdc_TestCase {
 
 		$this->assertStringContainsString(
 			'>Anderer Text</a>',
-			$this->capture( 'sdc_link', 'cta', '', 'Anderer Text' )
+			$this->capture( 'sdcpb_link', 'cta', '', 'Anderer Text' )
 		);
 
-		$this->assertSame( '', $this->capture( 'sdc_link', 'fehlt' ) );
+		$this->assertSame( '', $this->capture( 'sdcpb_link', 'fehlt' ) );
 	}
 
 	/**
 	 * A file without a title is labelled with its file name.
 	 */
 	public function test_sdc_file_falls_back_to_the_file_name() {
-		Sdc_View::push( 'hero', array( 'doc' => array( 'url' => 'https://example.org/download/preisliste.pdf' ) ) );
+		Sdcpb_View::push( 'hero', array( 'doc' => array( 'url' => 'https://example.org/download/preisliste.pdf' ) ) );
 
-		$out = $this->capture( 'sdc_file', 'doc', 'download' );
+		$out = $this->capture( 'sdcpb_file', 'doc', 'download' );
 
 		$this->assertStringContainsString( 'href="https://example.org/download/preisliste.pdf"', $out );
 		$this->assertStringContainsString( '>preisliste.pdf</a>', $out );
-		$this->assertSame( '', $this->capture( 'sdc_file', 'fehlt' ) );
+		$this->assertSame( '', $this->capture( 'sdcpb_file', 'fehlt' ) );
 	}
 
 	/**
 	 * The loop hands the row and its index to the callback.
 	 */
 	public function test_sdc_each_passes_row_and_index() {
-		Sdc_View::push(
+		Sdcpb_View::push(
 			'faq',
 			array(
 				'items' => array(
@@ -858,7 +916,7 @@ class ViewTest extends Sdc_TestCase {
 		);
 
 		ob_start();
-		sdc_each(
+		sdcpb_each(
 			'items',
 			function ( $row, $index ) {
 				// Deliberately raw: the test asserts that the helper hands the
@@ -876,7 +934,7 @@ class ViewTest extends Sdc_TestCase {
 	 * An empty or missing list is not a loop.
 	 */
 	public function test_sdc_each_ignores_empty_lists() {
-		Sdc_View::push( 'faq', array( 'items' => array() ) );
+		Sdcpb_View::push( 'faq', array( 'items' => array() ) );
 
 		$called = 0;
 		$count  = function () use ( &$called ) {
@@ -884,9 +942,9 @@ class ViewTest extends Sdc_TestCase {
 		};
 
 		ob_start();
-		sdc_each( 'items', $count );
-		sdc_each( 'fehlt', $count );
-		sdc_each( 'items', 'keine_funktion_xyz' );
+		sdcpb_each( 'items', $count );
+		sdcpb_each( 'fehlt', $count );
+		sdcpb_each( 'items', 'keine_funktion_xyz' );
 		$out = (string) ob_get_clean();
 
 		$this->assertSame( '', $out );
@@ -897,24 +955,24 @@ class ViewTest extends Sdc_TestCase {
 	 * A class attribute is built from the parts that carry something.
 	 */
 	public function test_sdc_class_drops_empty_parts() {
-		$this->assertSame( 'class="hero hero--gross"', $this->capture( 'sdc_class', 'hero', '', '  ', 'hero--gross' ) );
-		$this->assertSame( '', $this->capture( 'sdc_class', '', '' ) );
+		$this->assertSame( 'class="hero hero--gross"', $this->capture( 'sdcpb_class', 'hero', '', '  ', 'hero--gross' ) );
+		$this->assertSame( '', $this->capture( 'sdcpb_class', '', '' ) );
 	}
 
 	/**
-	 * A view that only wants its own wrapper calls `sdc_fields()`.
+	 * A view that only wants its own wrapper calls `sdcpb_fields()`.
 	 */
 	public function test_sdc_fields_prints_the_generic_markup() {
-		Sdc_View::push( 'hero', $this->hero_component()['data'] );
+		Sdcpb_View::push( 'hero', $this->hero_component()['data'] );
 
-		$out = $this->capture( 'sdc_fields' );
+		$out = $this->capture( 'sdcpb_fields' );
 
 		$this->assertStringContainsString( 'Willkommen', $out );
 		$this->assertStringContainsString( 'sdc-field', $out );
 
-		Sdc_View::pop();
+		Sdcpb_View::pop();
 
-		$this->assertSame( '', $this->capture( 'sdc_fields' ) );
+		$this->assertSame( '', $this->capture( 'sdcpb_fields' ) );
 	}
 
 	/*
@@ -927,15 +985,15 @@ class ViewTest extends Sdc_TestCase {
 	 * The generated view uses the helper that fits each field type.
 	 */
 	public function test_scaffold_uses_the_helper_for_every_field_type() {
-		$body = Sdc_View::scaffold( 'hero', $this->scaffold_fields() );
+		$body = Sdcpb_View::scaffold( 'hero', $this->scaffold_fields() );
 
-		$this->assertStringContainsString( "sdc_text( 'heading' )", $body );
-		$this->assertStringContainsString( "sdc_html( 'body' )", $body );
-		$this->assertStringContainsString( "sdc_image( 'photo', 'large' )", $body );
-		$this->assertStringContainsString( "sdc_file( 'doc' )", $body );
-		$this->assertStringContainsString( "sdc_link( 'cta', 'button' )", $body );
-		$this->assertStringContainsString( "sdc_has( 'flag' )", $body );
-		$this->assertStringContainsString( "sdc_text( 'group1.title' )", $body );
+		$this->assertStringContainsString( "sdcpb_text( 'heading' )", $body );
+		$this->assertStringContainsString( "sdcpb_html( 'body' )", $body );
+		$this->assertStringContainsString( "sdcpb_image( 'photo', 'large' )", $body );
+		$this->assertStringContainsString( "sdcpb_file( 'doc' )", $body );
+		$this->assertStringContainsString( "sdcpb_link( 'cta', 'button' )", $body );
+		$this->assertStringContainsString( "sdcpb_has( 'flag' )", $body );
+		$this->assertStringContainsString( "sdcpb_text( 'group1.title' )", $body );
 		$this->assertStringContainsString( 'class="hero__heading"', $body );
 	}
 
@@ -943,22 +1001,22 @@ class ViewTest extends Sdc_TestCase {
 	 * Inside a loop the row travels as the helper's context argument.
 	 */
 	public function test_scaffold_of_a_repeater_passes_the_row() {
-		$body = Sdc_View::scaffold( 'faq', $this->scaffold_fields() );
+		$body = Sdcpb_View::scaffold( 'faq', $this->scaffold_fields() );
 
 		// The generated code says `$row`, not `\$row`: it is PHP that runs.
-		$this->assertStringContainsString( 'sdc_each( \'items\', function ( $row ) {', $body );
-		$this->assertStringContainsString( "sdc_text( 'q', \$row )", $body );
+		$this->assertStringContainsString( 'sdcpb_each( \'items\', function ( $row ) {', $body );
+		$this->assertStringContainsString( "sdcpb_text( 'q', \$row )", $body );
 
 		/*
 		 * The row is the *last* parameter of every helper, so a helper with
 		 * options in between needs those spelled out. Passing `, $row` right
 		 * after `'large'` put the row into `$attr` and rendered nothing.
 		 */
-		$this->assertStringContainsString( "sdc_image( 'img', 'large', array(), \$row )", $body );
-		$this->assertStringContainsString( "sdc_file( 'doc', '', \$row )", $body );
-		$this->assertStringContainsString( "sdc_link( 'cta', 'button', '', \$row )", $body );
-		$this->assertStringContainsString( "sdc_has( 'flag', \$row )", $body );
-		$this->assertStringContainsString( "sdc_html( 'txt', \$row )", $body );
+		$this->assertStringContainsString( "sdcpb_image( 'img', 'large', array(), \$row )", $body );
+		$this->assertStringContainsString( "sdcpb_file( 'doc', '', \$row )", $body );
+		$this->assertStringContainsString( "sdcpb_link( 'cta', 'button', '', \$row )", $body );
+		$this->assertStringContainsString( "sdcpb_has( 'flag', \$row )", $body );
+		$this->assertStringContainsString( "sdcpb_html( 'txt', \$row )", $body );
 	}
 
 	/**
@@ -966,24 +1024,24 @@ class ViewTest extends Sdc_TestCase {
 	 * lints, so a scaffold that does not lint cannot be saved at all.
 	 */
 	public function test_scaffold_is_valid_php() {
-		$this->assertTrue( Sdc_View::lint( Sdc_View::scaffold( 'hero', $this->scaffold_fields() ) ) );
-		$this->assertTrue( Sdc_View::lint( Sdc_View::scaffold( 'leer', array() ) ) );
+		$this->assertTrue( Sdcpb_View::lint( Sdcpb_View::scaffold( 'hero', $this->scaffold_fields() ) ) );
+		$this->assertTrue( Sdcpb_View::lint( Sdcpb_View::scaffold( 'leer', array() ) ) );
 	}
 
 	/**
 	 * Without fields the generated view is the generic output.
 	 */
 	public function test_scaffold_without_fields_calls_sdc_fields() {
-		$body = Sdc_View::scaffold( 'leer', array() );
+		$body = Sdcpb_View::scaffold( 'leer', array() );
 
-		$this->assertStringContainsString( '<?php sdc_fields(); ?>', $body );
+		$this->assertStringContainsString( '<?php sdcpb_fields(); ?>', $body );
 	}
 
 	/**
 	 * The hint names the component whose fields were used.
 	 */
 	public function test_scaffold_hint_names_the_component() {
-		$this->assertStringContainsString( 'hero', Sdc_View::scaffold_hint( 'hero' ) );
+		$this->assertStringContainsString( 'hero', Sdcpb_View::scaffold_hint( 'hero' ) );
 	}
 
 	/*
@@ -1032,12 +1090,12 @@ class ViewTest extends Sdc_TestCase {
 	 * view showed its own header to visitors.
 	 */
 	public function test_a_generated_view_prints_no_header() {
-		$this->component_fixture( 'faq', Sdc_View::wrap( 'faq', Sdc_View::scaffold( 'faq', $this->generated_fields() ) ) );
+		$this->component_fixture( 'faq', Sdcpb_View::wrap( 'faq', Sdcpb_View::scaffold( 'faq', $this->generated_fields() ) ) );
 
 		$post_id = $this->make_page();
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->faq_component( 'Fragen & Antworten', 2 ) ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->faq_component( 'Fragen & Antworten', 2 ) ) ) );
 
-		$html = Sdc_Frontend::render_post( $post_id );
+		$html = Sdcpb_Frontend::render_post( $post_id );
 
 		$this->assertStringNotContainsString( 'Ansicht von', $html );
 		$this->assertStringNotContainsString( 'Frei umbaubar', $html );
@@ -1047,12 +1105,12 @@ class ViewTest extends Sdc_TestCase {
 	 * The scaffold is usable as-is: fields, repeat and escaping all land.
 	 */
 	public function test_a_generated_view_renders_its_fields() {
-		$this->component_fixture( 'faq', Sdc_View::wrap( 'faq', Sdc_View::scaffold( 'faq', $this->generated_fields() ) ) );
+		$this->component_fixture( 'faq', Sdcpb_View::wrap( 'faq', Sdcpb_View::scaffold( 'faq', $this->generated_fields() ) ) );
 
 		$post_id = $this->make_page();
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->faq_component( 'Fragen & Antworten', 2 ) ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->faq_component( 'Fragen & Antworten', 2 ) ) ) );
 
-		$html = Sdc_Frontend::render_post( $post_id );
+		$html = Sdcpb_Frontend::render_post( $post_id );
 
 		$this->assertStringContainsString( 'class="faq__heading"', $html );
 		$this->assertStringContainsString( 'Fragen &amp; Antworten', $html );
@@ -1071,7 +1129,7 @@ class ViewTest extends Sdc_TestCase {
 		$id = $this->attachment_fixture( 'application/pdf', 'probe.pdf', 'Probe PDF' );
 
 		ob_start();
-		sdc_file( 'doc', '', array( 'doc' => $id ) );
+		sdcpb_file( 'doc', '', array( 'doc' => $id ) );
 		$html = (string) ob_get_clean();
 
 		$this->assertStringContainsString( '<a href=', $html );
@@ -1085,7 +1143,7 @@ class ViewTest extends Sdc_TestCase {
 		$id = $this->attachment_fixture( 'application/pdf', 'probe.pdf', 'Probe PDF' );
 
 		ob_start();
-		sdc_image( 'img', 'large', array(), array( 'img' => $id ) );
+		sdcpb_image( 'img', 'large', array(), array( 'img' => $id ) );
 		$html = (string) ob_get_clean();
 
 		$this->assertSame( '', $html );
@@ -1102,11 +1160,11 @@ class ViewTest extends Sdc_TestCase {
 	 */
 	public function test_can_edit_follows_manage_options() {
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
-		$this->assertTrue( Sdc_View::can_edit() );
-		$this->assertTrue( Sdc_View::can_edit( 'hero' ) );
+		$this->assertTrue( Sdcpb_View::can_edit() );
+		$this->assertTrue( Sdcpb_View::can_edit( 'hero' ) );
 
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'editor' ) ) );
-		$this->assertFalse( Sdc_View::can_edit( 'hero' ) );
+		$this->assertFalse( Sdcpb_View::can_edit( 'hero' ) );
 	}
 
 	/**
@@ -1115,13 +1173,13 @@ class ViewTest extends Sdc_TestCase {
 	public function test_can_edit_can_be_refused_by_filter() {
 		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
 
-		add_filter( 'sdc_pb_can_edit_view', '__return_false' );
+		add_filter( 'sdcpb_can_edit_view', '__return_false' );
 
-		$this->assertFalse( Sdc_View::can_edit( 'hero' ) );
+		$this->assertFalse( Sdcpb_View::can_edit( 'hero' ) );
 
-		remove_filter( 'sdc_pb_can_edit_view', '__return_false' );
+		remove_filter( 'sdcpb_can_edit_view', '__return_false' );
 
-		$this->assertTrue( Sdc_View::can_edit( 'hero' ) );
+		$this->assertTrue( Sdcpb_View::can_edit( 'hero' ) );
 	}
 
 	/*
@@ -1135,21 +1193,21 @@ class ViewTest extends Sdc_TestCase {
 	 * escaping to remember.
 	 *
 	 * This is the seam the whole class exists for: the frontend pushes the
-	 * context, the template calls `sdc_text()`, the value comes out escaped.
+	 * context, the template calls `sdcpb_text()`, the value comes out escaped.
 	 */
 	public function test_a_view_reads_its_component_through_the_helpers() {
 		$this->component_fixture(
 			'faq',
 			'<article class="v-faq">'
-			. "<?php sdc_text( 'heading' ); ?>"
-			. "<?php sdc_each( 'items', function ( \$row ) { ?><i><?php sdc_text( 'q', \$row ); ?></i><?php } ); ?>"
+			. "<?php sdcpb_text( 'heading' ); ?>"
+			. "<?php sdcpb_each( 'items', function ( \$row ) { ?><i><?php sdcpb_text( 'q', \$row ); ?></i><?php } ); ?>"
 			. '</article>'
 		);
 
 		$post_id = $this->make_page();
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->faq_component( 'Fragen & Antworten', 2 ) ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->faq_component( 'Fragen & Antworten', 2 ) ) ) );
 
-		$html = Sdc_Frontend::render_post( $post_id );
+		$html = Sdcpb_Frontend::render_post( $post_id );
 
 		$this->assertStringContainsString( '<article class="v-faq">', $html );
 		$this->assertStringContainsString( 'Fragen &amp; Antworten', $html );
@@ -1161,13 +1219,13 @@ class ViewTest extends Sdc_TestCase {
 	 * The context is gone once the component has been rendered.
 	 */
 	public function test_the_context_is_dropped_after_a_render() {
-		$this->component_fixture( 'hero', "<?php sdc_text( 'heading' ); ?>" );
+		$this->component_fixture( 'hero', "<?php sdcpb_text( 'heading' ); ?>" );
 
 		$post_id = $this->make_page();
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->hero_component( 'Kopf' ) ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->hero_component( 'Kopf' ) ) ) );
 
-		$this->assertStringContainsString( 'Kopf', Sdc_Frontend::render_post( $post_id ) );
-		$this->assertNull( Sdc_View::context() );
+		$this->assertStringContainsString( 'Kopf', Sdcpb_Frontend::render_post( $post_id ) );
+		$this->assertNull( Sdcpb_View::context() );
 	}
 
 	/**
@@ -1175,23 +1233,23 @@ class ViewTest extends Sdc_TestCase {
 	 */
 	public function test_a_nested_render_keeps_the_outer_context() {
 		$inner = $this->make_page();
-		Sdc_Store::save_data( $inner, array( 'components' => array( $this->hero_component( 'Innen' ) ) ) );
+		Sdcpb_Store::save_data( $inner, array( 'components' => array( $this->hero_component( 'Innen' ) ) ) );
 
-		$this->component_fixture( 'hero', "<?php sdc_text( 'heading' ); ?>" );
+		$this->component_fixture( 'hero', "<?php sdcpb_text( 'heading' ); ?>" );
 		$this->component_fixture(
 			'faq',
-			'<?php echo Sdc_Frontend::render_post( ' . (int) $inner . ' ); ?>'
-			. "<?php sdc_text( 'heading' ); ?>"
+			'<?php echo Sdcpb_Frontend::render_post( ' . (int) $inner . ' ); ?>'
+			. "<?php sdcpb_text( 'heading' ); ?>"
 		);
 
 		$outer = $this->make_page();
-		Sdc_Store::save_data( $outer, array( 'components' => array( $this->faq_component( 'Außen', 1 ) ) ) );
+		Sdcpb_Store::save_data( $outer, array( 'components' => array( $this->faq_component( 'Außen', 1 ) ) ) );
 
-		$html = Sdc_Frontend::render_post( $outer );
+		$html = Sdcpb_Frontend::render_post( $outer );
 
 		$this->assertStringContainsString( 'Innen', $html );
 		$this->assertStringContainsString( 'Außen', $html );
-		$this->assertNull( Sdc_View::context() );
+		$this->assertNull( Sdcpb_View::context() );
 	}
 
 	/**
@@ -1201,19 +1259,19 @@ class ViewTest extends Sdc_TestCase {
 		$this->component_fixture( 'hero', "<?php throw new RuntimeException( 'kaputt' ); ?>" );
 
 		$post_id = $this->make_page();
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->hero_component( 'Egal' ) ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->hero_component( 'Egal' ) ) ) );
 
 		$level  = ob_get_level();
 		$caught = '';
 
 		try {
-			Sdc_Frontend::render_post( $post_id );
+			Sdcpb_Frontend::render_post( $post_id );
 		} catch ( RuntimeException $error ) {
 			$caught = $error->getMessage();
 		}
 
 		$this->assertSame( 'kaputt', $caught );
-		$this->assertNull( Sdc_View::context() );
+		$this->assertNull( Sdcpb_View::context() );
 		$this->assertSame( $level, ob_get_level() );
 	}
 
@@ -1221,7 +1279,7 @@ class ViewTest extends Sdc_TestCase {
 	 * A component's own stylesheet is enqueued with the page that renders it.
 	 *
 	 * This is the fallback path: by default the styles are inlined by
-	 * `Sdc_Block`, and `enqueue_component_styles()` steps aside for it. A site
+	 * `Sdcpb_Block`, and `enqueue_component_styles()` steps aside for it. A site
 	 * that turned inlining off gets one file per component here.
 	 */
 	public function test_component_css_is_enqueued_for_a_rendered_page() {
@@ -1230,18 +1288,18 @@ class ViewTest extends Sdc_TestCase {
 		$css = $this->content_fixture( 'hero', '.sdc-hero{color:red}' );
 
 		$post_id = $this->make_page();
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->hero_component( 'Mit CSS' ) ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->hero_component( 'Mit CSS' ) ) ) );
 
 		$this->go_to( get_permalink( $post_id ) );
 
-		Sdc_Frontend::enqueue_component_styles();
+		Sdcpb_Frontend::enqueue_component_styles();
 
 		$this->assertTrue( wp_style_is( 'sdc-component-hero', 'enqueued' ) );
 
 		$registered = wp_styles()->registered['sdc-component-hero'];
 
 		$this->assertSame(
-			untrailingslashit( content_url() ) . '/' . Sdc_Schema::USER_DIR . '/hero/component.css',
+			untrailingslashit( content_url() ) . '/' . Sdcpb_Schema::USER_DIR . '/hero/component.css',
 			$registered->src
 		);
 		$this->assertSame( (string) filemtime( $css ), $registered->ver );
@@ -1255,11 +1313,11 @@ class ViewTest extends Sdc_TestCase {
 		$this->content_fixture( 'hero', '.sdc-hero{color:red}' );
 
 		$post_id = $this->make_page();
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->hero_component( 'Mit CSS' ) ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->hero_component( 'Mit CSS' ) ) ) );
 
 		$this->go_to( get_permalink( $post_id ) );
 
-		Sdc_Frontend::enqueue_component_styles();
+		Sdcpb_Frontend::enqueue_component_styles();
 
 		$this->assertFalse( wp_style_is( 'sdc-component-hero', 'enqueued' ) );
 	}
@@ -1269,11 +1327,11 @@ class ViewTest extends Sdc_TestCase {
 	 */
 	public function test_component_css_is_not_enqueued_without_a_file() {
 		$post_id = $this->make_page();
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->hero_component() ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->hero_component() ) ) );
 
 		$this->go_to( get_permalink( $post_id ) );
 
-		Sdc_Frontend::enqueue_component_styles();
+		Sdcpb_Frontend::enqueue_component_styles();
 
 		$this->assertFalse( wp_style_is( 'sdc-component-hero', 'enqueued' ) );
 	}
@@ -1288,7 +1346,7 @@ class ViewTest extends Sdc_TestCase {
 
 		$this->content_fixture( 'hero', '.sdc-hero{color:red}' );
 
-		Sdc_Frontend::enqueue_component_styles();
+		Sdcpb_Frontend::enqueue_component_styles();
 
 		$this->assertFalse( wp_style_is( 'sdc-component-hero', 'enqueued' ) );
 	}
@@ -1300,14 +1358,14 @@ class ViewTest extends Sdc_TestCase {
 	public function test_component_css_needs_a_public_url() {
 		$this->without_inline_styles();
 
-		$this->component_fixture( 'hero', "<?php sdc_text( 'heading' ); ?>", '.sdc-hero{color:red}' );
+		$this->component_fixture( 'hero', "<?php sdcpb_text( 'heading' ); ?>", '.sdc-hero{color:red}' );
 
 		$post_id = $this->make_page();
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->hero_component() ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->hero_component() ) ) );
 
 		$this->go_to( get_permalink( $post_id ) );
 
-		Sdc_Frontend::enqueue_component_styles();
+		Sdcpb_Frontend::enqueue_component_styles();
 
 		// The fixture lives in the temp dir: no root, no URL, no enqueue.
 		$this->assertFalse( wp_style_is( 'sdc-component-hero', 'enqueued' ) );
@@ -1315,7 +1373,7 @@ class ViewTest extends Sdc_TestCase {
 		$seen = array();
 
 		add_filter(
-			'sdc_pb_component_style_src',
+			'sdcpb_component_style_src',
 			function ( $src, $file, $type ) use ( &$seen ) {
 				$seen = array( $src, $file, $type );
 
@@ -1325,7 +1383,7 @@ class ViewTest extends Sdc_TestCase {
 			3
 		);
 
-		Sdc_Frontend::enqueue_component_styles();
+		Sdcpb_Frontend::enqueue_component_styles();
 
 		$this->assertTrue( wp_style_is( 'sdc-component-hero', 'enqueued' ) );
 		$this->assertSame( 'https://cdn.example.org/hero.css', wp_styles()->registered['sdc-component-hero']->src );
@@ -1338,7 +1396,7 @@ class ViewTest extends Sdc_TestCase {
 	 * The hook is registered where WordPress fires it.
 	 */
 	public function test_the_stylesheet_hook_is_registered() {
-		$this->assertNotFalse( has_action( 'wp_enqueue_scripts', array( 'Sdc_Frontend', 'enqueue_component_styles' ) ) );
+		$this->assertNotFalse( has_action( 'wp_enqueue_scripts', array( 'Sdcpb_Frontend', 'enqueue_component_styles' ) ) );
 	}
 
 	/*
@@ -1368,7 +1426,7 @@ class ViewTest extends Sdc_TestCase {
 		$dir = $this->components;
 
 		add_filter(
-			'sdc_pb_component_dirs',
+			'sdcpb_component_dirs',
 			static function () use ( $dir ) {
 				return array( $dir );
 			}
@@ -1378,13 +1436,13 @@ class ViewTest extends Sdc_TestCase {
 	/**
 	 * Switch component styles back to one file per component.
 	 *
-	 * By default `Sdc_Block` inlines the page's component styles into the head
+	 * By default `Sdcpb_Block` inlines the page's component styles into the head
 	 * and `enqueue_component_styles()` steps aside. The file path is still the
 	 * documented way for a site that wants separate stylesheets, so it is
 	 * tested through the filter that turns inlining off.
 	 */
 	private function without_inline_styles() {
-		add_filter( 'sdc_pb_inline_component_styles', '__return_false' );
+		add_filter( 'sdcpb_inline_component_styles', '__return_false' );
 	}
 
 	/**
@@ -1435,7 +1493,7 @@ class ViewTest extends Sdc_TestCase {
 
 		$this->assertTrue( wp_mkdir_p( $dir ) );
 
-		file_put_contents( $dir . '/definition.json', wp_json_encode( array( 'key' => Sdc_Schema::KEY_PREFIX . $type ) ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Test fixture.
+		file_put_contents( $dir . '/definition.json', wp_json_encode( array( 'key' => Sdcpb_Schema::KEY_PREFIX . $type ) ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Test fixture.
 
 		if ( null !== $render ) {
 			file_put_contents( $dir . '/render.php', $render . "\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Test fixture.
@@ -1455,7 +1513,7 @@ class ViewTest extends Sdc_TestCase {
 	 * @return string Absolute path of the stylesheet.
 	 */
 	private function content_fixture( $type, $css ) {
-		$base = untrailingslashit( WP_CONTENT_DIR ) . '/' . Sdc_Schema::USER_DIR;
+		$base = untrailingslashit( WP_CONTENT_DIR ) . '/' . Sdcpb_Schema::USER_DIR;
 
 		$this->assertTrue( wp_mkdir_p( $base . '/' . $type ) );
 

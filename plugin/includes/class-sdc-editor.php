@@ -15,7 +15,7 @@
  *
  * What is left here is the one fact the rest of the plugin still needs: which
  * post types the builder edits. The frontend reads it to decide where a
- * legacy document may render, and `Sdc_Block` to decide where a document is
+ * legacy document may render, and `Sdcpb_Block` to decide where a document is
  * migrated into blocks.
  *
  * @package SdcPageBuilder
@@ -26,7 +26,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Post types the builder applies to.
  */
-class Sdc_Editor {
+class Sdcpb_Editor {
 
 	/**
 	 * Post types that get the builder.
@@ -37,7 +37,7 @@ class Sdc_Editor {
 	 * @return string[]
 	 */
 	public static function post_types() {
-		$types = (array) apply_filters( 'sdc_pb_post_types', array( 'page' ) );
+		$types = (array) apply_filters( 'sdcpb_post_types', array( 'page' ) );
 		return array_values( array_filter( array_map( 'sanitize_key', $types ) ) );
 	}
 }

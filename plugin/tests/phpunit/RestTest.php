@@ -11,7 +11,7 @@
  * of calling the callbacks directly, so routing and permission callbacks are
  * included in the result.
  */
-class RestTest extends Sdc_TestCase {
+class RestTest extends Sdcpb_TestCase {
 
 	/**
 	 * The routes that exist — and the four that were deliberately removed.
@@ -22,7 +22,7 @@ class RestTest extends Sdc_TestCase {
 	 */
 	public function test_registered_routes_are_the_two_that_have_clients() {
 		$routes = array_keys( rest_get_server()->get_routes() );
-		$ns     = '/' . Sdc_Rest::NAMESPACE_V1;
+		$ns     = '/' . Sdcpb_Rest::NAMESPACE_V1;
 
 		foreach ( array( '/pages/(?P<id>\d+)', '/components' ) as $route ) {
 			$this->assertContains( $ns . $route, $routes, "Route $route is not registered" );
@@ -38,7 +38,7 @@ class RestTest extends Sdc_TestCase {
 	 */
 	public function test_get_returns_the_stored_document() {
 		$post_id = $this->make_page();
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->faq_component( 'Gelesen' ) ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->faq_component( 'Gelesen' ) ) ) );
 
 		$response = $this->dispatch_as_admin( $this->request( 'GET', '/pages/' . $post_id ) );
 
@@ -65,7 +65,7 @@ class RestTest extends Sdc_TestCase {
 		$response = $this->dispatch_as_admin( $this->request( 'POST', '/pages/' . $post_id, $payload ) );
 		$this->assertSame( 200, $response->get_status(), 'Save was refused: ' . wp_json_encode( $response->get_data() ) );
 
-		$stored = Sdc_Store::get_data( $post_id );
+		$stored = Sdcpb_Store::get_data( $post_id );
 		$this->assertCount( 2, $stored['components'] );
 		$this->assertSame( 'faq', $stored['components'][0]['type'] );
 		$this->assertSame( 'hero', $stored['components'][1]['type'] );
@@ -111,7 +111,7 @@ class RestTest extends Sdc_TestCase {
 		);
 
 		$this->assertSame( 400, $response->get_status() );
-		$this->assertSame( 'sdc_unknown_component', $response->get_data()['code'] );
+		$this->assertSame( 'sdcpb_unknown_component', $response->get_data()['code'] );
 	}
 
 	/**
@@ -122,7 +122,7 @@ class RestTest extends Sdc_TestCase {
 	 */
 	public function test_required_field_cannot_be_cleared_on_save() {
 		$post_id = $this->make_page();
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->hero_component( 'Vorher' ) ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->hero_component( 'Vorher' ) ) ) );
 
 		$response = $this->dispatch_as_admin(
 			$this->request(
@@ -140,8 +140,8 @@ class RestTest extends Sdc_TestCase {
 		);
 
 		$this->assertSame( 422, $response->get_status() );
-		$this->assertSame( 'sdc_invalid_document', $response->get_data()['code'] );
-		$this->assertSame( 'Vorher', Sdc_Store::get_data( $post_id )['components'][0]['data']['heading'], 'The rejected save must not touch the stored document' );
+		$this->assertSame( 'sdcpb_invalid_document', $response->get_data()['code'] );
+		$this->assertSame( 'Vorher', Sdcpb_Store::get_data( $post_id )['components'][0]['data']['heading'], 'The rejected save must not touch the stored document' );
 	}
 
 	/**

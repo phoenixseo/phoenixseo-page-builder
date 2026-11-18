@@ -2,7 +2,7 @@
 /**
  * K5-Befund: welche Bestandsseiten melden eine fehlende Ansicht?
  *
- * @package Sdc_Page_Builder
+ * @package Sdcpb_Page_Builder
  */
 
 $posts = get_posts(
@@ -11,12 +11,12 @@ $posts = get_posts(
 		'post_status' => array( 'publish', 'draft', 'pending', 'future', 'private' ),
 		'numberposts' => -1,
 		'fields'      => 'ids',
-		'meta_key'    => Sdc_Store::META_KEY,
+		'meta_key'    => Sdcpb_Store::META_KEY,
 	)
 );
 
 foreach ( $posts as $post_id ) {
-	$data = Sdc_Store::get_data( (int) $post_id );
+	$data = Sdcpb_Store::get_data( (int) $post_id );
 	if ( empty( $data['components'] ) ) {
 		continue;
 	}
@@ -27,7 +27,7 @@ foreach ( $posts as $post_id ) {
 		if ( '' === $type ) {
 			continue;
 		}
-		if ( ! Sdc_Frontend::has_view( $type ) ) {
+		if ( ! Sdcpb_Frontend::has_view( $type ) ) {
 			$missing[] = $type;
 		}
 	}
@@ -42,5 +42,5 @@ foreach ( $posts as $post_id ) {
 	}
 }
 
-echo "---\nSchema-Typen: " . implode( ', ', array_keys( Sdc_Schema::components() ) ) . "\n";
-echo 'Komponenten-Ordner: ' . implode( ', ', array_map( 'basename', Sdc_Schema::user_dirs() ) ) . "\n";
+echo "---\nSchema-Typen: " . implode( ', ', array_keys( Sdcpb_Schema::components() ) ) . "\n";
+echo 'Komponenten-Ordner: ' . implode( ', ', array_map( 'basename', Sdcpb_Schema::user_dirs() ) ) . "\n";

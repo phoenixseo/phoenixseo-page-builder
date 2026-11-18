@@ -28,24 +28,24 @@
 $fails   = 0;
 $checked = 0;
 $check   = function ( $label, $ok, $note = '' ) use ( &$fails, &$checked ) {
-	$checked++;
+	++$checked;
 	if ( ! $ok ) {
-		$fails++;
+		++$fails;
 	}
 	printf( "%s %s%s\n", $ok ? 'PASS' : 'FAIL', $label, '' !== $note ? " — $note" : '' );
 };
 
-printf( "Host: %s %s\n", Sdc_Field_Adapter::host(), Sdc_Field_Adapter::host_version() );
+printf( "Host: %s %s\n", Sdcpb_Field_Adapter::host(), Sdcpb_Field_Adapter::host_version() );
 echo "Seite: 2\n\n";
 
 // ---------------------------------------------------------------- 1. content
 
 echo "== 1. Gespeichertes Dokument rendert ==\n";
 
-$doc = Sdc_Store::get_data( 2 );
+$doc = Sdcpb_Store::get_data( 2 );
 $check( 'Dokument hat 2 Komponenten', 2 === count( $doc['components'] ), count( $doc['components'] ) . ' Komponenten' );
 
-$html = Sdc_Frontend::render_post( 2 );
+$html = Sdcpb_Frontend::render_post( 2 );
 $check( 'Ausgabe nicht leer', strlen( $html ) > 200, strlen( $html ) . ' Bytes' );
 
 // Erwartung direkt aus dem gespeicherten Dokument ableiten, nicht aus dem Code:
@@ -110,7 +110,7 @@ $check( 'kein aria-hidden Dekorationselement (Drag-Handle)', false === strpos( $
 
 echo "\n== 3. Werte werden escaped ==\n";
 
-$evil = Sdc_Frontend::render_post( 0 ); // no document → empty, proves the empty case too.
+$evil = Sdcpb_Frontend::render_post( 0 ); // no document → empty, proves the empty case too.
 $check( 'Post ohne Dokument liefert leeren String', '' === $evil );
 
 // Eine Komponente mit HTML in jedem Wert über die echte Renderfunktion.
@@ -124,7 +124,7 @@ $probe_id = wp_insert_post(
 );
 $check( 'Probe-Seite angelegt', $probe_id > 0, 'ID ' . $probe_id );
 
-Sdc_Store::save_data(
+Sdcpb_Store::save_data(
 	$probe_id,
 	array(
 		'components' => array(
@@ -135,17 +135,21 @@ Sdc_Store::save_data(
 				'data'   => array(
 					'heading' => '<script>alert(1)</script>Kopf & "Zitat"',
 					'items'   => array(
-						array( '_id' => 'p_1', 'q' => '<b>fett</b> & <i>kursiv</i>', 'a' => 'Zeile 1' . "\n" . 'Zeile 2' ),
+						array(
+							'_id' => 'p_1',
+							'q'   => '<b>fett</b> & <i>kursiv</i>',
+							'a'   => 'Zeile 1' . "\n" . 'Zeile 2',
+						),
 					),
 				),
 			),
 		),
 	)
 );
-Sdc_Schema::flush();
+Sdcpb_Schema::flush();
 
 global $wpdb;
-$probe_html = Sdc_Frontend::render_post( $probe_id );
+$probe_html = Sdcpb_Frontend::render_post( $probe_id );
 $check( 'Probe-Script nicht ausgeführt, sondern escaped', false === strpos( $probe_html, '<script>' ) && false !== strpos( $probe_html, '&lt;script&gt;' ) );
 $check( 'HTML im Feldwert bleibt Text', false === strpos( $probe_html, '<b>fett</b>' ) && false !== strpos( $probe_html, '&lt;b&gt;fett&lt;/b&gt;' ) );
 $check( 'Anführungszeichen escaped', false !== strpos( $probe_html, '&quot;Zitat&quot;' ) );
@@ -157,16 +161,16 @@ $check( 'Zeilenumbruch als <br>', false !== strpos( $probe_html, "Zeile 1<br />\
 echo "\n== 4. Kanten ==\n";
 
 // 4a. leeres Dokument
-Sdc_Store::save_data( $probe_id, array( 'components' => array() ) );
-Sdc_Schema::flush();
-$empty_html = Sdc_Frontend::render_post( $probe_id );
+Sdcpb_Store::save_data( $probe_id, array( 'components' => array() ) );
+Sdcpb_Schema::flush();
+$empty_html = Sdcpb_Frontend::render_post( $probe_id );
 $check( 'leeres Dokument: leerer String, kein Wrapper', '' === $empty_html, '"" (' . strlen( $empty_html ) . ' Bytes)' );
 
 // 4b. unbekannter Typ: übersprungen, geloggt, kein Fatal
-$log = tempnam( sys_get_temp_dir(), 'sdc-log' );
+$log          = tempnam( sys_get_temp_dir(), 'sdc-log' );
 $previous_log = ini_set( 'error_log', $log );
 
-Sdc_Store::save_data(
+Sdcpb_Store::save_data(
 	$probe_id,
 	array(
 		'components' => array(
@@ -182,15 +186,21 @@ Sdc_Store::save_data(
 				'schema' => 'faq@1',
 				'data'   => array(
 					'heading' => 'Nach der unbekannten Komponente',
-					'items'   => array( array( '_id' => 'u_1', 'q' => 'Steht noch da?', 'a' => 'Ja.' ) ),
+					'items'   => array(
+						array(
+							'_id' => 'u_1',
+							'q'   => 'Steht noch da?',
+							'a'   => 'Ja.',
+						),
+					),
 				),
 			),
 		),
 	)
 );
-Sdc_Schema::flush();
+Sdcpb_Schema::flush();
 
-$unknown_html = Sdc_Frontend::render_post( $probe_id );
+$unknown_html = Sdcpb_Frontend::render_post( $probe_id );
 $log_text     = (string) @file_get_contents( $log );
 ini_set( 'error_log', $previous_log );
 
@@ -200,7 +210,7 @@ $check( 'unbekannter Typ: im error_log vermerkt', false !== strpos( $log_text, '
 $check( 'unbekannter Typ: nur eine Komponente ausgegeben', 1 === substr_count( $unknown_html, 'class="sdc-component' ), substr_count( $unknown_html, 'class="sdc-component' ) . ' Wrapper' );
 
 // 4c. leere Zeilen werden verworfen
-Sdc_Store::save_data(
+Sdcpb_Store::save_data(
 	$probe_id,
 	array(
 		'components' => array(
@@ -211,17 +221,29 @@ Sdc_Store::save_data(
 				'data'   => array(
 					'heading' => '',
 					'items'   => array(
-						array( '_id' => 'e_1', 'q' => '', 'a' => '' ),
-						array( '_id' => 'e_2', 'q' => 'Die einzige echte Frage', 'a' => 'Antwort' ),
-						array( '_id' => 'e_3', 'q' => '', 'a' => '' ),
+						array(
+							'_id' => 'e_1',
+							'q'   => '',
+							'a'   => '',
+						),
+						array(
+							'_id' => 'e_2',
+							'q'   => 'Die einzige echte Frage',
+							'a'   => 'Antwort',
+						),
+						array(
+							'_id' => 'e_3',
+							'q'   => '',
+							'a'   => '',
+						),
 					),
 				),
 			),
 		),
 	)
 );
-Sdc_Schema::flush();
-$emptyrows_html = Sdc_Frontend::render_post( $probe_id );
+Sdcpb_Schema::flush();
+$emptyrows_html = Sdcpb_Frontend::render_post( $probe_id );
 $check( 'leere Zeilen verworfen: 1 von 3 Zeilen ausgegeben', 1 === substr_count( $emptyrows_html, 'class="sdc-row"' ), substr_count( $emptyrows_html, 'class="sdc-row"' ) . ' Zeilen' );
 $check( 'leere Überschrift erzeugt kein leeres Element', false === strpos( $emptyrows_html, 'sdc-field--heading' ) );
 
@@ -232,7 +254,12 @@ $check( 'leere Überschrift erzeugt kein leeres Element', false === strpos( $emp
 // Blatt — nicht drei Ebenen. Der erste Lauf dieser Prüfung war rot, weil das
 // Fixture nur zwei Container hatte (Blatt = depth 3, also legitim) und ich
 // trotzdem eine Kappung erwartet habe. Fixture korrigiert, nicht der Code.
-$leaf = array( 'key' => 'field_probe_leaf', 'name' => 'leaf', 'label' => 'Blatt', 'type' => 'text' );
+$leaf = array(
+	'key'   => 'field_probe_leaf',
+	'name'  => 'leaf',
+	'label' => 'Blatt',
+	'type'  => 'text',
+);
 
 $depth3_field = array(
 	'key'        => 'field_probe_d1',
@@ -259,9 +286,9 @@ $depth3_field = array(
 );
 $depth3_value = array( array( 'd2' => array( array( 'd3' => array( array( 'leaf' => 'TIEF-3' ) ) ) ) ) );
 
-$log2         = tempnam( sys_get_temp_dir(), 'sdc-log' );
-$previous_log = ini_set( 'error_log', $log2 );
-$depth_ok_renderer = Sdc_Renderer::render_fields( array( $depth3_field ), array( 'd1' => $depth3_value ), 'acf', 1 );
+$log2              = tempnam( sys_get_temp_dir(), 'sdc-log' );
+$previous_log      = ini_set( 'error_log', $log2 );
+$depth_ok_renderer = Sdcpb_Renderer::render_fields( array( $depth3_field ), array( 'd1' => $depth3_value ), 'acf', 1 );
 $depth_ok_log      = (string) @file_get_contents( $log2 );
 ini_set( 'error_log', $previous_log );
 
@@ -288,7 +315,7 @@ $count_levels = function ( array $field ) {
 	$levels = 1;
 	$cursor = $field;
 	while ( isset( $cursor['sub_fields'][0]['type'] ) && 'repeater' === $cursor['sub_fields'][0]['type'] ) {
-		$levels++;
+		++$levels;
 		$cursor = $cursor['sub_fields'][0];
 	}
 	return $levels;
@@ -298,9 +325,9 @@ $check( 'Fixture: Tiefe-4-Feld hat genau 4 Container-Ebenen', 4 === $count_level
 
 $depth4_value = array( array( 'd2' => array( array( 'd3' => array( array( 'd4' => array( array( 'leaf' => 'TIEF-4' ) ) ) ) ) ) ) );
 
-$log3         = tempnam( sys_get_temp_dir(), 'sdc-log' );
-$previous_log = ini_set( 'error_log', $log3 );
-$deep_renderer = Sdc_Renderer::render_fields( array( $depth4_field ), array( 'd1' => $depth4_value ), 'acf', 1 );
+$log3          = tempnam( sys_get_temp_dir(), 'sdc-log' );
+$previous_log  = ini_set( 'error_log', $log3 );
+$deep_renderer = Sdcpb_Renderer::render_fields( array( $depth4_field ), array( 'd1' => $depth4_value ), 'acf', 1 );
 $deep_log      = (string) @file_get_contents( $log3 );
 ini_set( 'error_log', $previous_log );
 
@@ -308,9 +335,9 @@ $check( 'Tiefe 4 gekappt (Renderer): kein TIEF-4 in der Ausgabe', false === strp
 $check( 'Tiefe 4 wird gemeldet, nicht still verschluckt', false !== strpos( $deep_log, 'überschreitet das Maximum 3' ), trim( str_replace( $log3, '', $deep_log ) ) );
 
 // Dieselbe Grenze auf dem Frontend-Weg: dort greift der eigene Guard der Klasse.
-$log4         = tempnam( sys_get_temp_dir(), 'sdc-log' );
-$previous_log = ini_set( 'error_log', $log4 );
-$frontend_deep = Sdc_Frontend::render_fields_probe( array( $depth4_field ), array( 'd1' => $depth4_value ), 1 );
+$log4          = tempnam( sys_get_temp_dir(), 'sdc-log' );
+$previous_log  = ini_set( 'error_log', $log4 );
+$frontend_deep = Sdcpb_Frontend::render_fields_probe( array( $depth4_field ), array( 'd1' => $depth4_value ), 1 );
 $frontend_log  = (string) @file_get_contents( $log4 );
 ini_set( 'error_log', $previous_log );
 
@@ -361,7 +388,7 @@ clean_post_cache( $probe_id );
 // hier rot, obwohl die Zeile weg war — Harness-Defekt, nicht Code).
 $still_there = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE ID = %d", $probe_id ) );
 $check( 'Probe-Seite aus der DB entfernt', 0 === $still_there, $still_there . ' Zeilen' );
-$check( 'Testdaten Seite 2 unverändert', 2 === count( Sdc_Store::get_data( 2 )['components'] ) );
+$check( 'Testdaten Seite 2 unverändert', 2 === count( Sdcpb_Store::get_data( 2 )['components'] ) );
 
 printf( "\n%s (%d geprüft, %d Fehler)\n", 0 === $fails ? 'ERGEBNIS: ALLE PRÜFUNGEN GRÜN' : 'ERGEBNIS: FEHLSCHLÄGE', $checked, $fails );
 exit( 0 === $fails ? 0 : 1 );

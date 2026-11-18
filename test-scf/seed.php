@@ -34,10 +34,10 @@ for ( $i = 1; $i <= 3; $i++ ) {
 	);
 }
 
-$post_id = sdc_fixture_seed_page( 'SDC Messseite', array(
-	'sdc_faq'    => $faq,
-	'sdc_team'   => $team,
-	'sdc_preise' => $preise,
+$post_id = sdcpb_fixture_seed_page( 'SDC Messseite', array(
+	'sdcpb_faq'    => $faq,
+	'sdcpb_team'   => $team,
+	'sdcpb_preise' => $preise,
 ) );
 
 echo "Post-ID: $post_id\n";
@@ -55,7 +55,7 @@ foreach ( array_slice( $rows, 0, 10 ) as $r ) {
 echo "  … (insgesamt " . count( $rows ) . " Zeilen)\n\n";
 
 // Aufschlüsselung: wie viele Meta-Zeilen pro Komponente?
-foreach ( array( 'sdc_faq', 'sdc_team', 'sdc_preise' ) as $f ) {
+foreach ( array( 'sdcpb_faq', 'sdcpb_team', 'sdcpb_preise' ) as $f ) {
 	$n = (int) $wpdb->get_var( $wpdb->prepare(
 		"SELECT COUNT(*) FROM {$wpdb->postmeta} WHERE post_id=%d AND (meta_key LIKE %s OR meta_key LIKE %s)",
 		$post_id, $wpdb->esc_like( $f ) . '%', $wpdb->esc_like( '_' . $f ) . '%'
@@ -65,6 +65,6 @@ foreach ( array( 'sdc_faq', 'sdc_team', 'sdc_preise' ) as $f ) {
 echo "\nPOST_ID=$post_id\n";
 
 // Zurücklesen und Struktur prüfen.
-$back = get_field( 'sdc_team', $post_id, false );
-echo "\nget_field(sdc_team) -> " . count( (array) $back ) . " Zeilen, Typ " . gettype( $back ) . "\n";
+$back = get_field( 'sdcpb_team', $post_id, false );
+echo "\nget_field(sdcpb_team) -> " . count( (array) $back ) . " Zeilen, Typ " . gettype( $back ) . "\n";
 echo "Erste Zeile: " . wp_json_encode( $back[0] ?? null, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) . "\n";

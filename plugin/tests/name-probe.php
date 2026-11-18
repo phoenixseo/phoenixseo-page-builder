@@ -3,7 +3,6 @@
  * Wie baut ACF den name-Pfad eines Feldes? Muss ich wissen, bevor ich
  * eigene Zeilen-Container rendere und die Blätter vom Wirt rendern lasse.
  */
-
 function probe_render( $label, $field ) {
 	ob_start();
 	try {
@@ -27,7 +26,16 @@ $base = array(
 
 probe_render( 'name=heading', array_merge( $base, array( 'name' => 'heading' ) ) );
 probe_render( 'name=acf[field_sdc_faq_heading]', array_merge( $base, array( 'name' => 'acf[field_sdc_faq_heading]' ) ) );
-probe_render( 'name=heading + prefix=acf', array_merge( $base, array( 'name' => 'heading', 'prefix' => 'acf' ) ) );
+probe_render(
+	'name=heading + prefix=acf',
+	array_merge(
+		$base,
+		array(
+			'name'   => 'heading',
+			'prefix' => 'acf',
+		)
+	)
+);
 probe_render(
 	'name=items[0][q]',
 	array_merge(

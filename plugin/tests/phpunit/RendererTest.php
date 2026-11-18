@@ -10,13 +10,13 @@
  * contract: instance-prefixed input names, one card per component, no
  * collisions between two components of the same type.
  */
-class RendererTest extends Sdc_TestCase {
+class RendererTest extends Sdcpb_TestCase {
 
 	/**
 	 * A component card declares its type, context and instance.
 	 */
 	public function test_component_card_exposes_type_context_and_instance() {
-		$html = Sdc_Renderer::render_component( 'faq', $this->faq_component()['data'], 'editor', 'c_one' );
+		$html = Sdcpb_Renderer::render_component( 'faq', $this->faq_component()['data'], 'editor', 'c_one' );
 
 		$this->assertStringContainsString( 'class="sdc-component sdc-component--faq"', $html );
 		$this->assertStringContainsString( 'data-sdc-type="faq"', $html );
@@ -33,8 +33,8 @@ class RendererTest extends Sdc_TestCase {
 	public function test_two_instances_of_one_type_do_not_share_input_names() {
 		$data = $this->faq_component()['data'];
 
-		$one = Sdc_Renderer::render_component( 'faq', $data, 'editor', 'c_one' );
-		$two = Sdc_Renderer::render_component( 'faq', $data, 'editor', 'c_two' );
+		$one = Sdcpb_Renderer::render_component( 'faq', $data, 'editor', 'c_one' );
+		$two = Sdcpb_Renderer::render_component( 'faq', $data, 'editor', 'c_two' );
 
 		$this->assertStringContainsString( 'name="acf[c_one][field_sdc_faq_heading]"', $one );
 		$this->assertStringContainsString( 'name="acf[c_two][field_sdc_faq_heading]"', $two );
@@ -50,7 +50,7 @@ class RendererTest extends Sdc_TestCase {
 	 * Every field of the schema appears in the markup.
 	 */
 	public function test_all_schema_fields_are_rendered() {
-		$html = Sdc_Renderer::render_component( 'faq', $this->faq_component()['data'], 'editor', 'c_one' );
+		$html = Sdcpb_Renderer::render_component( 'faq', $this->faq_component()['data'], 'editor', 'c_one' );
 
 		$this->assertStringContainsString( 'data-sdc-name="heading"', $html );
 		$this->assertStringContainsString( 'data-sdc-name="items"', $html );
@@ -60,7 +60,7 @@ class RendererTest extends Sdc_TestCase {
 	 * Row values from the document are present in the rendered inputs.
 	 */
 	public function test_saved_values_reach_the_inputs() {
-		$html = Sdc_Renderer::render_component( 'faq', $this->faq_component( 'Überschrift gespeichert', 2 )['data'], 'editor', 'c_one' );
+		$html = Sdcpb_Renderer::render_component( 'faq', $this->faq_component( 'Überschrift gespeichert', 2 )['data'], 'editor', 'c_one' );
 
 		$this->assertStringContainsString( 'Überschrift gespeichert', $html );
 		$this->assertStringContainsString( 'Frage 1', $html );
@@ -76,7 +76,7 @@ class RendererTest extends Sdc_TestCase {
 			'items'   => array(),
 		);
 
-		$html = Sdc_Renderer::render_component( 'faq', $data, 'editor', 'c_one' );
+		$html = Sdcpb_Renderer::render_component( 'faq', $data, 'editor', 'c_one' );
 
 		$this->assertStringNotContainsString( '<script>alert', $html );
 		$this->assertStringContainsString( '&lt;script&gt;', $html );
@@ -86,14 +86,14 @@ class RendererTest extends Sdc_TestCase {
 	 * An unknown type renders nothing rather than throwing.
 	 */
 	public function test_unknown_type_renders_nothing() {
-		$this->assertSame( '', Sdc_Renderer::render_component( 'gibt-es-nicht', array(), 'editor', 'c_x' ) );
+		$this->assertSame( '', Sdcpb_Renderer::render_component( 'gibt-es-nicht', array(), 'editor', 'c_x' ) );
 	}
 
 	/**
 	 * An instance id cannot break out of the prefix or the attribute.
 	 */
 	public function test_instance_id_is_sanitized() {
-		$html = Sdc_Renderer::render_component( 'faq', $this->faq_component()['data'], 'editor', 'c_"onmouseover="alert(1)' );
+		$html = Sdcpb_Renderer::render_component( 'faq', $this->faq_component()['data'], 'editor', 'c_"onmouseover="alert(1)' );
 
 		$this->assertStringNotContainsString( 'onmouseover="alert', $html );
 	}
@@ -102,7 +102,7 @@ class RendererTest extends Sdc_TestCase {
 	 * Both shipped types render through the same seam — no per-type code path.
 	 */
 	public function test_second_type_renders_without_type_specific_code() {
-		$html = Sdc_Renderer::render_component( 'hero', $this->hero_component()['data'], 'editor', 'c_hero' );
+		$html = Sdcpb_Renderer::render_component( 'hero', $this->hero_component()['data'], 'editor', 'c_hero' );
 
 		$this->assertStringContainsString( 'sdc-component--hero', $html );
 		$this->assertStringContainsString( 'data-sdc-name="heading"', $html );
@@ -118,7 +118,7 @@ class RendererTest extends Sdc_TestCase {
 			'items'   => array(),
 		);
 
-		$html = Sdc_Renderer::render_component( 'faq', $data, 'editor', 'c_one' );
+		$html = Sdcpb_Renderer::render_component( 'faq', $data, 'editor', 'c_one' );
 
 		$this->assertStringContainsString( 'data-sdc-name="items"', $html );
 		$this->assertStringContainsString( 'Ohne Einträge', $html );

@@ -18,8 +18,8 @@
  * another one each run.
  */
 
-if ( ! class_exists( 'Sdc_Store' ) ) {
-	echo "Sdc_Store not loaded — activate the sdc-page-builder plugin first.\n";
+if ( ! class_exists( 'Sdcpb_Store' ) ) {
+	echo "Sdcpb_Store not loaded — activate the sdc-page-builder plugin first.\n";
 	exit( 1 );
 }
 
@@ -44,7 +44,7 @@ if ( ! $page_id ) {
 }
 
 $document = array(
-	'version'    => Sdc_Store::FORMAT_VERSION,
+	'version'    => Sdcpb_Store::FORMAT_VERSION,
 	'components' => array(
 		array(
 			'_id'  => 'c_demo_hero',
@@ -83,9 +83,9 @@ $document = array(
 	),
 );
 
-$saved = Sdc_Store::save_data( $page_id, $document );
-$read  = Sdc_Store::get_data( $page_id );
-$meta  = get_post_meta( $page_id, Sdc_Store::META_KEY, true );
+$saved = Sdcpb_Store::save_data( $page_id, $document );
+$read  = Sdcpb_Store::get_data( $page_id );
+$meta  = get_post_meta( $page_id, Sdcpb_Store::META_KEY, true );
 
 echo 'Post-ID:      ' . $page_id . "\n";
 echo 'Gespeichert:  ' . ( $saved ? 'ja' : 'NEIN' ) . "\n";

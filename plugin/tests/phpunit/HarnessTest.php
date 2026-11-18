@@ -10,7 +10,7 @@
  * Proves that WordPress loaded, the host field plugin is active, and the plugin
  * under test booted — in that order, each asserted separately.
  */
-class HarnessTest extends Sdc_TestCase {
+class HarnessTest extends Sdcpb_TestCase {
 
 	/**
 	 * WordPress really loaded, and it is not older than the header promises.
@@ -42,19 +42,19 @@ class HarnessTest extends Sdc_TestCase {
 	 * The host field plugin is active and reports itself.
 	 */
 	public function test_host_field_plugin_is_available() {
-		$this->assertTrue( Sdc_Field_Adapter::is_available(), 'Neither ACF nor SCF is active in the test install' );
-		$this->assertContains( Sdc_Field_Adapter::host(), array( 'acf', 'scf' ) );
+		$this->assertTrue( Sdcpb_Field_Adapter::is_available(), 'Neither ACF nor SCF is active in the test install' );
+		$this->assertContains( Sdcpb_Field_Adapter::host(), array( 'acf', 'scf' ) );
 	}
 
 	/**
 	 * The plugin under test booted from the repository directory, not from a stale copy.
 	 */
 	public function test_plugin_under_test_boots_from_the_repository() {
-		$this->assertTrue( class_exists( 'Sdc_Store' ), 'Sdc_Store missing — plugin did not boot' );
-		$this->assertTrue( class_exists( 'Sdc_Schema' ) );
-		$this->assertTrue( class_exists( 'Sdc_Renderer' ) );
+		$this->assertTrue( class_exists( 'Sdcpb_Store' ), 'Sdcpb_Store missing — plugin did not boot' );
+		$this->assertTrue( class_exists( 'Sdcpb_Schema' ) );
+		$this->assertTrue( class_exists( 'Sdcpb_Renderer' ) );
 
-		$loaded = ( new ReflectionClass( 'Sdc_Store' ) )->getFileName();
+		$loaded = ( new ReflectionClass( 'Sdcpb_Store' ) )->getFileName();
 		$this->assertStringContainsString(
 			dirname( __DIR__, 2 ),
 			$loaded,

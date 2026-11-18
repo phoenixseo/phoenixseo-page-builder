@@ -1,9 +1,9 @@
 {
-    "key": "group_sdc_component_faq",
+    "key": "group_sdcpb_component_faq",
     "title": "FAQ",
-    "sdc_description": "Frage-Antwort-Liste mit optionaler Überschrift.",
-    "sdc_icon": "editor-help",
-    "sdc_version": 1,
+    "sdcpb_description": "Frage-Antwort-Liste mit optionaler Überschrift.",
+    "sdcpb_icon": "editor-help",
+    "sdcpb_version": 1,
     "fields": [
         {
             "key": "field_sdc_faq_heading",
@@ -46,7 +46,7 @@
     "location": [
         [
             {
-                "param": "sdc_component",
+                "param": "sdcpb_component",
                 "operator": "==",
                 "value": "1"
             }

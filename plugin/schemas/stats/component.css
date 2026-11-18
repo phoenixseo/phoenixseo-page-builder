@@ -1,0 +1,85 @@
+/**
+ * Stats: numbers in a row, separated by hairlines.
+ *
+ * The list is a `<dl>` whose items are divs; `column-reverse` puts the number
+ * above its label while the markup keeps the reading order (term first).
+ */
+
+.sdc-stats {
+	--sdc-st-gap: 2rem;
+	--sdc-st-rule: color-mix(in srgb, currentColor 15%, transparent);
+
+	margin: 0 0 2rem;
+}
+
+.sdc-stats__heading {
+	margin: 0 0 1.25rem;
+	font-size: clamp(1.4rem, 1.2rem + 0.8vw, 1.9rem);
+	line-height: 1.2;
+}
+
+.sdc-stats__list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sdc-st-gap);
+	margin: 0;
+	padding: 0;
+}
+
+.sdc-stats__item {
+	display: flex;
+	flex-direction: column-reverse;
+	gap: 0.15rem;
+	flex: 1 1 8rem;
+	min-width: 0;
+	padding-inline-start: var(--sdc-st-gap);
+	border-inline-start: 1px solid var(--sdc-st-rule);
+}
+
+.sdc-stats__item:first-child {
+	padding-inline-start: 0;
+	border-inline-start: 0;
+}
+
+.sdc-stats__value {
+	margin: 0;
+	font-size: clamp(1.6rem, 1.3rem + 1.2vw, 2.4rem);
+	font-weight: 700;
+	line-height: 1.1;
+	font-variant-numeric: tabular-nums;
+}
+
+.sdc-stats__label {
+	margin: 0;
+	line-height: 1.4;
+	opacity: 0.85;
+}
+
+.sdc-stats__note {
+	display: block;
+	margin-top: 0.15rem;
+	font-size: 0.8125rem;
+	font-weight: 400;
+	line-height: 1.4;
+	opacity: 0.6;
+}
+
+/* On a phone the hairlines move to the top edge: columns become rows. */
+@media (max-width: 40rem) {
+	.sdc-stats__list {
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.sdc-stats__item {
+		padding-inline-start: 0;
+		padding-block-start: 1rem;
+		border-inline-start: 0;
+		border-block-start: 1px solid var(--sdc-st-rule);
+	}
+
+	.sdc-stats__item:first-child {
+		padding-block-start: 0;
+		border-block-start: 0;
+	}
+}

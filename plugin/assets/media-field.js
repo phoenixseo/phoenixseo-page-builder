@@ -98,7 +98,7 @@
 		valueFor: valueFor,
 	};
 
-	root.SDCMediaField = api;
+	root.SDCPBMediaField = api;
 
 	if ( typeof module === 'object' && module.exports ) {
 		module.exports = api;

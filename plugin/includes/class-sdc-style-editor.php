@@ -5,10 +5,10 @@
  * A component is three files: `definition.json`, `render.php` and
  * `component.css`. The first two are edited on this screen already; this
  * class adds the third. It is the screen only — reading, linting and writing
- * live in `Sdc_View`, next to the same three for the view.
+ * live in `Sdcpb_View`, next to the same three for the view.
  *
  * Nothing here is per-component plumbing that had to be invented: the
- * stylesheet the panel edits is the one `Sdc_Block::styles()` already
+ * stylesheet the panel edits is the one `Sdcpb_Block::styles()` already
  * delivers, so a saved file is live on the next page load without a cache to
  * clear (the version is an md5 of the contents).
  *
@@ -20,14 +20,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Renders the stylesheet panel and hands a posted stylesheet to `Sdc_View`.
+ * Renders the stylesheet panel and hands a posted stylesheet to `Sdcpb_View`.
  */
-class Sdc_Style_Editor {
+class Sdcpb_Style_Editor {
 
 	/**
 	 * Name of the textarea, and the form field the save path reads.
 	 */
-	const FIELD = 'sdc_css_body';
+	const FIELD = 'sdcpb_css_body';
 
 	/**
 	 * Name of the scaffold button.
@@ -36,7 +36,7 @@ class Sdc_Style_Editor {
 	 * a normal form submission, so the save path can tell it apart without
 	 * any JavaScript to keep working.
 	 */
-	const SCAFFOLD = 'sdc_css_scaffold';
+	const SCAFFOLD = 'sdcpb_css_scaffold';
 
 	/**
 	 * Nothing to hook. Present so the plugin bootstrap reads like the others.
@@ -54,12 +54,12 @@ class Sdc_Style_Editor {
 	 * @param string|null $css  Stylesheet to show; null reads it from disk.
 	 */
 	public static function render( $type, $css = null ) {
-		if ( ! Sdc_View::can_edit_style( $type ) ) {
+		if ( ! Sdcpb_View::can_edit_style( $type ) ) {
 			return;
 		}
 
-		$own       = Sdc_View::style_file( Sdc_Admin::write_dir(), $type );
-		$effective = Sdc_View::style( $type );
+		$own       = Sdcpb_View::style_file( Sdcpb_Admin::write_dir(), $type );
+		$effective = Sdcpb_View::style( $type );
 
 		/*
 		 * A theme may ship the stylesheet, and the theme comes first in the
@@ -83,14 +83,14 @@ class Sdc_Style_Editor {
 			printf(
 				'<textarea rows="18" class="large-text code" readonly spellcheck="false" aria-label="%s">%s</textarea>',
 				esc_attr__( 'Styles, schreibgeschützt', 'sdc-page-builder' ),
-				esc_textarea( Sdc_View::read_style( $effective ) )
+				esc_textarea( Sdcpb_View::read_style( $effective ) )
 			);
 
 			return;
 		}
 
 		if ( null === $css ) {
-			$css = Sdc_View::read_style( $own );
+			$css = Sdcpb_View::read_style( $own );
 		}
 
 		printf(
@@ -180,11 +180,11 @@ class Sdc_Style_Editor {
 	 */
 	public static function posted_style( $type ) {
 		if ( self::wants_scaffold() ) {
-			return Sdc_View::style_scaffold( $type );
+			return Sdcpb_View::style_scaffold( $type );
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified by check_admin_referer() in Sdc_Admin::handle().
-		return isset( $_POST[ self::FIELD ] ) ? (string) wp_unslash( $_POST[ self::FIELD ] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- It is CSS; lint_style() is what judges it.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Verified by check_admin_referer() in Sdcpb_Admin::handle(); the value is CSS, and lint_style() is what judges it.
+		return isset( $_POST[ self::FIELD ] ) ? (string) wp_unslash( $_POST[ self::FIELD ] ) : '';
 	}
 
 	/**
@@ -193,7 +193,7 @@ class Sdc_Style_Editor {
 	 * @return bool
 	 */
 	public static function wants_scaffold() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified by check_admin_referer() in Sdc_Admin::handle().
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified by check_admin_referer() in Sdcpb_Admin::handle().
 		return isset( $_POST[ self::SCAFFOLD ] );
 	}
 
@@ -203,7 +203,7 @@ class Sdc_Style_Editor {
 	 * @return bool
 	 */
 	private static function posted() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified by check_admin_referer() in Sdc_Admin::handle().
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified by check_admin_referer() in Sdcpb_Admin::handle().
 		return isset( $_POST[ self::FIELD ] ) || self::wants_scaffold();
 	}
 
@@ -222,14 +222,14 @@ class Sdc_Style_Editor {
 			return true;
 		}
 
-		if ( ! Sdc_View::can_edit_style( $type ) ) {
+		if ( ! Sdcpb_View::can_edit_style( $type ) ) {
 			return new WP_Error(
-				'sdc_style_forbidden',
+				'sdcpb_style_forbidden',
 				__( 'Diese Styles darfst du nicht ändern.', 'sdc-page-builder' )
 			);
 		}
 
-		return Sdc_View::lint_style( self::posted_style( $type ) );
+		return Sdcpb_View::lint_style( self::posted_style( $type ) );
 	}
 
 	/**
@@ -254,6 +254,6 @@ class Sdc_Style_Editor {
 			return true;
 		}
 
-		return Sdc_View::write_style( $dir, $type, self::posted_style( $type ) );
+		return Sdcpb_View::write_style( $dir, $type, self::posted_style( $type ) );
 	}
 }

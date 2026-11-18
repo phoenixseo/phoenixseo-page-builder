@@ -77,5 +77,5 @@ test( 'valueFor answers an empty string when the selection has no ID', () => {
 } );
 
 test( 'the module exports itself for the browser as well', () => {
-	assert.equal( globalThis.SDCMediaField, media );
+	assert.equal( globalThis.SDCPBMediaField, media );
 } );

@@ -2,17 +2,17 @@
 /**
  * Components as blocks: placement inside the block editor.
  *
- * Until now a page's components lived in one postmeta document (`_sdc_data`)
+ * Until now a page's components lived in one postmeta document (`_sdcpb_data`)
  * and were appended in the frontend by `the_content`. That made the builder a
  * separate screen next to the editor, and the editor itself showed nothing.
  *
  * A block closes that gap: it is a placement, not a second data model. Each
  * block carries its component's values as `data` and renders through the very
- * same `Sdc_Frontend` path the metabox uses — so the canvas shows the real
+ * same `Sdcpb_Frontend` path the metabox uses — so the canvas shows the real
  * frontend markup, and there is no second renderer that could drift.
  *
  * One block per component type, not one block for all of them. A single
- * `sdc/component` was cheaper to register, but every instance carried the same
+ * `sdcpb/component` was cheaper to register, but every instance carried the same
  * name: three FAQ blocks on a page were three times "SDC-Komponente" in the
  * list view and the breadcrumb, and the author had to open them to find the
  * right one. The type in the block name puts the component's own label where
@@ -34,12 +34,12 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Registers and renders one block per component.
  */
-class Sdc_Block {
+class Sdcpb_Block {
 
 	/**
-	 * Block name prefix. The component type is appended: `sdc/faq`.
+	 * Block name prefix. The component type is appended: `sdcpb/faq`.
 	 */
-	const PREFIX = 'sdc/';
+	const PREFIX = 'sdcpb/';
 
 	/**
 	 * The single block name earlier builds used for every type.
@@ -47,7 +47,7 @@ class Sdc_Block {
 	 * Kept as a migration source only: content written with it still yields
 	 * its component types when styles are collected.
 	 */
-	const LEGACY = 'sdc/component';
+	const LEGACY = 'sdcpb/component';
 
 	/**
 	 * Editor script handle.
@@ -154,12 +154,12 @@ class Sdc_Block {
 		// `editor_style` refers to a handle, so the handle has to exist by
 		// the time the block renders. An unregistered handle is not an error
 		// WordPress reports — the canvas simply loses its styling.
-		$css = SDC_PB_DIR . 'assets/block-editor.css';
+		$css = SDCPB_DIR . 'assets/block-editor.css';
 
 		if ( file_exists( $css ) && ! wp_style_is( self::STYLE, 'registered' ) ) {
 			wp_register_style(
 				self::STYLE,
-				SDC_PB_URL . 'assets/block-editor.css',
+				SDCPB_URL . 'assets/block-editor.css',
 				array(),
 				(string) filemtime( $css )
 			);
@@ -170,7 +170,7 @@ class Sdc_Block {
 				continue;
 			}
 
-			$component = Sdc_Schema::get( $type );
+			$component = Sdcpb_Schema::get( $type );
 
 			if ( ! $component ) {
 				continue;
@@ -226,7 +226,7 @@ class Sdc_Block {
 	/**
 	 * Keep the first build's block name working.
 	 *
-	 * Content written before this build carries `wp:sdc/component` with the
+	 * Content written before this build carries `wp:sdcpb/component` with the
 	 * type in an attribute. Unregistered, WordPress falls back to the block's
 	 * stored inner HTML — which a dynamic block never has — so an old page
 	 * would silently lose its components. Verified the hard way: page 128
@@ -298,16 +298,18 @@ class Sdc_Block {
 	/**
 	 * Component types that can be placed as a block.
 	 *
-	 * A block name allows a narrow alphabet, so a type outside it is skipped
-	 * rather than registered into a name WordPress would reject.
+	 * A block name allows a narrow alphabet: lowercase letters, digits and
+	 * dashes. A type outside it is skipped rather than registered under a name
+	 * WordPress would reject — `sdcpb/feature_grid` is not a block name, and
+	 * `register_block_type()` answers with a `_doing_it_wrong()` notice.
 	 *
 	 * @return string[]
 	 */
 	public static function types() {
 		$types = array();
 
-		foreach ( array_keys( Sdc_Schema::components() ) as $type ) {
-			if ( is_string( $type ) && preg_match( '/^[a-z0-9][a-z0-9_-]*$/', $type ) ) {
+		foreach ( array_keys( Sdcpb_Schema::components() ) as $type ) {
+			if ( is_string( $type ) && preg_match( '/^[a-z0-9][a-z0-9-]*$/', $type ) ) {
 				$types[] = $type;
 			}
 		}
@@ -345,13 +347,13 @@ class Sdc_Block {
 		 * nothing, and nobody is told. So the unknown type goes through the
 		 * same reporter the document path uses.
 		 */
-		if ( ! Sdc_Schema::get( $type ) ) {
+		if ( ! Sdcpb_Schema::get( $type ) ) {
 			$attributes = is_array( $attributes ) ? $attributes : array();
 			$data       = isset( $attributes['data'] ) && is_array( $attributes['data'] )
 				? $attributes['data']
 				: array();
 
-			return Sdc_Frontend::render_instance( $type, $data, (int) $post_id );
+			return Sdcpb_Frontend::render_instance( $type, $data, (int) $post_id );
 		}
 
 		$data = isset( $attributes['data'] ) && is_array( $attributes['data'] )
@@ -372,7 +374,7 @@ class Sdc_Block {
 		 * block renderer knows it as `$block->context['postId']`; the caller
 		 * passes whatever it has.
 		 */
-		$html = Sdc_Frontend::render_instance( $type, $data, (int) $post_id );
+		$html = Sdcpb_Frontend::render_instance( $type, $data, (int) $post_id );
 
 		/*
 		 * A component without values prints nothing — right for a page, wrong
@@ -387,7 +389,7 @@ class Sdc_Block {
 					sprintf(
 						/* translators: %s: component label. */
 						__( '%s: noch keine Inhalte.', 'sdc-page-builder' ),
-						(string) Sdc_Schema::get( $type )['label']
+						(string) Sdcpb_Schema::get( $type )['label']
 					)
 				),
 				esc_html__( 'Werte rechts in der Seitenleiste eintragen.', 'sdc-page-builder' )
@@ -436,9 +438,9 @@ class Sdc_Block {
 	 * Editor script and the schema the inspector is built from.
 	 */
 	public static function enqueue_editor_assets() {
-		$file  = SDC_PB_DIR . 'assets/block.js';
-		$rows  = SDC_PB_DIR . 'assets/inspector-rows.js';
-		$media = SDC_PB_DIR . 'assets/media-field.js';
+		$file  = SDCPB_DIR . 'assets/block.js';
+		$rows  = SDCPB_DIR . 'assets/inspector-rows.js';
+		$media = SDCPB_DIR . 'assets/media-field.js';
 
 		if ( ! file_exists( $file ) || ! file_exists( $rows ) || ! file_exists( $media ) ) {
 			return;
@@ -451,22 +453,22 @@ class Sdc_Block {
 		 */
 		wp_enqueue_media();
 
-		// Row mutations, loaded first: `block.js` reads `window.SDCBlockRows`
+		// Row mutations, loaded first: `block.js` reads `window.SDCPBBlockRows`
 		// and throws without it, so the order is part of the contract. The
 		// dependency array below is what guarantees it — not the call order.
 		wp_enqueue_script(
 			self::SCRIPT . '-rows',
-			SDC_PB_URL . 'assets/inspector-rows.js',
+			SDCPB_URL . 'assets/inspector-rows.js',
 			array(),
 			(string) filemtime( $rows ),
 			true
 		);
 
 		// Same contract for the media value rules: `block.js` reads
-		// `window.SDCMediaField` and throws when it is missing.
+		// `window.SDCPBMediaField` and throws when it is missing.
 		wp_enqueue_script(
 			self::SCRIPT . '-media',
-			SDC_PB_URL . 'assets/media-field.js',
+			SDCPB_URL . 'assets/media-field.js',
 			array(),
 			(string) filemtime( $media ),
 			true
@@ -474,7 +476,7 @@ class Sdc_Block {
 
 		wp_enqueue_script(
 			self::SCRIPT,
-			SDC_PB_URL . 'assets/block.js',
+			SDCPB_URL . 'assets/block.js',
 			array( self::SCRIPT . '-rows', self::SCRIPT . '-media', 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-server-side-render', 'wp-data', 'wp-compose', 'media-views' ),
 			(string) filemtime( $file ),
 			true
@@ -482,7 +484,7 @@ class Sdc_Block {
 
 		wp_localize_script(
 			self::SCRIPT,
-			'SDC_BLOCK',
+			'SDCPB_BLOCK',
 			array(
 				'prefix'     => self::PREFIX,
 				'category'   => self::CATEGORY,
@@ -501,7 +503,7 @@ class Sdc_Block {
 	 * `layouts` for `flexible_content`.
 	 *
 	 * Built from the raw host definitions (`acf_get_fields()`), not from
-	 * `Sdc_Schema::fields()`: the normalized form drops `sub_fields`, and a
+	 * `Sdcpb_Schema::fields()`: the normalized form drops `sub_fields`, and a
 	 * repeater without its rows is not a repeater.
 	 *
 	 * @return array[]
@@ -510,7 +512,7 @@ class Sdc_Block {
 		$schema = array();
 
 		foreach ( self::types() as $type ) {
-			$component = Sdc_Schema::get( $type );
+			$component = Sdcpb_Schema::get( $type );
 
 			if ( ! $component ) {
 				continue;
@@ -521,7 +523,7 @@ class Sdc_Block {
 				'label'       => (string) $component['label'],
 				'description' => (string) $component['description'],
 				'icon'        => self::icon( $component ),
-				'fields'      => self::fields_for_js( Sdc_Field_Adapter::get_fields( $component['key'] ) ),
+				'fields'      => self::fields_for_js( Sdcpb_Field_Adapter::get_fields( $component['key'] ) ),
 			);
 		}
 
@@ -691,14 +693,14 @@ class Sdc_Block {
 		 *
 		 * @param bool $inline Default true.
 		 */
-		if ( ! apply_filters( 'sdc_pb_inline_component_styles', true ) ) {
+		if ( ! apply_filters( 'sdcpb_inline_component_styles', true ) ) {
 			return '';
 		}
 
 		$css = '';
 
 		foreach ( null === $types ? self::types_here() : $types as $type ) {
-			$file = Sdc_View::style( $type );
+			$file = Sdcpb_View::style( $type );
 
 			if ( '' === $file || ! is_readable( $file ) ) {
 				continue;
@@ -734,7 +736,7 @@ class Sdc_Block {
 	 * Component types placed on the current post.
 	 *
 	 * Two sources, because a page can be built two ways: blocks in
-	 * `post_content`, and the metabox document in `_sdc_data`. A page that
+	 * `post_content`, and the metabox document in `_sdcpb_data`. A page that
 	 * mixes them needs the styles of both.
 	 *
 	 * @return string[]
@@ -747,7 +749,7 @@ class Sdc_Block {
 		}
 
 		$types = self::types_in( (string) $post->post_content );
-		$data  = Sdc_Store::get_data( (int) $post->ID );
+		$data  = Sdcpb_Store::get_data( (int) $post->ID );
 
 		if ( isset( $data['components'] ) && is_array( $data['components'] ) ) {
 			foreach ( $data['components'] as $component ) {
@@ -834,13 +836,13 @@ class Sdc_Block {
 			return;
 		}
 
-		$src = Sdc_Frontend::component_style_url( $type );
+		$src = Sdcpb_Frontend::component_style_url( $type );
 
 		if ( '' === $src ) {
 			return;
 		}
 
-		$file = Sdc_View::style( $type );
+		$file = Sdcpb_View::style( $type );
 
 		wp_enqueue_style( $handle, $src, array(), (string) filemtime( $file ) );
 	}

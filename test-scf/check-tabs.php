@@ -14,7 +14,7 @@
 
 wp_set_current_user( (int) get_users( array( 'role' => 'administrator', 'number' => 1, 'fields' => 'ID' ) )[0] );
 
-$all = Sdc_Schema::components();
+$all = Sdcpb_Schema::components();
 
 if ( empty( $all ) ) {
 	echo "Kein Komponententyp im Schema — nichts zu prüfen.\n";
@@ -31,9 +31,9 @@ $type  = '';
 $skipped = array();
 
 foreach ( array_keys( (array) $all ) as $candidate ) {
-	$file = Sdc_Schema::file_for_key( (string) $all[ $candidate ]['key'] );
+	$file = Sdcpb_Schema::file_for_key( (string) $all[ $candidate ]['key'] );
 
-	if ( '' !== $file && 0 === strpos( $file, Sdc_Admin::write_dir() . '/' ) ) {
+	if ( '' !== $file && 0 === strpos( $file, Sdcpb_Admin::write_dir() . '/' ) ) {
 		$type = (string) $candidate;
 		break;
 	}
@@ -48,7 +48,7 @@ if ( '' === $type ) {
 
 printf( "Übersprungen: %s\n\n", empty( $skipped ) ? '—' : implode( ', ', $skipped ) );
 
-$method = new ReflectionMethod( 'Sdc_Admin', 'render_edit_form' );
+$method = new ReflectionMethod( 'Sdcpb_Admin', 'render_edit_form' );
 $method->setAccessible( true );
 
 ob_start();
@@ -60,9 +60,9 @@ $checks = array(
 	'Panel content'          => strpos( $html, 'data-sdc-panel="content"' ) !== false,
 	'Panel view'             => strpos( $html, 'data-sdc-panel="view"' ) !== false,
 	'Panel styles'           => strpos( $html, 'data-sdc-panel="styles"' ) !== false,
-	'Feld sdc_fields'        => strpos( $html, 'name="sdc_fields"' ) !== false,
-	'Feld sdc_view_body'     => strpos( $html, 'name="sdc_view_body"' ) !== false,
-	'Feld sdc_css_body'      => strpos( $html, 'name="sdc_css_body"' ) !== false,
+	'Feld sdcpb_fields'        => strpos( $html, 'name="sdcpb_fields"' ) !== false,
+	'Feld sdcpb_view_body'     => strpos( $html, 'name="sdcpb_view_body"' ) !== false,
+	'Feld sdcpb_css_body'      => strpos( $html, 'name="sdcpb_css_body"' ) !== false,
 );
 
 /*

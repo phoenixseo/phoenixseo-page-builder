@@ -18,7 +18,7 @@
  *   block and through the document. Otherwise the canvas and the page disagree
  *   and nobody notices until a client does.
  */
-class BlockTest extends Sdc_TestCase {
+class BlockTest extends Sdcpb_TestCase {
 
 	/**
 	 * Every component type gets its own block, named and titled after it.
@@ -37,8 +37,8 @@ class BlockTest extends Sdc_TestCase {
 
 		$checked = 0;
 
-		foreach ( array_keys( Sdc_Block::schema() ) as $type ) {
-			$name = 'sdc/' . $type;
+		foreach ( array_keys( Sdcpb_Block::schema() ) as $type ) {
+			$name = 'sdcpb/' . $type;
 
 			if ( ! $registry->is_registered( $name ) ) {
 				continue;
@@ -47,9 +47,9 @@ class BlockTest extends Sdc_TestCase {
 			++$checked;
 			$block = $registry->get_registered( $name );
 
-			$this->assertSame( Sdc_Schema::get( $type )['label'], $block->title );
+			$this->assertSame( Sdcpb_Schema::get( $type )['label'], $block->title );
 			$this->assertNotFalse(
-				has_action( 'init', array( 'Sdc_Block', 'register' ) ),
+				has_action( 'init', array( 'Sdcpb_Block', 'register' ) ),
 				'Die Registrierung hängt an init.'
 			);
 		}
@@ -61,22 +61,22 @@ class BlockTest extends Sdc_TestCase {
 		);
 
 		// The reverse direction, which is the promise that actually matters
-		// for the inserter: no `sdc/*` block exists that is not a component.
+		// for the inserter: no `sdcpb/*` block exists that is not a component.
 		// A leftover registration would offer the author a block that cannot
 		// render.
 		foreach ( $registry->get_all_registered() as $name => $block ) {
-			if ( 0 !== strpos( $name, 'sdc/' ) || 'sdc/component' === $name ) {
+			if ( 0 !== strpos( $name, Sdcpb_Block::PREFIX ) || Sdcpb_Block::PREFIX . 'component' === $name ) {
 				continue;
 			}
 
-			$type = substr( $name, 4 );
+			$type = substr( $name, strlen( Sdcpb_Block::PREFIX ) );
 
 			$this->assertArrayHasKey(
 				$type,
-				Sdc_Block::schema(),
+				Sdcpb_Block::schema(),
 				'Block "' . $name . '" gehört zu einer Komponente.'
 			);
-			$this->assertSame( Sdc_Schema::get( $type )['label'], $block->title );
+			$this->assertSame( Sdcpb_Schema::get( $type )['label'], $block->title );
 		}
 	}
 
@@ -89,8 +89,8 @@ class BlockTest extends Sdc_TestCase {
 
 		foreach ( array( 'hero', 'faq' ) as $type ) {
 			$this->assertTrue(
-				$registry->is_registered( 'sdc/' . $type ),
-				'sdc/' . $type . ' ist registriert.'
+				$registry->is_registered( 'sdcpb/' . $type ),
+				'sdcpb/' . $type . ' ist registriert.'
 			);
 		}
 	}
@@ -102,13 +102,13 @@ class BlockTest extends Sdc_TestCase {
 	public function test_blocks_live_in_the_plugin_category() {
 		$registry = WP_Block_Type_Registry::get_instance();
 
-		foreach ( array( 'sdc/hero', 'sdc/faq', Sdc_Block::LEGACY ) as $name ) {
+		foreach ( array( 'sdcpb/hero', 'sdcpb/faq', Sdcpb_Block::LEGACY ) as $name ) {
 			if ( ! $registry->is_registered( $name ) ) {
 				continue;
 			}
 
 			$this->assertSame(
-				Sdc_Block::CATEGORY,
+				Sdcpb_Block::CATEGORY,
 				$registry->get_registered( $name )->category,
 				'Block "' . $name . '" liegt in der eigenen Kategorie.'
 			);
@@ -137,7 +137,7 @@ class BlockTest extends Sdc_TestCase {
 			null
 		);
 
-		$this->assertSame( Sdc_Block::CATEGORY, $categories[0]['slug'] );
+		$this->assertSame( Sdcpb_Block::CATEGORY, $categories[0]['slug'] );
 		$this->assertSame( 'SDC-Komponenten', $categories[0]['title'] );
 
 		// The theme's categories survive, in their order.
@@ -171,9 +171,9 @@ class BlockTest extends Sdc_TestCase {
 	public function test_the_legacy_block_is_registered_but_hidden() {
 		$registry = WP_Block_Type_Registry::get_instance();
 
-		$this->assertTrue( $registry->is_registered( Sdc_Block::LEGACY ) );
+		$this->assertTrue( $registry->is_registered( Sdcpb_Block::LEGACY ) );
 
-		$block = $registry->get_registered( Sdc_Block::LEGACY );
+		$block = $registry->get_registered( Sdcpb_Block::LEGACY );
 
 		$this->assertFalse(
 			$block->supports['inserter'] ?? true,
@@ -181,7 +181,7 @@ class BlockTest extends Sdc_TestCase {
 		);
 
 		// It also must not count as a component of its own.
-		$this->assertNotContains( 'component', Sdc_Block::types() );
+		$this->assertNotContains( 'component', Sdcpb_Block::types() );
 	}
 
 	/**
@@ -191,11 +191,11 @@ class BlockTest extends Sdc_TestCase {
 	public function test_the_legacy_block_renders_its_type() {
 		$hero = $this->hero_component( 'Alter Block' );
 
-		$html = Sdc_Block::render( $hero['type'], array( 'data' => $hero['data'] ) );
+		$html = Sdcpb_Block::render( $hero['type'], array( 'data' => $hero['data'] ) );
 
 		$this->assertStringContainsString( 'Alter Block', $html );
 
-		$callback = WP_Block_Type_Registry::get_instance()->get_registered( Sdc_Block::LEGACY )->render_callback;
+		$callback = WP_Block_Type_Registry::get_instance()->get_registered( Sdcpb_Block::LEGACY )->render_callback;
 
 		$this->assertIsCallable( $callback );
 
@@ -208,7 +208,7 @@ class BlockTest extends Sdc_TestCase {
 	 * Without a type the legacy block prints nothing rather than guessing.
 	 */
 	public function test_the_legacy_block_prints_nothing_without_a_type() {
-		$callback = WP_Block_Type_Registry::get_instance()->get_registered( Sdc_Block::LEGACY )->render_callback;
+		$callback = WP_Block_Type_Registry::get_instance()->get_registered( Sdcpb_Block::LEGACY )->render_callback;
 
 		$this->assertSame( '', call_user_func( $callback, array() ) );
 		$this->assertSame( '', call_user_func( $callback, array( 'type' => '' ) ) );
@@ -233,7 +233,7 @@ class BlockTest extends Sdc_TestCase {
 		$unknown = 'k5-block-' . substr( md5( (string) $post_id ), 0, 6 );
 		$block   = new WP_Block(
 			array(
-				'blockName'    => Sdc_Block::LEGACY,
+				'blockName'    => Sdcpb_Block::LEGACY,
 				'attrs'        => array( 'type' => $unknown ),
 				'innerBlocks'  => array(),
 				'innerHTML'    => '',
@@ -244,7 +244,7 @@ class BlockTest extends Sdc_TestCase {
 
 		$this->assertSame( $post_id, $block->context['postId'], 'The type must declare postId in uses_context, or WP drops it.' );
 
-		$callback = WP_Block_Type_Registry::get_instance()->get_registered( Sdc_Block::LEGACY )->render_callback;
+		$callback = WP_Block_Type_Registry::get_instance()->get_registered( Sdcpb_Block::LEGACY )->render_callback;
 		$html     = (string) call_user_func( $callback, array( 'type' => $unknown ), '', $block );
 
 		$this->assertStringContainsString( '<!-- sdc:', $html, 'The block path must mark a lost component for an editor.' );
@@ -256,7 +256,7 @@ class BlockTest extends Sdc_TestCase {
 	public function test_render_prints_the_component() {
 		$hero = $this->hero_component( 'Block-Kopfzeile' );
 
-		$html = Sdc_Block::render( $hero['type'], array( 'data' => $hero['data'] ) );
+		$html = Sdcpb_Block::render( $hero['type'], array( 'data' => $hero['data'] ) );
 
 		$this->assertStringContainsString( 'sdc-component--hero', $html );
 		$this->assertStringContainsString( 'Block-Kopfzeile', $html );
@@ -273,9 +273,9 @@ class BlockTest extends Sdc_TestCase {
 	public function test_block_output_matches_the_document_output() {
 		$faq = $this->faq_component( 'Fragen aus dem Block', 2 );
 
-		$from_block = Sdc_Block::render( $faq['type'], array( 'data' => $faq['data'] ) );
+		$from_block = Sdcpb_Block::render( $faq['type'], array( 'data' => $faq['data'] ) );
 
-		$from_document = Sdc_Frontend::render_instance( $faq['type'], $faq['data'] );
+		$from_document = Sdcpb_Frontend::render_instance( $faq['type'], $faq['data'] );
 
 		$this->assertSame( $from_document, $from_block );
 	}
@@ -287,7 +287,7 @@ class BlockTest extends Sdc_TestCase {
 	public function test_rendered_fields_carry_their_name() {
 		$faq = $this->faq_component( 'Mit Namen' );
 
-		$html = Sdc_Block::render( $faq['type'], array( 'data' => $faq['data'] ) );
+		$html = Sdcpb_Block::render( $faq['type'], array( 'data' => $faq['data'] ) );
 
 		$this->assertStringContainsString( 'data-sdc-name="heading"', $html );
 	}
@@ -298,7 +298,7 @@ class BlockTest extends Sdc_TestCase {
 	public function test_render_with_an_unknown_type_prints_nothing() {
 		$this->assertSame(
 			'',
-			Sdc_Block::render(
+			Sdcpb_Block::render(
 				'gibt-es-nicht-' . wp_generate_password( 6, false ),
 				array( 'data' => array( 'heading' => 'egal' ) )
 			)
@@ -310,7 +310,7 @@ class BlockTest extends Sdc_TestCase {
 	 * wrapper. The canvas is the exception and says why (see below).
 	 */
 	public function test_render_without_values_prints_nothing() {
-		$html = Sdc_Block::render( 'hero', array() );
+		$html = Sdcpb_Block::render( 'hero', array() );
 
 		$this->assertIsString( $html );
 		$this->assertSame( '', $html, 'Ein leerer Block schreibt nichts in die Seite.' );
@@ -325,7 +325,7 @@ class BlockTest extends Sdc_TestCase {
 		$_GET['context'] = 'edit';
 
 		try {
-			$html = Sdc_Block::render( 'hero', array() );
+			$html = Sdcpb_Block::render( 'hero', array() );
 		} finally {
 			unset( $_GET['context'] );
 		}
@@ -345,7 +345,7 @@ class BlockTest extends Sdc_TestCase {
 		$_GET['context'] = 'edit';
 
 		try {
-			$html = Sdc_Block::render( $hero['type'], array( 'data' => $hero['data'] ) );
+			$html = Sdcpb_Block::render( $hero['type'], array( 'data' => $hero['data'] ) );
 		} finally {
 			unset( $_GET['context'] );
 		}
@@ -358,13 +358,13 @@ class BlockTest extends Sdc_TestCase {
 	 * Types placed in block content are found, including inside a container.
 	 */
 	public function test_types_in_finds_blocks_and_inner_blocks() {
-		$content = '<!-- wp:sdc/faq {"data":{}} /-->'
+		$content = '<!-- wp:sdcpb/faq {"data":{}} /-->'
 			. '<!-- wp:columns --><div class="wp-block-columns">'
 			. '<!-- wp:column --><div class="wp-block-column">'
-			. '<!-- wp:sdc/hero {"data":{}} /-->'
+			. '<!-- wp:sdcpb/hero {"data":{}} /-->'
 			. '</div><!-- /wp:column --></div><!-- /wp:columns -->';
 
-		$types = Sdc_Block::types_in( $content );
+		$types = Sdcpb_Block::types_in( $content );
 
 		sort( $types );
 
@@ -378,7 +378,7 @@ class BlockTest extends Sdc_TestCase {
 	public function test_types_in_reads_the_legacy_block() {
 		$this->assertSame(
 			array( 'faq' ),
-			Sdc_Block::types_in( '<!-- wp:sdc/component {"type":"faq","data":{}} /-->' )
+			Sdcpb_Block::types_in( '<!-- wp:sdcpb/component {"type":"faq","data":{}} /-->' )
 		);
 	}
 
@@ -387,7 +387,7 @@ class BlockTest extends Sdc_TestCase {
 	 * keeps `parse_blocks()` off every ordinary page.
 	 */
 	public function test_types_in_is_a_no_op_without_component_blocks() {
-		$this->assertSame( array(), Sdc_Block::types_in( '<p>Nur Text</p>' ) );
+		$this->assertSame( array(), Sdcpb_Block::types_in( '<p>Nur Text</p>' ) );
 	}
 
 	/**
@@ -395,7 +395,7 @@ class BlockTest extends Sdc_TestCase {
 	 * its rows would render as a plain text input in the sidebar.
 	 */
 	public function test_schema_keeps_repeater_sub_fields() {
-		$schema = Sdc_Block::schema();
+		$schema = Sdcpb_Block::schema();
 
 		$repeater = null;
 		foreach ( $schema['faq']['fields'] as $field ) {
@@ -415,7 +415,7 @@ class BlockTest extends Sdc_TestCase {
 	 * …and the same for every repeater, not just the one somebody looked at.
 	 */
 	public function test_every_repeater_has_sub_fields() {
-		foreach ( Sdc_Block::schema() as $type => $component ) {
+		foreach ( Sdcpb_Block::schema() as $type => $component ) {
 			foreach ( $component['fields'] as $field ) {
 				if ( 'repeater' !== $field['type'] ) {
 					continue;
@@ -434,7 +434,7 @@ class BlockTest extends Sdc_TestCase {
 	 * field has the two things a control cannot work without.
 	 */
 	public function test_schema_describes_every_component() {
-		$schema = Sdc_Block::schema();
+		$schema = Sdcpb_Block::schema();
 
 		$this->assertArrayHasKey( 'hero', $schema );
 		$this->assertArrayHasKey( 'faq', $schema );
@@ -468,16 +468,16 @@ class BlockTest extends Sdc_TestCase {
 		$this->style_fixture( 'hero', '.sdc-hero{color:red}' );
 
 		$post_id = $this->make_page(
-			array( 'post_content' => '<!-- wp:sdc/hero {"data":{"heading":"X"}} /-->' )
+			array( 'post_content' => '<!-- wp:sdcpb/hero {"data":{"heading":"X"}} /-->' )
 		);
 
 		$this->go_to( get_permalink( $post_id ) );
 
-		Sdc_Block::print_component_styles();
+		Sdcpb_Block::print_component_styles();
 
-		$this->assertTrue( wp_style_is( Sdc_Block::STYLES, 'enqueued' ) );
+		$this->assertTrue( wp_style_is( Sdcpb_Block::STYLES, 'enqueued' ) );
 
-		$inline = wp_styles()->registered[ Sdc_Block::STYLES ]->extra['after'];
+		$inline = wp_styles()->registered[ Sdcpb_Block::STYLES ]->extra['after'];
 
 		$this->assertStringContainsString( '.sdc-hero{color:red}', implode( "\n", (array) $inline ) );
 	}
@@ -489,11 +489,11 @@ class BlockTest extends Sdc_TestCase {
 	public function test_types_here_covers_the_metabox_document() {
 		$post_id = $this->make_page();
 
-		Sdc_Store::save_data( $post_id, array( 'components' => array( $this->hero_component() ) ) );
+		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->hero_component() ) ) );
 
 		$this->go_to( get_permalink( $post_id ) );
 
-		$this->assertSame( array( 'hero' ), Sdc_Block::types_here() );
+		$this->assertSame( array( 'hero' ), Sdcpb_Block::types_here() );
 	}
 
 	/**
@@ -501,10 +501,10 @@ class BlockTest extends Sdc_TestCase {
 	 */
 	public function test_types_here_merges_blocks_and_document() {
 		$post_id = $this->make_page(
-			array( 'post_content' => '<!-- wp:sdc/faq {"data":{}} /-->' )
+			array( 'post_content' => '<!-- wp:sdcpb/faq {"data":{}} /-->' )
 		);
 
-		Sdc_Store::save_data(
+		Sdcpb_Store::save_data(
 			$post_id,
 			array(
 				'components' => array(
@@ -516,7 +516,7 @@ class BlockTest extends Sdc_TestCase {
 
 		$this->go_to( get_permalink( $post_id ) );
 
-		$types = Sdc_Block::types_here();
+		$types = Sdcpb_Block::types_here();
 		sort( $types );
 
 		$this->assertSame( array( 'faq', 'hero' ), $types );
@@ -530,13 +530,13 @@ class BlockTest extends Sdc_TestCase {
 		$this->style_fixture( 'hero', '.sdc-hero{color:red}' );
 
 		$post_id = $this->make_page(
-			array( 'post_content' => '<!-- wp:sdc/hero {"data":{"heading":"X"}} /-->' )
+			array( 'post_content' => '<!-- wp:sdcpb/hero {"data":{"heading":"X"}} /-->' )
 		);
 
 		$this->go_to( get_permalink( $post_id ) );
 
-		Sdc_Block::print_component_styles();
-		Sdc_Block::render( 'hero', array( 'data' => array( 'heading' => 'X' ) ) );
+		Sdcpb_Block::print_component_styles();
+		Sdcpb_Block::render( 'hero', array( 'data' => array( 'heading' => 'X' ) ) );
 
 		$this->assertFalse( wp_style_is( 'sdc-component-hero', 'enqueued' ) );
 	}
@@ -548,9 +548,9 @@ class BlockTest extends Sdc_TestCase {
 	public function test_inlining_can_be_switched_off() {
 		$this->style_fixture( 'hero', '.sdc-hero{color:red}' );
 
-		add_filter( 'sdc_pb_inline_component_styles', '__return_false' );
+		add_filter( 'sdcpb_inline_component_styles', '__return_false' );
 
-		$this->assertSame( '', Sdc_Block::styles( array( 'hero' ) ) );
+		$this->assertSame( '', Sdcpb_Block::styles( array( 'hero' ) ) );
 	}
 
 	/**
@@ -560,8 +560,8 @@ class BlockTest extends Sdc_TestCase {
 	public function test_the_inline_stylesheet_is_versioned_by_content() {
 		$this->style_fixture( 'hero', '.sdc-hero{color:red}' );
 
-		$first = Sdc_Block::styles( array( 'hero' ) );
-		$again = Sdc_Block::styles( array( 'hero' ) );
+		$first = Sdcpb_Block::styles( array( 'hero' ) );
+		$again = Sdcpb_Block::styles( array( 'hero' ) );
 
 		$this->assertSame( $first, $again );
 		$this->assertNotSame( '', $first );
@@ -576,7 +576,7 @@ class BlockTest extends Sdc_TestCase {
 	/**
 	 * A stylesheet in the site's own component directory, removed afterwards.
 	 *
-	 * The lookup in `Sdc_View::style()` only needs `<dir>/<type>/component.css`
+	 * The lookup in `Sdcpb_View::style()` only needs `<dir>/<type>/component.css`
 	 * to exist — the component's definition may live elsewhere, which keeps
 	 * this fixture independent of where the suite's components come from.
 	 *
@@ -584,7 +584,7 @@ class BlockTest extends Sdc_TestCase {
 	 * @param string $css  Stylesheet contents.
 	 */
 	private function style_fixture( $type, $css ) {
-		$dir = untrailingslashit( WP_CONTENT_DIR ) . '/' . Sdc_Schema::USER_DIR . '/' . $type;
+		$dir = untrailingslashit( WP_CONTENT_DIR ) . '/' . Sdcpb_Schema::USER_DIR . '/' . $type;
 
 		$this->assertTrue( wp_mkdir_p( $dir ) );
 

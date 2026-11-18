@@ -8,7 +8,7 @@
 /**
  * Base test case.
  */
-abstract class Sdc_TestCase extends WP_UnitTestCase {
+abstract class Sdcpb_TestCase extends WP_UnitTestCase {
 
 	/**
 	 * Post IDs created by the current test, removed in tear_down().
@@ -95,7 +95,7 @@ abstract class Sdc_TestCase extends WP_UnitTestCase {
 	 * @return WP_REST_Request
 	 */
 	protected function request( $method, $route, array $body = array() ) {
-		$request = new WP_REST_Request( $method, '/' . Sdc_Rest::NAMESPACE_V1 . $route );
+		$request = new WP_REST_Request( $method, '/' . Sdcpb_Rest::NAMESPACE_V1 . $route );
 		if ( ! empty( $body ) ) {
 			$request->set_header( 'content-type', 'application/json' );
 			$request->set_body( wp_json_encode( $body ) );

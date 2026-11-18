@@ -5,7 +5,7 @@
  * Two things are defended here.
  *
  * 1. Silence by default. Deactivating or uninstalling the plugin must not cost
- *    a site its content, because `_sdc_data` holds pages a user wrote.
+ *    a site its content, because `_sdcpb_data` holds pages a user wrote.
  * 2. Completeness when opted in — including rows a per-post sweep cannot reach:
  *    the copy on a revision, and an orphan row whose post is already gone. A
  *    stale revision copy is not harmless bookkeeping: it is exactly what a later
@@ -22,7 +22,7 @@
 /**
  * Uninstall opt-in and purge completeness.
  */
-class UninstallTest extends Sdc_TestCase {
+class UninstallTest extends Sdcpb_TestCase {
 
 	/**
 	 * Wall-clock ceiling for one purge, in seconds.
@@ -60,8 +60,8 @@ class UninstallTest extends Sdc_TestCase {
 			define( 'WP_UNINSTALL_PLUGIN', 'sdc-page-builder/sdc-page-builder.php' );
 		}
 
-		if ( $opted_in && ! defined( 'SDC_PB_DELETE_DATA_ON_UNINSTALL' ) ) {
-			define( 'SDC_PB_DELETE_DATA_ON_UNINSTALL', true );
+		if ( $opted_in && ! defined( 'SDCPB_DELETE_DATA_ON_UNINSTALL' ) ) {
+			define( 'SDCPB_DELETE_DATA_ON_UNINSTALL', true );
 		}
 
 		$file = $this->uninstall_file();
@@ -79,15 +79,15 @@ class UninstallTest extends Sdc_TestCase {
 		}
 
 		$this->assertTrue(
-			function_exists( 'sdc_pb_uninstall_purge' ),
-			'uninstall.php does not define sdc_pb_uninstall_purge()'
+			function_exists( 'sdcpb_uninstall_purge' ),
+			'uninstall.php does not define sdcpb_uninstall_purge()'
 		);
 
 		// The require above already purged. Calling again both yields the count
 		// and proves the purge is repeatable: an uninstall that errors on a
 		// second run would be a poor uninstall.
 		$started = microtime( true );
-		$rows    = sdc_pb_uninstall_purge();
+		$rows    = sdcpb_uninstall_purge();
 		$elapsed = microtime( true ) - $started;
 
 		return array(
@@ -97,7 +97,7 @@ class UninstallTest extends Sdc_TestCase {
 	}
 
 	/**
-	 * Count `_sdc_data` rows in the database, across every post type.
+	 * Count `_sdcpb_data` rows in the database, across every post type.
 	 *
 	 * `get_post_meta()` reads the cache of one post. Counting by key is the
 	 * only way to see a row whose post was deleted, which is one of the states
@@ -109,7 +109,7 @@ class UninstallTest extends Sdc_TestCase {
 		global $wpdb;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- asserting on the raw table is the point.
-		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->postmeta} WHERE meta_key = %s", Sdc_Store::META_KEY ) );
+		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->postmeta} WHERE meta_key = %s", Sdcpb_Store::META_KEY ) );
 	}
 
 	/**
@@ -122,14 +122,14 @@ class UninstallTest extends Sdc_TestCase {
 		$source = file_get_contents( $this->uninstall_file() );
 
 		$this->assertStringContainsString(
-			'SDC_PB_DELETE_DATA_ON_UNINSTALL',
+			'SDCPB_DELETE_DATA_ON_UNINSTALL',
 			$source,
 			'uninstall.php no longer checks the opt-in constant'
 		);
 
 		// The guard must run before the purge, not after it.
-		$guard_at = strpos( $source, 'if ( ! defined( \'SDC_PB_DELETE_DATA_ON_UNINSTALL\'' );
-		$purge_at = strpos( $source, 'sdc_pb_uninstall_purge();' );
+		$guard_at = strpos( $source, 'if ( ! defined( \'SDCPB_DELETE_DATA_ON_UNINSTALL\'' );
+		$purge_at = strpos( $source, 'sdcpb_uninstall_purge();' );
 
 		$this->assertIsInt( $guard_at, 'The opt-in guard is gone' );
 		$this->assertIsInt( $purge_at, 'The purge call is gone' );
@@ -146,12 +146,12 @@ class UninstallTest extends Sdc_TestCase {
 	 */
 	public function test_without_opt_in_no_document_is_deleted() {
 		$this->assertFalse(
-			defined( 'SDC_PB_DELETE_DATA_ON_UNINSTALL' ),
+			defined( 'SDCPB_DELETE_DATA_ON_UNINSTALL' ),
 			'This test must run before the opted-in cases define the constant'
 		);
 
 		$page_id = $this->make_page();
-		Sdc_Store::save_data( $page_id, array( 'components' => array( $this->faq_component() ) ) );
+		Sdcpb_Store::save_data( $page_id, array( 'components' => array( $this->faq_component() ) ) );
 
 		$before = $this->count_meta_rows();
 		$this->assertGreaterThan( 0, $before, 'Fixture did not store a document' );
@@ -165,7 +165,7 @@ class UninstallTest extends Sdc_TestCase {
 		);
 		$this->assertSame(
 			'faq',
-			get_post_meta( $page_id, Sdc_Store::META_KEY, true )['components'][0]['type'],
+			get_post_meta( $page_id, Sdcpb_Store::META_KEY, true )['components'][0]['type'],
 			'the page lost its document'
 		);
 	}
@@ -175,15 +175,15 @@ class UninstallTest extends Sdc_TestCase {
 	 */
 	public function test_opt_in_purge_deletes_page_documents() {
 		$page_id = $this->make_page();
-		Sdc_Store::save_data( $page_id, array( 'components' => array( $this->faq_component() ) ) );
+		Sdcpb_Store::save_data( $page_id, array( 'components' => array( $this->faq_component() ) ) );
 
-		$this->assertSame( 'faq', get_post_meta( $page_id, Sdc_Store::META_KEY, true )['components'][0]['type'] );
+		$this->assertSame( 'faq', get_post_meta( $page_id, Sdcpb_Store::META_KEY, true )['components'][0]['type'] );
 
 		$result = $this->load_and_run_uninstall();
 
 		$this->assertSame(
 			'',
-			get_post_meta( $page_id, Sdc_Store::META_KEY, true ),
+			get_post_meta( $page_id, Sdcpb_Store::META_KEY, true ),
 			'Page document survived the purge'
 		);
 		$this->assertLessThan(
@@ -203,15 +203,15 @@ class UninstallTest extends Sdc_TestCase {
 	 */
 	public function test_purge_reaches_revision_copies() {
 		$page_id = $this->make_page();
-		Sdc_Store::save_data( $page_id, array( 'components' => array( $this->faq_component() ) ) );
+		Sdcpb_Store::save_data( $page_id, array( 'components' => array( $this->faq_component() ) ) );
 
 		$revision_id = _wp_put_post_revision( get_post( $page_id ), true );
 		$this->assertIsInt( $revision_id );
-		update_post_meta( $revision_id, Sdc_Store::META_KEY, array( 'components' => array( $this->faq_component( 'Alter Stand' ) ) ) );
+		update_post_meta( $revision_id, Sdcpb_Store::META_KEY, array( 'components' => array( $this->faq_component( 'Alter Stand' ) ) ) );
 
 		$this->assertNotSame(
 			'',
-			get_post_meta( $revision_id, Sdc_Store::META_KEY, true ),
+			get_post_meta( $revision_id, Sdcpb_Store::META_KEY, true ),
 			'fixture did not place a document on the revision'
 		);
 
@@ -219,7 +219,7 @@ class UninstallTest extends Sdc_TestCase {
 
 		$this->assertSame(
 			'',
-			get_post_meta( $revision_id, Sdc_Store::META_KEY, true ),
+			get_post_meta( $revision_id, Sdcpb_Store::META_KEY, true ),
 			'Revision kept a copy of the document; a per-post sweep over post_type=any does not see revisions'
 		);
 	}
@@ -231,7 +231,7 @@ class UninstallTest extends Sdc_TestCase {
 		global $wpdb;
 
 		$page_id = $this->make_page();
-		Sdc_Store::save_data( $page_id, array( 'components' => array( $this->faq_component() ) ) );
+		Sdcpb_Store::save_data( $page_id, array( 'components' => array( $this->faq_component() ) ) );
 
 		// Delete the post but not its meta: the state a crashed delete or a
 		// direct DB removal leaves behind. A per-post sweep never enumerates it.
@@ -241,7 +241,7 @@ class UninstallTest extends Sdc_TestCase {
 
 		$this->assertSame(
 			'faq',
-			get_post_meta( $page_id, Sdc_Store::META_KEY, true )['components'][0]['type'],
+			get_post_meta( $page_id, Sdcpb_Store::META_KEY, true )['components'][0]['type'],
 			'fixture did not leave an orphan row behind'
 		);
 
@@ -249,7 +249,7 @@ class UninstallTest extends Sdc_TestCase {
 
 		$this->assertSame(
 			'',
-			get_post_meta( $page_id, Sdc_Store::META_KEY, true ),
+			get_post_meta( $page_id, Sdcpb_Store::META_KEY, true ),
 			'Orphan row survived; nothing enumerates it per post'
 		);
 	}
@@ -265,7 +265,7 @@ class UninstallTest extends Sdc_TestCase {
 	public function test_purge_removes_every_row_in_one_pass() {
 		for ( $i = 0; $i < 150; $i++ ) {
 			$page_id = $this->make_page();
-			Sdc_Store::save_data( $page_id, array( 'components' => array( $this->faq_component() ) ) );
+			Sdcpb_Store::save_data( $page_id, array( 'components' => array( $this->faq_component() ) ) );
 
 			// A revision copy as well, so the row count deliberately exceeds
 			// 150. The tracked post keeps its own revision, which tear_down()
@@ -291,11 +291,11 @@ class UninstallTest extends Sdc_TestCase {
 	 */
 	public function test_purge_is_idempotent() {
 		$page_id = $this->make_page();
-		Sdc_Store::save_data( $page_id, array( 'components' => array( $this->faq_component() ) ) );
+		Sdcpb_Store::save_data( $page_id, array( 'components' => array( $this->faq_component() ) ) );
 
 		$this->load_and_run_uninstall();
 
-		$second = sdc_pb_uninstall_purge();
+		$second = sdcpb_uninstall_purge();
 
 		$this->assertSame( 0, (int) $second, 'a second purge reported deletions on an empty table' );
 		$this->assertSame( 0, $this->count_meta_rows() );

@@ -18,12 +18,12 @@
 $fails = 0;
 $check = function ( $label, $ok, $note = '' ) use ( &$fails ) {
 	if ( ! $ok ) {
-		$fails++;
+		++$fails;
 	}
 	printf( "%s %s%s\n", $ok ? 'PASS' : 'FAIL', $label, '' !== $note ? " — $note" : '' );
 };
 
-printf( "Host: %s %s\n\n", Sdc_Field_Adapter::host(), Sdc_Field_Adapter::host_version() );
+printf( "Host: %s %s\n\n", Sdcpb_Field_Adapter::host(), Sdcpb_Field_Adapter::host_version() );
 
 /**
  * Die eine Komponente, zweimal: gleicher Typ, unterschiedliche Instanz.
@@ -33,17 +33,41 @@ $instances = array(
 	'c_one' => array(
 		'heading' => 'Häufige Fragen',
 		'items'   => array(
-			array( '_id' => 'r_1', 'q' => 'Erste Frage?', 'a' => 'Erste Antwort.' ),
-			array( '_id' => 'r_2', 'q' => 'Zweite Frage?', 'a' => 'Zweite Antwort.' ),
-			array( '_id' => 'r_3', 'q' => 'Dritte Frage?', 'a' => 'Dritte Antwort.' ),
+			array(
+				'_id' => 'r_1',
+				'q'   => 'Erste Frage?',
+				'a'   => 'Erste Antwort.',
+			),
+			array(
+				'_id' => 'r_2',
+				'q'   => 'Zweite Frage?',
+				'a'   => 'Zweite Antwort.',
+			),
+			array(
+				'_id' => 'r_3',
+				'q'   => 'Dritte Frage?',
+				'a'   => 'Dritte Antwort.',
+			),
 		),
 	),
 	'c_two' => array(
 		'heading' => 'Weitere Fragen',
 		'items'   => array(
-			array( '_id' => 's_1', 'q' => 'Vierte Frage?', 'a' => 'Vierte Antwort.' ),
-			array( '_id' => 's_2', 'q' => 'Fünfte Frage?', 'a' => 'Fünfte Antwort.' ),
-			array( '_id' => 's_3', 'q' => 'Sechste Frage?', 'a' => 'Sechste Antwort.' ),
+			array(
+				'_id' => 's_1',
+				'q'   => 'Vierte Frage?',
+				'a'   => 'Vierte Antwort.',
+			),
+			array(
+				'_id' => 's_2',
+				'q'   => 'Fünfte Frage?',
+				'a'   => 'Fünfte Antwort.',
+			),
+			array(
+				'_id' => 's_3',
+				'q'   => 'Sechste Frage?',
+				'a'   => 'Sechste Antwort.',
+			),
 		),
 	),
 );
@@ -54,7 +78,7 @@ foreach ( $instances as $instance => $data ) {
 	echo "== Instanz {$instance} rendern ==\n";
 
 	// $context wird mitgemessen: er steht im Wrapper und damit in der Signatur.
-	$html = Sdc_Renderer::render_component( 'faq', $data, 'editor', $instance );
+	$html = Sdcpb_Renderer::render_component( 'faq', $data, 'editor', $instance );
 	$check( 'HTML nicht leer', strlen( $html ) > 500, strlen( $html ) . ' Bytes' );
 
 	echo "\n== Struktur ==\n";
@@ -146,7 +170,7 @@ $check(
 // Instanznamen — die Längen unterscheiden sich also zwangsläufig. Verglichen wird
 // die Gerüstlänge: HTML ohne Instanzname und ohne die Nutztexte. Weicht die ab,
 // rendert der Code die Instanzen unterschiedlich — das wäre ein echter Befund.
-$scrub = function ( $html, $instance, $data ) {
+$scrub  = function ( $html, $instance, $data ) {
 	$out = str_replace( $instance, 'INST', $html );
 	$out = str_replace( $data['heading'], 'HEADING', $out );
 	foreach ( $data['items'] as $row ) {
@@ -174,8 +198,15 @@ $check(
 
 // Innerhalb einer Instanz darf kein Name doppelt vorkommen: ein doppelter Name
 // heißt, dass beim Absenden eine Eingabe die andere überschreibt.
-$all      = array_merge( $a['names'], $b['names'] );
-$dup      = array_keys( array_filter( array_count_values( $all ), function ( $n ) { return $n > 1; } ) );
+$all = array_merge( $a['names'], $b['names'] );
+$dup = array_keys(
+	array_filter(
+		array_count_values( $all ),
+		function ( $n ) {
+			return $n > 1;
+		}
+	)
+);
 $check(
 	'keine zwei Eingabenamen doppelt über beide Instanzen',
 	empty( $dup ),

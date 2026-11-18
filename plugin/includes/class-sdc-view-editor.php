@@ -7,7 +7,7 @@
  * textarea with the body, a reference for the helpers a view may call, and a
  * button that generates a starting point from the field definitions.
  *
- * The panel is markup only. Reading, linting and writing live in `Sdc_View`;
+ * The panel is markup only. Reading, linting and writing live in `Sdcpb_View`;
  * this class is the screen in front of it.
  *
  * @package SdcPageBuilder
@@ -18,14 +18,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Renders the view editor and hands a posted body to `Sdc_View`.
+ * Renders the view editor and hands a posted body to `Sdcpb_View`.
  */
-class Sdc_View_Editor {
+class Sdcpb_View_Editor {
 
 	/**
 	 * Name of the textarea, and the form field the save path reads.
 	 */
-	const FIELD = 'sdc_view_body';
+	const FIELD = 'sdcpb_view_body';
 
 	/**
 	 * Name of the generate button.
@@ -35,7 +35,7 @@ class Sdc_View_Editor {
 	 * submits the rest of the form, which is what generation needs: the
 	 * fields it reads are the ones being saved.
 	 */
-	const GENERATE = 'sdc_generate_view';
+	const GENERATE = 'sdcpb_generate_view';
 
 	/**
 	 * Nothing to hook. Present so the plugin bootstrap reads like the others.
@@ -54,12 +54,12 @@ class Sdc_View_Editor {
 	 * @param string|null $body   Body to show; null reads it from disk.
 	 */
 	public static function render( $type, array $fields = array(), $body = null ) {
-		if ( ! Sdc_View::can_edit( $type ) ) {
+		if ( ! Sdcpb_View::can_edit( $type ) ) {
 			return;
 		}
 
 		if ( null === $body ) {
-			$body = Sdc_View::read( Sdc_View::file( Sdc_Admin::write_dir(), $type ) );
+			$body = Sdcpb_View::read( Sdcpb_View::file( Sdcpb_Admin::write_dir(), $type ) );
 		}
 
 		printf(
@@ -139,11 +139,11 @@ class Sdc_View_Editor {
 	/**
 	 * The helper reference.
 	 *
-	 * Built from `Sdc_View::helpers()`, the same list the code documents
+	 * Built from `Sdcpb_View::helpers()`, the same list the code documents
 	 * itself with, so the panel cannot fall behind the API.
 	 */
 	private static function render_helpers() {
-		$helpers = Sdc_View::helpers();
+		$helpers = Sdcpb_View::helpers();
 
 		if ( empty( $helpers ) ) {
 			return;
@@ -152,7 +152,7 @@ class Sdc_View_Editor {
 		printf( '<h4>%s</h4>', esc_html__( 'Helfer', 'sdc-page-builder' ) );
 		printf(
 			'<p class="description">%s</p>',
-			esc_html__( 'Jeder Helfer escapt von sich aus. Wer eigenes Markup braucht, nimmt sdc_value() und escapt selbst.', 'sdc-page-builder' )
+			esc_html__( 'Jeder Helfer escapt von sich aus. Wer eigenes Markup braucht, nimmt sdcpb_value() und escapt selbst.', 'sdc-page-builder' )
 		);
 
 		echo '<table class="widefat striped" style="max-width:56em;">';
@@ -185,11 +185,11 @@ class Sdc_View_Editor {
 	 */
 	public static function posted_body( $type, array $fields ) {
 		if ( self::wants_generate() ) {
-			return Sdc_View::scaffold( $type, $fields );
+			return Sdcpb_View::scaffold( $type, $fields );
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified by check_admin_referer() in handle().
-		return isset( $_POST[ self::FIELD ] ) ? (string) wp_unslash( $_POST[ self::FIELD ] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- It is PHP source; lint() is what judges it.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Verified by check_admin_referer() in handle(); the value is PHP source, and lint() is what judges it.
+		return isset( $_POST[ self::FIELD ] ) ? (string) wp_unslash( $_POST[ self::FIELD ] ) : '';
 	}
 
 	/**
@@ -219,14 +219,14 @@ class Sdc_View_Editor {
 			return true;
 		}
 
-		if ( ! Sdc_View::can_edit( $type ) ) {
+		if ( ! Sdcpb_View::can_edit( $type ) ) {
 			return new WP_Error(
-				'sdc_view_forbidden',
+				'sdcpb_view_forbidden',
 				__( 'Diese Ansicht darfst du nicht ändern.', 'sdc-page-builder' )
 			);
 		}
 
-		return Sdc_View::lint( Sdc_View::normalize( self::posted_body( $type, $fields ) ) );
+		return Sdcpb_View::lint( Sdcpb_View::normalize( self::posted_body( $type, $fields ) ) );
 	}
 
 	/**
@@ -264,6 +264,6 @@ class Sdc_View_Editor {
 			return true;
 		}
 
-		return Sdc_View::write( $dir, $type, self::posted_body( $type, $fields ) );
+		return Sdcpb_View::write( $dir, $type, self::posted_body( $type, $fields ) );
 	}
 }

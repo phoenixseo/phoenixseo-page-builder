@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * wirklich braucht: Text-Repeater, Medien + Links, und eine Komponente mit
  * verschachtelter Struktur (Preisplan -> Leistungszeilen).
  */
-function sdc_fixture_components() {
+function sdcpb_fixture_components() {
 	return array(
 		'faq'     => array(
 			'title' => 'SDC: FAQ',
@@ -56,7 +56,7 @@ function sdc_fixture_components() {
  * Stress-Komponente: 12 Subfelder, Zeilenzahl frei — um die
  * max_input_vars-Grenze (PHP-Default 1000) real zu erreichen.
  */
-function sdc_fixture_stress_fields( $count = 12 ) {
+function sdcpb_fixture_stress_fields( $count = 12 ) {
 	$types = array( 'text', 'text', 'text', 'textarea', 'text', 'text', 'text', 'text', 'url', 'text', 'text', 'text' );
 	$out   = array();
 	for ( $i = 0; $i < $count; $i++ ) {
@@ -72,12 +72,12 @@ function sdc_fixture_stress_fields( $count = 12 ) {
 /**
  * Feldgruppen registrieren. key = UUID-Format wie ACF es anlegt.
  */
-function sdc_fixture_register() {
+function sdcpb_fixture_register() {
 	if ( ! function_exists( 'acf_add_local_field_group' ) ) {
 		return;
 	}
 
-	$components = sdc_fixture_components();
+	$components = sdcpb_fixture_components();
 	$i          = 0;
 
 	foreach ( $components as $slug => $component ) {
@@ -104,7 +104,7 @@ function sdc_fixture_register() {
 			'fields'   => array(
 				array(
 					'key'        => 'field_sdc_' . $slug,
-					'name'       => 'sdc_' . $slug,
+					'name'       => 'sdcpb_' . $slug,
 					'label'      => $component['title'],
 					'type'       => 'repeater',
 					'layout'     => 'table',
@@ -122,32 +122,32 @@ function sdc_fixture_register() {
 		'fields'   => array(
 			array(
 				'key'        => 'field_sdc_stress',
-				'name'       => 'sdc_stress',
+				'name'       => 'sdcpb_stress',
 				'label'      => 'Stress-Repeater',
 				'type'       => 'repeater',
 				'layout'     => 'table',
-				'sub_fields' => sdc_fixture_stress_fields(),
+				'sub_fields' => sdcpb_fixture_stress_fields(),
 			),
 		),
 		'location' => array( array( array( 'param' => 'post_type', 'operator' => '==', 'value' => 'page' ) ) ),
 	) );
 }
-add_action( 'acf/init', 'sdc_fixture_register' );
+add_action( 'acf/init', 'sdcpb_fixture_register' );
 
 /**
  * Realistischer Builder-Aufbau: EINE Flexible-Content-Fläche, in die beliebig
  * viele Komponenten-Instanzen gelegt werden. Genau so muss ein Page-Builder
  * arbeiten — mehrere Instanzen derselben Komponente auf einer Seite.
  */
-function sdc_fixture_builder_layouts() {
-	$components = sdc_fixture_components();
+function sdcpb_fixture_builder_layouts() {
+	$components = sdcpb_fixture_components();
 
 	// Zusätzlich eine große Komponente (12 Felder) — realistisch für
 	// Hero/Feature-Grid mit Bild, Badge, mehreren Links.
 	$components['feature'] = array(
 		'title'  => 'SDC: Feature-Grid',
 		'rows'   => 5,
-		'fields' => sdc_fixture_stress_fields( 12 ),
+		'fields' => sdcpb_fixture_stress_fields( 12 ),
 	);
 
 	$layouts = array();
@@ -192,7 +192,7 @@ function sdc_fixture_builder_layouts() {
 		'fields'   => array(
 			array(
 				'key'          => 'field_sdc_builder',
-				'name'         => 'sdc_builder',
+				'name'         => 'sdcpb_builder',
 				'label'        => 'Komponenten',
 				'type'         => 'flexible_content',
 				'layouts'      => $layouts,
@@ -202,12 +202,12 @@ function sdc_fixture_builder_layouts() {
 		'location' => array( array( array( 'param' => 'page_template', 'operator' => '==', 'value' => 'default' ) ) ),
 	) );
 }
-add_action( 'acf/init', 'sdc_fixture_builder_layouts' );
+add_action( 'acf/init', 'sdcpb_fixture_builder_layouts' );
 
 /**
  * Eine Zeile mit Beispieldaten für eine Komponente.
  */
-function sdc_fixture_row( $slug, $r ) {
+function sdcpb_fixture_row( $slug, $r ) {
 	$werte = array(
 		'frage'       => "Frage $r: Wie läuft das ab?",
 		'antwort'     => "Antwort $r: Wir starten mit einem Audit und setzen die Maßnahmen in Sprints um.",
@@ -227,7 +227,7 @@ function sdc_fixture_row( $slug, $r ) {
 	);
 
 	$row = array();
-	foreach ( array_keys( sdc_fixture_row_keys( $slug ) ) as $key ) {
+	foreach ( array_keys( sdcpb_fixture_row_keys( $slug ) ) as $key ) {
 		$row[ $key ] = $werte[ $key ] ?? "Wert $r";
 	}
 	return $row;
@@ -236,10 +236,10 @@ function sdc_fixture_row( $slug, $r ) {
 /**
  * Die Subfeld-Namen einer Komponente (nur die Namen, für den Zeilenaufbau).
  */
-function sdc_fixture_row_keys( $slug ) {
-	$components = sdc_fixture_components();
+function sdcpb_fixture_row_keys( $slug ) {
+	$components = sdcpb_fixture_components();
 	$fields     = $components[ $slug ]['fields'] ?? array();
-	// 'feature' ist nicht in sdc_fixture_components() — 12 Felder feld_0 … feld_11.
+	// 'feature' ist nicht in sdcpb_fixture_components() — 12 Felder feld_0 … feld_11.
 	if ( 'feature' === $slug ) {
 		return array_fill_keys( array_map( fn( $i ) => 'feld_' . $i, range( 0, 11 ) ), true );
 	}
@@ -250,7 +250,7 @@ function sdc_fixture_row_keys( $slug ) {
  * Hilfsfunktion: eine Seite mit gegebenen Komponenten-Daten füllen.
  * Wird von den Messskripten benutzt.
  */
-function sdc_fixture_seed_page( $title, $data ) {
+function sdcpb_fixture_seed_page( $title, $data ) {
 	$post_id = wp_insert_post( array(
 		'post_title'  => $title,
 		'post_status' => 'publish',
