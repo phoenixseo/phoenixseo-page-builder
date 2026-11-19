@@ -332,7 +332,7 @@ class ViewTest extends Sdcpb_TestCase {
 
 		$this->assertWPError( $result );
 		$this->assertSame( 'sdcpb_view_syntax', $result->get_error_code() );
-		$this->assertStringContainsString( 'Zeile 2', $result->get_error_message() );
+		$this->assertStringContainsString( 'line 2', $result->get_error_message() );
 	}
 
 	/**
@@ -1254,6 +1254,11 @@ class ViewTest extends Sdcpb_TestCase {
 
 	/**
 	 * A view that throws must not leave its context or an output buffer behind.
+	 *
+	 * The exception itself is caught in the renderer (a template that dies
+	 * must not take the page down), so what this test guards is what the
+	 * catch must not leak: the pushed context and the buffer opened for the
+	 * template. Both would otherwise survive into the next component.
 	 */
 	public function test_a_dying_view_does_not_leak_context_or_buffer() {
 		$this->component_fixture( 'hero', "<?php throw new RuntimeException( 'kaputt' ); ?>" );
@@ -1261,16 +1266,12 @@ class ViewTest extends Sdcpb_TestCase {
 		$post_id = $this->make_page();
 		Sdcpb_Store::save_data( $post_id, array( 'components' => array( $this->hero_component( 'Egal' ) ) ) );
 
-		$level  = ob_get_level();
-		$caught = '';
+		$level = ob_get_level();
 
-		try {
-			Sdcpb_Frontend::render_post( $post_id );
-		} catch ( RuntimeException $error ) {
-			$caught = $error->getMessage();
-		}
+		// No try/catch: if the exception escapes again, the test fails as an
+		// error rather than passing on the weaker assertion below.
+		Sdcpb_Frontend::render_post( $post_id );
 
-		$this->assertSame( 'kaputt', $caught );
 		$this->assertNull( Sdcpb_View::context() );
 		$this->assertSame( $level, ob_get_level() );
 	}

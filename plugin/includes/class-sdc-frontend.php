@@ -332,7 +332,7 @@ class Sdcpb_Frontend {
 
 		$data = isset( $component['data'] ) && is_array( $component['data'] ) ? $component['data'] : array();
 
-		$html = self::render_template( $type, $data, $component );
+		$html = self::render_template( $type, $data, $component, (int) $post_id );
 
 		if ( null === $html ) {
 			$body = self::component_fields_html( $type, $data );
@@ -438,7 +438,7 @@ class Sdcpb_Frontend {
 			error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- A missing view is a content loss and has to be traceable outside the page.
 				sprintf(
 					/* translators: 1: component type, 2: post ID. */
-					__( 'SDC Page Builder: Komponententyp "%1$s" hat keine Ansicht (Seite %2$d)', 'sdc-page-builder' ),
+					__( 'SDC Page Builder: component type "%1$s" has no view (page %2$d)', 'sdc-page-builder' ),
 					$type,
 					$post_id
 				)
@@ -454,8 +454,59 @@ class Sdcpb_Frontend {
 			esc_html(
 				sprintf(
 					/* translators: %s: component type. */
-					__( 'Komponententyp "%s" hat keine Ansicht', 'sdc-page-builder' ),
+					__( 'Component type "%s" has no view', 'sdc-page-builder' ),
 					$type
+				)
+			)
+		);
+	}
+
+	/**
+	 * A template threw while rendering.
+	 *
+	 * Logged always, printed into the page source only for someone who can
+	 * edit the page — the same rule as `report_missing()`, and for the same
+	 * reason: a visitor gets a gap, the editor gets a pointer to the file.
+	 *
+	 * @param string    $type    Component type.
+	 * @param int       $post_id Post the document belongs to; 0 when unknown.
+	 * @param Throwable $error   What the template threw.
+	 * @return string HTML.
+	 */
+	private static function report_broken_template( $type, $post_id, $error ) {
+		static $seen = array();
+
+		$type    = (string) $type;
+		$post_id = (int) $post_id;
+		$where   = basename( (string) $error->getFile() ) . ':' . (int) $error->getLine();
+
+		if ( ! isset( $seen[ $type ] ) ) {
+			$seen[ $type ] = true;
+
+			error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- A template that throws is a content loss and has to be traceable outside the page.
+				sprintf(
+					/* translators: 1: component type, 2: file and line, 3: error message, 4: post ID. */
+					__( 'SDC Page Builder: view of "%1$s" failed (%2$s): %3$s (page %4$d)', 'sdc-page-builder' ),
+					$type,
+					$where,
+					$error->getMessage(),
+					$post_id
+				)
+			);
+		}
+
+		if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
+			return '';
+		}
+
+		return sprintf(
+			'<!-- sdc: %1$s -->',
+			esc_html(
+				sprintf(
+					/* translators: 1: component type, 2: file and line. */
+					__( 'View of "%1$s" failed (%2$s)', 'sdc-page-builder' ),
+					$type,
+					$where
 				)
 			)
 		);
@@ -471,9 +522,12 @@ class Sdcpb_Frontend {
 	 * @param string $type      Component type.
 	 * @param array  $data      Stored values; read by the template, not here.
 	 * @param array  $component Document entry; read by the template, not here.
+	 * @param int    $post_id   Post the document belongs to; 0 when unknown.
+	 *                          Only used to decide whether a template failure
+	 *                          is reported into the page source.
 	 * @return string|null HTML, or null when there is no template.
 	 */
-	private static function render_template( $type, array $data, array $component ) {
+	private static function render_template( $type, array $data, array $component, $post_id = 0 ) {
 		$file = Sdcpb_Schema::template( $type );
 
 		if ( '' === $file ) {
@@ -483,7 +537,7 @@ class Sdcpb_Frontend {
 		// The template reads $type, $data and $component as plain local
 		// variables — no extraction, no globals. Documented in the README so a
 		// theme author knows exactly which names exist.
-		$render = static function () use ( $file, $type, $data, $component ) {
+		$render = static function () use ( $file, $type, $data, $component, $post_id ) {
 			ob_start();
 
 			/*
@@ -495,11 +549,35 @@ class Sdcpb_Frontend {
 			 */
 			Sdcpb_View::push( $type, $data );
 
+			$error = null;
+
 			try {
 				include $file;
+			} catch ( Throwable $thrown ) {
+				/*
+				 * A template is theme code and can fail: a helper that no
+				 * longer exists, a typo in a class name, a thrown exception.
+				 * Uncaught, any of those takes the page down — WordPress
+				 * turns the fatal into "there has been a critical error",
+				 * the visitor sees nothing, and the cause sits in a log
+				 * somewhere else entirely. Worth catching even though the
+				 * failure is loud once found: it is silent at the only place
+				 * that matters, the page.
+				 *
+				 * The partial output goes with the buffer. Half a component
+				 * is worse than a clean gap — its markup is unbalanced by
+				 * definition, and it would break the rest of the page's
+				 * layout instead of only its own.
+				 */
+				$error = $thrown;
+				ob_clean();
 			} finally {
 				Sdcpb_View::pop();
 				$html = (string) ob_get_clean();
+			}
+
+			if ( null !== $error ) {
+				return self::report_broken_template( $type, $post_id, $error );
 			}
 
 			return $html;
@@ -597,7 +675,7 @@ class Sdcpb_Frontend {
 	 */
 	private static function render_list( array $field, $value, $depth ) {
 		if ( $depth > self::MAX_DEPTH ) {
-			error_log( sprintf( 'SDC Page Builder: Verschachtelungstiefe %d überschreitet das Maximum %d (Feld "%s").', (int) $depth, self::MAX_DEPTH, (string) $field['name'] ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( sprintf( 'SDC Page Builder: nesting depth %d exceeds the maximum %d (field "%s").', (int) $depth, self::MAX_DEPTH, (string) $field['name'] ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			return '';
 		}
 
@@ -676,7 +754,7 @@ class Sdcpb_Frontend {
 	 */
 	private static function render_group( array $field, $value, $depth ) {
 		if ( $depth > self::MAX_DEPTH ) {
-			error_log( sprintf( 'SDC Page Builder: Verschachtelungstiefe %d überschreitet das Maximum %d (Feld "%s").', (int) $depth, self::MAX_DEPTH, (string) $field['name'] ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( sprintf( 'SDC Page Builder: nesting depth %d exceeds the maximum %d (field "%s").', (int) $depth, self::MAX_DEPTH, (string) $field['name'] ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			return '';
 		}
 
@@ -744,7 +822,7 @@ class Sdcpb_Frontend {
 
 			case 'true_false':
 				$on = ! empty( $value );
-				return '<p>' . esc_html( $on ? __( 'Ja', 'sdc-page-builder' ) : __( 'Nein', 'sdc-page-builder' ) ) . '</p>';
+				return '<p>' . esc_html( $on ? __( 'Yes', 'sdc-page-builder' ) : __( 'No', 'sdc-page-builder' ) ) . '</p>';
 
 			case 'link':
 				return self::format_link( $value );

@@ -62,20 +62,63 @@ class I18nTest extends Sdcpb_TestCase {
 	}
 
 	/**
-	 * With no compiled catalog the domain is not "loaded" — that is correct and
-	 * worth pinning: `load_plugin_textdomain()` returns false when there is no
-	 * `.mo`, so a missing catalog fails silently rather than erroring, and the
-	 * plugin keeps working with its source strings.
+	 * The source strings are English, and the POT proves it.
 	 *
-	 * The plugin's source strings are German, so no de_DE catalog ships: a
-	 * translation to the same text would be dead weight. Language packs from
-	 * wp.org fill this in per locale.
+	 * This is the regression gate for the conversion itself: the plugin used to
+	 * carry German source strings, which meant an English site rendered German.
+	 * A translation cannot fix that — the source language *is* the fallback. So
+	 * the check runs on the POT rather than on the shipped catalog: any German
+	 * character in a `msgid` means a source string went back to German.
 	 */
-	public function test_textdomain_loads_without_a_catalog_at_no_cost() {
-		do_action( 'init' );
+	public function test_source_strings_carry_no_german_characters() {
+		$pot = dirname( __DIR__, 2 ) . '/languages/sdc-page-builder.pot';
+		$ids = self::pot_entries( (string) file_get_contents( $pot ) );
 
-		// Nothing thrown, and the source string is returned unchanged.
-		$this->assertSame( 'Gespeichert.', __( 'Gespeichert.', 'sdc-page-builder' ) );
+		$german = array();
+		foreach ( $ids as $entry ) {
+			foreach ( array( $entry['msgid'], $entry['plural'] ) as $string ) {
+				if ( '' !== $string && preg_match( '/[äöüßÄÖÜ]/u', $string ) ) {
+					$german[] = $string;
+				}
+			}
+		}
+
+		$this->assertGreaterThan( 100, count( $ids ), 'The POT holds almost no entries — the parser broke, not the strings' );
+		$this->assertSame(
+			array(),
+			$german,
+			'Source strings are German again — English is the fallback language: ' . wp_json_encode( $german, JSON_UNESCAPED_UNICODE )
+		);
+	}
+
+	/**
+	 * The shipped German catalog translates a real string.
+	 *
+	 * `de_DE.po`/`.mo` are what makes a German site German. Testing the loading
+	 * path with a throwaway catalog (below) proves WordPress reads a `.mo`; this
+	 * test proves *our* `.mo` holds the strings — a generator that silently
+	 * produced an empty catalog would pass the other one.
+	 */
+	public function test_shipped_german_catalog_translates_a_real_string() {
+		$mo_file = dirname( __DIR__, 2 ) . '/languages/sdc-page-builder-de_DE.mo';
+		$this->assertFileExists( $mo_file, 'languages/sdc-page-builder-de_DE.mo is missing — run test-scf/make-po.py' );
+
+		unload_textdomain( 'sdc-page-builder' );
+		$loaded = load_textdomain( 'sdc-page-builder', $mo_file, 'de_DE' );
+
+		try {
+			$translated = __( 'Save Component', 'sdc-page-builder' );
+			$plural_one = sprintf( _n( '%d season', '%d seasons', 1, 'sdc-page-builder' ), 1 );
+			$plural_two = sprintf( _n( '%d season', '%d seasons', 3, 'sdc-page-builder' ), 3 );
+		} finally {
+			// A leaked catalog would translate strings for every later test.
+			unload_textdomain( 'sdc-page-builder' );
+		}
+
+		$this->assertTrue( $loaded, 'load_textdomain() rejected the shipped catalog' );
+		$this->assertSame( 'Komponente speichern', $translated );
+		$this->assertSame( '1 Staffel', $plural_one, 'The singular plural form is wrong' );
+		$this->assertSame( '3 Staffeln', $plural_two, 'The plural form is wrong' );
 	}
 
 	/**
@@ -93,7 +136,7 @@ class I18nTest extends Sdcpb_TestCase {
 		$mo->add_entry(
 			new Translation_Entry(
 				array(
-					'singular'     => 'Gespeichert.',
+					'singular'     => 'Save Component',
 					'translations' => array( 'PROBE-OK' ),
 				)
 			)
@@ -102,7 +145,14 @@ class I18nTest extends Sdcpb_TestCase {
 
 		unload_textdomain( 'sdc-page-builder' );
 		$loaded = load_textdomain( 'sdc-page-builder', $mo_file, 'de_DE' );
-		$result = __( 'Gespeichert.', 'sdc-page-builder' );
+
+		try {
+			$result = __( 'Save Component', 'sdc-page-builder' );
+		} finally {
+			// Leaving the probe catalog loaded would translate this string for
+			// every test that runs after this one.
+			unload_textdomain( 'sdc-page-builder' );
+		}
 
 		wp_delete_file( $mo_file );
 

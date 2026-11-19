@@ -1,7 +1,7 @@
 {
     "key": "group_sdcpb_component_movie",
-    "title": "Film",
-    "sdcpb_description": "Ein Film mit Poster, den harten Angaben in einer Definitionsliste, Besetzung und Klappentext.",
+    "title": "Movie",
+    "sdcpb_description": "A film with poster, the hard facts in a definition list, cast and synopsis.",
     "sdcpb_icon": "format-video",
     "sdcpb_version": 1,
     "fields": [
@@ -10,29 +10,29 @@
             "label": "Poster",
             "name": "poster",
             "type": "image",
-            "instructions": "Hochformat, mindestens 600 px hoch. Fehlt es, beginnt der Text links.",
+            "instructions": "Portrait, at least 600 px tall. Without it, the text starts on the left.",
             "required": 0,
             "return_format": "array",
             "preview_size": "medium"
         },
         {
             "key": "field_sdc_movie_title",
-            "label": "Titel",
+            "label": "Title",
             "name": "title",
             "type": "text",
             "required": 1
         },
         {
             "key": "field_sdc_movie_original_title",
-            "label": "Originaltitel",
+            "label": "Original title",
             "name": "original_title",
             "type": "text",
-            "instructions": "Nur ausfüllen, wenn er sich vom deutschen Titel unterscheidet.",
+            "instructions": "Only fill in if it differs from the original title.",
             "required": 0
         },
         {
             "key": "field_sdc_movie_year",
-            "label": "Erscheinungsjahr",
+            "label": "Release year",
             "name": "year",
             "type": "number",
             "required": 0,
@@ -42,7 +42,7 @@
         },
         {
             "key": "field_sdc_movie_director",
-            "label": "Regie",
+            "label": "Director",
             "name": "director",
             "type": "text",
             "required": 0
@@ -52,15 +52,15 @@
             "label": "Genre",
             "name": "genre",
             "type": "text",
-            "instructions": "Mehrere durch Komma trennen: Drama, Thriller.",
+            "instructions": "Separate several with commas: drama, thriller.",
             "required": 0
         },
         {
             "key": "field_sdc_movie_runtime",
-            "label": "Laufzeit in Minuten",
+            "label": "Runtime in minutes",
             "name": "runtime",
             "type": "number",
-            "instructions": "Nur die Zahl, 117 statt 1:57. Die Ansicht schreibt daraus 1 Std. 57 Min.",
+            "instructions": "The number only, 117 instead of 1:57. The view turns that into 1h 57m.",
             "required": 0,
             "min": 1,
             "max": 1200,
@@ -68,10 +68,10 @@
         },
         {
             "key": "field_sdc_movie_rating",
-            "label": "Bewertung",
+            "label": "Rating",
             "name": "rating",
             "type": "number",
-            "instructions": "Von 0 bis 10, eine Nachkommastelle: 8.4. Leer lassen, wenn es keine gibt.",
+            "instructions": "From 0 to 10, one decimal place: 8.4. Leave empty if there is none.",
             "required": 0,
             "min": 0,
             "max": 10,
@@ -79,13 +79,13 @@
         },
         {
             "key": "field_sdc_movie_cast",
-            "label": "Besetzung",
+            "label": "Cast",
             "name": "cast",
             "type": "repeater",
-            "instructions": "Die Reihenfolge hier ist die Reihenfolge im Vorspann.",
+            "instructions": "The order here is the order in the credits.",
             "required": 0,
             "layout": "table",
-            "button_label": "Person hinzufügen",
+            "button_label": "Add person",
             "sub_fields": [
                 {
                     "key": "field_sdc_movie_cast_name",
@@ -96,20 +96,20 @@
                 },
                 {
                     "key": "field_sdc_movie_cast_role",
-                    "label": "Rolle",
+                    "label": "Role",
                     "name": "role",
                     "type": "text",
-                    "instructions": "Optional. Steht als „als …“ hinter dem Namen.",
+                    "instructions": "Optional. Sits after the name as \"as …\".",
                     "required": 0
                 }
             ]
         },
         {
             "key": "field_sdc_movie_synopsis",
-            "label": "Klappentext",
+            "label": "Synopsis",
             "name": "synopsis",
             "type": "textarea",
-            "instructions": "Drei bis fünf Sätze. Keine Spoiler.",
+            "instructions": "Three to five sentences. No spoilers.",
             "required": 0,
             "rows": 5
         },
@@ -118,7 +118,7 @@
             "label": "Link",
             "name": "link",
             "type": "link",
-            "instructions": "Optional. Trailer, Streaming oder Kino.",
+            "instructions": "Optional. Trailer, streaming or cinema.",
             "required": 0,
             "return_format": "array"
         }

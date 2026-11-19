@@ -188,7 +188,7 @@ class RepairTest extends Sdcpb_TestCase {
 		$this->assertSame( array( 'faq', 'hero' ), $this->types_in_content( $post_id ) );
 		$this->assertSame( 1, substr_count( (string) get_post_field( 'post_content', $post_id, 'raw' ), 'Fehlender Hero' ) );
 		$this->assertSame( 1, substr_count( (string) get_post_field( 'post_content', $post_id, 'raw' ), 'Schon da' ) );
-		$this->assertSame( array( '1 betroffene Seite(n), 1 ergänzt.' ), WP_CLI::lines( 'success' ) );
+		$this->assertSame( array( '1 affected page(s), 1 completed.' ), WP_CLI::lines( 'success' ) );
 		$this->assertSame( array(), WP_CLI::lines( 'warning' ) );
 	}
 
@@ -409,7 +409,7 @@ class RepairTest extends Sdcpb_TestCase {
 			$this->run_command( array( 'post' => (string) $post_id ) );
 			$this->fail( 'The command must refuse a post that is not a builder post type.' );
 		} catch ( RuntimeException $e ) {
-			$this->assertSame( 'Seite nicht gefunden oder kein unterstützter Inhaltstyp.', $e->getMessage() );
+			$this->assertSame( 'Page not found or not a supported post type.', $e->getMessage() );
 		}
 
 		$this->assertSame( '', get_post_field( 'post_content', $post_id, 'raw' ) );

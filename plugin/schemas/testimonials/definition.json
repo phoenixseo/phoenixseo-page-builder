@@ -1,13 +1,13 @@
 {
     "key": "group_sdcpb_component_testimonials",
-    "title": "Stimmen",
-    "sdcpb_description": "Kundenstimmen als Zitatkarten, seitlich scrollbar — ohne JavaScript.",
+    "title": "Testimonials",
+    "sdcpb_description": "Testimonials as quote cards, scrollable sideways — without JavaScript.",
     "sdcpb_icon": "format-quote",
     "sdcpb_version": 1,
     "fields": [
         {
             "key": "field_sdc_testimonials_heading",
-            "label": "Überschrift",
+            "label": "Heading",
             "name": "heading",
             "type": "text",
             "instructions": "Optional.",
@@ -17,20 +17,20 @@
         },
         {
             "key": "field_sdc_testimonials_items",
-            "label": "Stimmen",
+            "label": "Testimonials",
             "name": "items",
             "type": "repeater",
-            "instructions": "Eine Stimme pro Zeile. Ab zwei Stimmen lässt sich die Reihe seitlich wischen.",
+            "instructions": "One quote per row. From two quotes on, the row can be swiped sideways.",
             "required": 0,
             "layout": "table",
-            "button_label": "Stimme hinzufügen",
+            "button_label": "Add quote",
             "sub_fields": [
                 {
                     "key": "field_sdc_testimonials_item_quote",
-                    "label": "Zitat",
+                    "label": "Quote",
                     "name": "quote",
                     "type": "textarea",
-                    "instructions": "Ohne Anführungszeichen — die setzt die Ausgabe.",
+                    "instructions": "Without quotation marks — the output adds them.",
                     "required": 1,
                     "rows": 4
                 },
@@ -43,18 +43,18 @@
                 },
                 {
                     "key": "field_sdc_testimonials_item_role",
-                    "label": "Funktion",
+                    "label": "Role",
                     "name": "role",
                     "type": "text",
-                    "instructions": "Optional. Zum Beispiel Firma und Ort.",
+                    "instructions": "Optional. For example company and place.",
                     "required": 0
                 },
                 {
                     "key": "field_sdc_testimonials_item_photo",
-                    "label": "Foto",
+                    "label": "Photo",
                     "name": "photo",
                     "type": "image",
-                    "instructions": "Optional. Ohne Foto zeigt die Karte nur die Initialen.",
+                    "instructions": "Optional. Without a photo the card shows only the initials.",
                     "required": 0,
                     "return_format": "array",
                     "preview_size": "medium"

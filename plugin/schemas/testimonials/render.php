@@ -53,7 +53,7 @@ $sdcpb_heading_id = wp_unique_id( 'sdc-testimonials-' );
 		<?php if ( sdcpb_has( 'heading' ) ) : ?>
 			aria-labelledby="<?php echo esc_attr( $sdcpb_heading_id ); ?>"
 		<?php else : ?>
-			aria-label="<?php esc_attr_e( 'Kundenstimmen', 'sdc-page-builder' ); ?>"
+			aria-label="<?php esc_attr_e( 'Testimonials', 'sdc-page-builder' ); ?>"
 		<?php endif; ?>
 	>
 		<?php

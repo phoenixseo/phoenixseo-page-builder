@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: SDC Page Builder 0.2.1\n"
+"Project-Id-Version: SDC Page Builder 0.3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sdc-page-builder\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-18T09:47:09+00:00\n"
+"POT-Creation-Date: 2026-11-19T14:05:24+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: sdc-page-builder\n"
@@ -26,7 +26,7 @@ msgstr ""
 
 #. Description of the plugin
 #: sdc-page-builder.php
-msgid "Komponentenbasierter Page Builder: ACF- oder SCF-Felder als Bausteine, ein Block pro Komponententyp, im Editor serverseitig gerendert."
+msgid "Component-based page builder: ACF or SCF fields as building blocks, one block per component type, rendered server-side in the editor."
 msgstr ""
 
 #. Author of the plugin
@@ -46,812 +46,1032 @@ msgstr ""
 #. translators: 1: number of pages, 2: WP-CLI command.
 #: includes/class-sdc-admin.php:289
 #, php-format
-msgid "%1$d Seite enthält eine Komponente ohne Ansicht. Sie rendert nichts, bis die Komponente zurück ist — Vorschau prüfen mit %2$s."
-msgid_plural "%1$d Seiten enthalten eine Komponente ohne Ansicht. Sie rendern nichts, bis die Komponente zurück ist — Vorschau prüfen mit %2$s."
+msgid "%1$d page contains a component without a view. It renders nothing until the component is back — check the preview with %2$s."
+msgid_plural "%1$d pages contain a component without a view. They render nothing until the component is back — check the preview with %2$s."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-sdc-admin.php:307
-#: includes/class-sdc-admin.php:426
+#: includes/class-sdc-admin.php:305
+#: includes/class-sdc-admin.php:424
 #: includes/class-sdc-block.php:125
-msgid "SDC-Komponenten"
+msgid "SDC Components"
 msgstr ""
 
-#: includes/class-sdc-admin.php:308
+#: includes/class-sdc-admin.php:306
 msgid "SDC"
 msgstr ""
 
-#: includes/class-sdc-admin.php:363
-msgid "Kein Zielordner: WP_CONTENT_DIR ist nicht definiert."
+#: includes/class-sdc-admin.php:361
+msgid "No target folder: WP_CONTENT_DIR is not defined."
 msgstr ""
 
 #. translators: %s: absolute directory path.
-#: includes/class-sdc-admin.php:372
+#: includes/class-sdc-admin.php:370
 #, php-format
-msgid "Der Ordner %s lässt sich nicht anlegen. Der Webserver braucht Schreibrecht auf wp-content."
+msgid "The folder %s cannot be created. The web server needs write access to wp-content."
 msgstr ""
 
 #. translators: %s: absolute directory path.
-#: includes/class-sdc-admin.php:383
+#: includes/class-sdc-admin.php:381
 #, php-format
-msgid "Der Ordner %s ist nicht beschreibbar. Komponenten können hier nur gelesen werden."
+msgid "The folder %s is not writable. Components can only be read here."
 msgstr ""
 
-#: includes/class-sdc-admin.php:416
+#: includes/class-sdc-admin.php:414
 #: includes/class-sdc-rest.php:106
-msgid "Keine Berechtigung für diese Seite."
+msgid "You do not have permission to view this page."
 msgstr ""
 
 #. translators: %s: absolute directory path.
-#: includes/class-sdc-admin.php:443
+#: includes/class-sdc-admin.php:441
 #, php-format
-msgid "Der Ordner %s ist nicht beschreibbar. Komponenten werden angezeigt, aber Anlegen und Löschen ist gesperrt."
+msgid "The folder %s is not writable. Components are shown, but creating and deleting is locked."
 msgstr ""
 
-#: includes/class-sdc-admin.php:444
-#: includes/class-sdc-admin.php:456
-msgid "(unbekannt)"
+#: includes/class-sdc-admin.php:442
+#: includes/class-sdc-admin.php:454
+msgid "(unknown)"
 msgstr ""
 
 #. translators: %s: absolute directory path.
-#: includes/class-sdc-admin.php:455
+#: includes/class-sdc-admin.php:453
 #, php-format
-msgid "Eine Komponente ist ein Ordner mit einer definition.json. Im Backend angelegte Komponenten liegen in %s und überleben einen Theme-Wechsel. Komponenten im Theme sind ausgeliefert und hier schreibgeschützt."
+msgid "A component is a folder with a definition.json. Components created in the admin live in %s and survive a theme switch. Components in the theme are shipped with it and are read-only here."
 msgstr ""
 
-#: includes/class-sdc-admin.php:496
-msgid "Vision und Konzept"
+#: includes/class-sdc-admin.php:494
+msgid "Vision and Concept"
 msgstr ""
 
-#: includes/class-sdc-admin.php:500
-msgid "Programmierung"
+#: includes/class-sdc-admin.php:498
+msgid "Programming"
 msgstr ""
 
 #. translators: %s: plugin author name, linked to their website.
-#: includes/class-sdc-admin.php:523
+#: includes/class-sdc-admin.php:521
 #, php-format
-msgid "Ein Plugin von %s"
+msgid "A plugin by %s"
 msgstr ""
 
-#: includes/class-sdc-admin.php:527
+#: includes/class-sdc-admin.php:525
 msgid "November 2026"
 msgstr ""
 
-#: includes/class-sdc-admin.php:529
-msgid "Spendier mir einen Kaffee"
+#: includes/class-sdc-admin.php:527
+msgid "Buy Me a Coffee"
 msgstr ""
 
-#: includes/class-sdc-admin.php:546
-msgid "Vorhandene Komponenten"
+#: includes/class-sdc-admin.php:544
+msgid "Existing Components"
 msgstr ""
 
-#: includes/class-sdc-admin.php:549
-msgid "Keine Komponenten gefunden. Das Plugin liefert hero und faq mit — fehlen die, ist ACF oder SCF nicht aktiv."
+#: includes/class-sdc-admin.php:547
+msgid "No components found. The plugin ships hero and faq — if they are missing, ACF or SCF is not active."
+msgstr ""
+
+#: includes/class-sdc-admin.php:555
+msgid "Component"
+msgstr ""
+
+#: includes/class-sdc-admin.php:556
+#: includes/class-sdc-admin.php:825
+#: includes/class-sdc-admin.php:1070
+msgid "Fields"
 msgstr ""
 
 #: includes/class-sdc-admin.php:557
-msgid "Komponente"
+msgid "Template"
 msgstr ""
 
 #: includes/class-sdc-admin.php:558
-#: includes/class-sdc-admin.php:827
-#: includes/class-sdc-admin.php:1072
-msgid "Felder"
+msgid "Storage"
 msgstr ""
 
 #: includes/class-sdc-admin.php:559
-msgid "Vorlage"
+msgid "Usage"
 msgstr ""
 
 #: includes/class-sdc-admin.php:560
-msgid "Ablage"
+msgid "Actions"
 msgstr ""
 
-#: includes/class-sdc-admin.php:561
-msgid "Verwendung"
+#: includes/class-sdc-admin.php:611
+msgid "unknown"
 msgstr ""
 
-#: includes/class-sdc-admin.php:562
-msgid "Aktionen"
-msgstr ""
-
-#: includes/class-sdc-admin.php:613
-msgid "unbekannt"
-msgstr ""
-
-#: includes/class-sdc-admin.php:617
+#: includes/class-sdc-admin.php:615
 msgid "wp-content"
 msgstr ""
 
-#: includes/class-sdc-admin.php:623
+#: includes/class-sdc-admin.php:621
 msgid "Plugin"
 msgstr ""
 
-#: includes/class-sdc-admin.php:626
+#: includes/class-sdc-admin.php:624
 msgid "Theme"
 msgstr ""
 
-#: includes/class-sdc-admin.php:652
+#: includes/class-sdc-admin.php:650
 msgid "—"
 msgstr ""
 
-#: includes/class-sdc-admin.php:666
-msgid "hier verwaltbar"
+#: includes/class-sdc-admin.php:664
+msgid "editable here"
 msgstr ""
 
-#: includes/class-sdc-admin.php:666
-msgid "schreibgeschützt"
+#: includes/class-sdc-admin.php:664
+msgid "read-only"
 msgstr ""
 
-#: includes/class-sdc-admin.php:706
-msgid "Bearbeiten"
+#: includes/class-sdc-admin.php:704
+msgid "Edit"
 msgstr ""
 
-#: includes/class-sdc-admin.php:725
+#: includes/class-sdc-admin.php:723
 msgid "Export"
 msgstr ""
 
-#: includes/class-sdc-admin.php:729
-msgid "Duplizieren"
+#: includes/class-sdc-admin.php:727
+msgid "Duplicate"
 msgstr ""
 
-#: includes/class-sdc-admin.php:737
-msgid "Neuer Typ"
+#: includes/class-sdc-admin.php:735
+msgid "New Type"
 msgstr ""
 
-#: includes/class-sdc-admin.php:740
-msgid "Anlegen"
+#: includes/class-sdc-admin.php:738
+msgid "Create"
 msgstr ""
 
-#: includes/class-sdc-admin.php:747
-msgid "Duplizieren legt die Kopie in wp-content/sdc-components/ an — dort ist sie hier bearbeitbar."
+#: includes/class-sdc-admin.php:745
+msgid "Duplicate puts the copy in wp-content/sdc-components/ — there it is editable here."
 msgstr ""
 
 #. translators: %s: component label.
-#: includes/class-sdc-admin.php:754
+#: includes/class-sdc-admin.php:752
 #, php-format
-msgid "Komponente „%s\" mit definition.json und render.php löschen?"
+msgid "Delete component \"%s\" with its definition.json and render.php?"
 msgstr ""
 
 #. translators: 1: component label, 2: number of pages.
-#: includes/class-sdc-admin.php:760
+#: includes/class-sdc-admin.php:758
 #, php-format
-msgid "Komponente „%1$s\" wird auf %2$d Seiten verwendet. Diese Stellen rendern danach nichts mehr. Wirklich löschen?"
+msgid "Component \"%1$s\" is used on %2$d pages. Those places will render nothing afterwards. Really delete?"
 msgstr ""
 
-#: includes/class-sdc-admin.php:772
-msgid "Auch bei Verwendung löschen"
+#: includes/class-sdc-admin.php:770
+msgid "Delete Even If In Use"
 msgstr ""
 
-#: includes/class-sdc-admin.php:778
-msgid "Löschen"
+#: includes/class-sdc-admin.php:776
+msgid "Delete"
 msgstr ""
 
-#: includes/class-sdc-admin.php:789
-msgid "Neue Komponente"
+#: includes/class-sdc-admin.php:787
+msgid "New Component"
 msgstr ""
 
-#: includes/class-sdc-admin.php:792
-msgid "Anlegen ist gesperrt, solange der Zielordner nicht beschreibbar ist."
+#: includes/class-sdc-admin.php:790
+msgid "Creating is locked while the target folder is not writable."
 msgstr ""
 
-#: includes/class-sdc-admin.php:801
-#: includes/class-sdc-admin.php:1039
-msgid "Typ"
+#: includes/class-sdc-admin.php:799
+#: includes/class-sdc-admin.php:1037
+msgid "Type"
 msgstr ""
 
-#: includes/class-sdc-admin.php:805
-msgid "Kleinbuchstaben, Ziffern und Bindestriche. Der Typ wird zum Ordnernamen, zum Blocknamen sdcpb/<typ> und zum Teil des Gruppen-Keys: group_sdcpb_component_<typ>."
+#: includes/class-sdc-admin.php:803
+msgid "Lowercase letters, digits and hyphens. The type becomes the folder name, the block name sdcpb/<type>, and part of the group key: group_sdcpb_component_<type>."
+msgstr ""
+
+#: includes/class-sdc-admin.php:807
+#: includes/class-sdc-admin.php:1045
+msgid "Name"
 msgstr ""
 
 #: includes/class-sdc-admin.php:809
 #: includes/class-sdc-admin.php:1047
-msgid "Name"
+msgid "Shown in the component picker, e.g. \"Quote\" or \"Pricing Table\"."
 msgstr ""
 
-#: includes/class-sdc-admin.php:811
-#: includes/class-sdc-admin.php:1049
-msgid "Erscheint im Komponenten-Picker, z. B. „Zitat\" oder „Preistabelle\"."
+#: includes/class-sdc-admin.php:812
+#: includes/class-sdc-admin.php:1050
+msgid "Description"
 msgstr ""
 
 #: includes/class-sdc-admin.php:814
 #: includes/class-sdc-admin.php:1052
-msgid "Beschreibung"
+msgid "Optional. Shown as help text on the picker tile."
 msgstr ""
 
-#: includes/class-sdc-admin.php:816
-#: includes/class-sdc-admin.php:1054
-msgid "Optional. Steht als Hilfetext in der Kachel des Pickers."
-msgstr ""
-
-#: includes/class-sdc-admin.php:819
-#: includes/class-sdc-admin.php:1057
+#: includes/class-sdc-admin.php:817
+#: includes/class-sdc-admin.php:1055
 msgid "Icon"
 msgstr ""
 
-#: includes/class-sdc-admin.php:823
-#: includes/class-sdc-admin.php:1061
-msgid "Optional. Ein Dashicon-Name, z. B. layout, cover-image, format-quote, table."
+#: includes/class-sdc-admin.php:821
+#: includes/class-sdc-admin.php:1059
+msgid "Optional. A Dashicon name, e.g. layout, cover-image, format-quote, table."
 msgstr ""
 
-#: includes/class-sdc-admin.php:841
-msgid "Ansicht"
+#: includes/class-sdc-admin.php:839
+msgid "View"
 msgstr ""
 
-#: includes/class-sdc-admin.php:846
-msgid "Komponente anlegen"
+#: includes/class-sdc-admin.php:844
+msgid "Create Component"
 msgstr ""
 
 #. translators: %s: component type.
-#: includes/class-sdc-admin.php:877
-#: includes/class-sdc-admin.php:1521
-#: includes/class-sdc-admin.php:1611
-#: includes/class-sdc-admin.php:1797
+#: includes/class-sdc-admin.php:875
+#: includes/class-sdc-admin.php:1519
+#: includes/class-sdc-admin.php:1609
+#: includes/class-sdc-admin.php:1795
 #, php-format
-msgid "Die Komponente %s gibt es nicht."
+msgid "The component %s does not exist."
 msgstr ""
 
-#: includes/class-sdc-admin.php:890
-msgid "Zu dieser Komponente wurde keine lesbare definition.json gefunden."
+#: includes/class-sdc-admin.php:888
+#: includes/class-sdc-admin.php:1875
+msgid "No readable definition.json was found for this component."
 msgstr ""
 
 #. translators: %s: path relative to the WordPress root.
-#: includes/class-sdc-admin.php:904
+#: includes/class-sdc-admin.php:902
 #, php-format
-msgid "Die Datei %s ist nicht lesbar oder enthält kein gültiges JSON."
+msgid "The file %s is not readable or does not contain valid JSON."
 msgstr ""
 
 #. translators: %s: component label.
-#: includes/class-sdc-admin.php:938
+#: includes/class-sdc-admin.php:936
 #, php-format
-msgid "Komponente bearbeiten: %s"
+msgid "Edit Component: %s"
 msgstr ""
 
-#: includes/class-sdc-admin.php:946
-msgid "Gespeichert wird in dieselbe definition.json. Der Typ bleibt unverändert: er steckt im Gruppen-Key und in jedem Feld-Key, an dem die Inhalte der Seiten hängen. Ein anderer Typ entsteht über „Duplizieren\"."
+#: includes/class-sdc-admin.php:944
+msgid "Saved into the same definition.json. The type stays unchanged: it sits in the group key and in every field key that the page content hangs on. A different type comes from \"Duplicate\"."
+msgstr ""
+
+#: includes/class-sdc-admin.php:950
+#: includes/class-sdc-admin.php:1620
+msgid "This component is not in wp-content/sdc-components/. Theme and plugin components are read-only because the next deploy would overwrite the change. Duplicate it to edit it here."
 msgstr ""
 
 #: includes/class-sdc-admin.php:952
-#: includes/class-sdc-admin.php:1622
-msgid "Diese Komponente liegt nicht in wp-content/sdc-components/. Theme- und Plugin-Komponenten sind schreibgeschützt, weil der nächste Deploy die Änderung überschreiben würde. Dupliziere sie, um sie hier zu bearbeiten."
+msgid "Back to Overview"
 msgstr ""
 
-#: includes/class-sdc-admin.php:954
-msgid "Zurück zur Übersicht"
+#: includes/class-sdc-admin.php:979
+msgid "Content"
 msgstr ""
 
-#: includes/class-sdc-admin.php:981
-msgid "Inhalt"
+#: includes/class-sdc-admin.php:980
+msgid "Name, description and the fields offered to editors. This is the part that changes in everyday work."
 msgstr ""
 
-#: includes/class-sdc-admin.php:982
-msgid "Name, Beschreibung und die Felder, die der Redaktion angeboten werden. Das ist der Teil, der sich im Alltag ändert."
+#: includes/class-sdc-admin.php:990
+msgid "View (PHP)"
 msgstr ""
 
-#: includes/class-sdc-admin.php:992
-msgid "Ansicht (PHP)"
+#: includes/class-sdc-admin.php:991
+msgid "How the component is rendered. Optional: without render.php the fields appear in a generic output."
 msgstr ""
 
-#: includes/class-sdc-admin.php:993
-msgid "Wie die Komponente ausgegeben wird. Optional: ohne render.php erscheinen die Felder in einer generischen Ausgabe."
-msgstr ""
-
-#: includes/class-sdc-admin.php:1000
+#: includes/class-sdc-admin.php:998
 msgid "Styles (CSS)"
 msgstr ""
 
-#: includes/class-sdc-admin.php:1001
-msgid "Eigene Gestaltung der Komponente. Optional: ohne component.css erbt sie die Styles des Themes."
+#: includes/class-sdc-admin.php:999
+msgid "The component's own styling. Optional: without component.css it inherits the theme's styles."
 msgstr ""
 
-#: includes/class-sdc-admin.php:1008
-msgid "Bereiche der Komponente"
+#: includes/class-sdc-admin.php:1006
+msgid "Component Sections"
 msgstr ""
 
-#: includes/class-sdc-admin.php:1011
-msgid "Komponente speichern"
+#: includes/class-sdc-admin.php:1009
+msgid "Save Component"
 msgstr ""
 
-#: includes/class-sdc-admin.php:1012
-msgid "Abbrechen"
+#: includes/class-sdc-admin.php:1010
+msgid "Cancel"
 msgstr ""
 
-#: includes/class-sdc-admin.php:1043
-msgid "Nicht änderbar. Ein neuer Typ würde neue Feld-Keys erzeugen, und die Inhalte der Seiten hingen danach an Feldern, die es nicht mehr gibt."
+#: includes/class-sdc-admin.php:1041
+msgid "Not editable. A new type would create new field keys, and the page content would then hang on fields that no longer exist."
 msgstr ""
 
-#: includes/class-sdc-admin.php:1079
-msgid "Felder entfernen bestätigen"
+#: includes/class-sdc-admin.php:1077
+msgid "Confirm Field Removal"
 msgstr ""
 
-#: includes/class-sdc-admin.php:1083
-msgid "Nur nötig, wenn ein Feldname aus der Liste verschwindet. Die Inhalte bleiben in den Seiten gespeichert, sind danach aber unsichtbar."
+#: includes/class-sdc-admin.php:1081
+msgid "Only needed when a field name disappears from the list. The content stays stored in the pages but becomes invisible afterwards."
+msgstr ""
+
+#: includes/class-sdc-admin.php:1181
+msgid "Example and Available Field Types"
 msgstr ""
 
 #: includes/class-sdc-admin.php:1183
-msgid "Beispiel und verfügbare Feldtypen"
+msgid "One entry per field. Whatever ACF knows on a field may go in too (rows, choices, return_format, sub_fields …)."
 msgstr ""
 
-#: includes/class-sdc-admin.php:1185
-msgid "Ein Eintrag pro Feld. Was ACF beim Feld kennt, darf mit hinein (rows, choices, return_format, sub_fields …)."
+#: includes/class-sdc-admin.php:1197
+msgid "Host Field Types"
 msgstr ""
 
-#: includes/class-sdc-admin.php:1199
-msgid "Feldtypen des Hosts"
+#: includes/class-sdc-admin.php:1210
+msgid "Import Component"
 msgstr ""
 
-#: includes/class-sdc-admin.php:1212
-msgid "Komponente importieren"
+#: includes/class-sdc-admin.php:1213
+msgid "Importing is locked while the target folder is not writable."
 msgstr ""
 
-#: includes/class-sdc-admin.php:1215
-msgid "Importieren ist gesperrt, solange der Zielordner nicht beschreibbar ist."
+#: includes/class-sdc-admin.php:1219
+msgid "A definition.json from another project — the group key inside it determines the type. Existing types are not overwritten."
 msgstr ""
 
-#: includes/class-sdc-admin.php:1221
-msgid "Eine definition.json aus einem anderen Projekt — der Gruppen-Key darin bestimmt den Typ. Vorhandene Typen werden nicht überschrieben."
+#: includes/class-sdc-admin.php:1225
+msgid "Import"
 msgstr ""
 
-#: includes/class-sdc-admin.php:1227
-msgid "Importieren"
+#: includes/class-sdc-admin.php:1252
+msgid "Component created."
+msgstr ""
+
+#: includes/class-sdc-admin.php:1253
+msgid "Component saved."
 msgstr ""
 
 #: includes/class-sdc-admin.php:1254
-msgid "Komponente angelegt."
+msgid "Component duplicated."
 msgstr ""
 
 #: includes/class-sdc-admin.php:1255
-msgid "Komponente gespeichert."
+msgid "Component deleted."
 msgstr ""
 
 #: includes/class-sdc-admin.php:1256
-msgid "Komponente dupliziert."
+msgid "Component imported."
 msgstr ""
 
 #: includes/class-sdc-admin.php:1257
-msgid "Komponente gelöscht."
+msgid "The action was not carried out."
 msgstr ""
 
-#: includes/class-sdc-admin.php:1258
-msgid "Komponente importiert."
+#: includes/class-sdc-admin.php:1292
+msgid "You do not have permission to perform this action."
 msgstr ""
 
-#: includes/class-sdc-admin.php:1259
-msgid "Die Aktion wurde nicht ausgeführt."
-msgstr ""
-
-#: includes/class-sdc-admin.php:1294
-msgid "Keine Berechtigung für diese Aktion."
-msgstr ""
-
-#: includes/class-sdc-admin.php:1311
-msgid "Unbekannte Aktion."
+#: includes/class-sdc-admin.php:1309
+msgid "Unknown action."
 msgstr ""
 
 #. translators: %s: component type.
-#: includes/class-sdc-admin.php:1447
-#: includes/class-sdc-admin.php:1570
+#: includes/class-sdc-admin.php:1445
+#: includes/class-sdc-admin.php:1568
 #, php-format
-msgid "Eine Komponente mit dem Typ %s gibt es bereits."
+msgid "A component with the type %s already exists."
 msgstr ""
 
-#: includes/class-sdc-admin.php:1456
-#: includes/class-sdc-admin.php:1645
-msgid "Die Komponente braucht einen Namen."
+#: includes/class-sdc-admin.php:1454
+#: includes/class-sdc-admin.php:1643
+msgid "The component needs a name."
 msgstr ""
 
-#: includes/class-sdc-admin.php:1530
-msgid "Zur Quellkomponente wurde keine definition.json gefunden."
+#: includes/class-sdc-admin.php:1528
+msgid "No definition.json was found for the source component."
 msgstr ""
 
 #. translators: %s: absolute file path.
-#: includes/class-sdc-admin.php:1540
+#: includes/class-sdc-admin.php:1538
 #, php-format
-msgid "Die Datei %s ist nicht lesbar."
+msgid "The file %s is not readable."
 msgstr ""
 
 #. translators: %s: absolute file path.
-#: includes/class-sdc-admin.php:1553
+#: includes/class-sdc-admin.php:1551
 #, php-format
-msgid "Die Datei %s enthält kein gültiges JSON."
+msgid "The file %s does not contain valid JSON."
 msgstr ""
 
 #. translators: %s: absolute file path.
-#: includes/class-sdc-admin.php:1634
+#: includes/class-sdc-admin.php:1632
 #, php-format
-msgid "Die Datei %s ist nicht lesbar oder enthält kein gültiges JSON. Ohne sie lässt sich die Komponente nicht speichern."
+msgid "The file %s is not readable or does not contain valid JSON. Without it the component cannot be saved."
 msgstr ""
 
 #. translators: %s: comma separated list of field labels and names.
-#: includes/class-sdc-admin.php:1672
+#: includes/class-sdc-admin.php:1670
 #, php-format
-msgid "Diese Felder fehlen in der neuen Feldliste: %s. Ihre Inhalte bleiben auf den Seiten gespeichert, sind danach aber unsichtbar. Setze „Felder entfernen bestätigen\", wenn das gewollt ist."
+msgid "These fields are missing from the new field list: %s. Their content stays stored in the pages but becomes invisible afterwards. Tick \"Confirm Field Removal\" if that is intended."
 msgstr ""
 
-#: includes/class-sdc-admin.php:1808
-msgid "Diese Komponente liegt nicht in wp-content/sdc-components/ — sie gehört zum Theme oder zum Plugin und wird dort gelöscht, nicht hier."
+#: includes/class-sdc-admin.php:1806
+msgid "This component is not in wp-content/sdc-components/ — it belongs to the theme or the plugin and is deleted there, not here."
 msgstr ""
 
 #. translators: 1: number of pages, 2: component type.
-#: includes/class-sdc-admin.php:1823
+#: includes/class-sdc-admin.php:1821
 #, php-format
-msgid "Die Komponente %2$s steht auf %1$d Seiten. Setze „Auch bei Verwendung löschen\", wenn das gewollt ist."
+msgid "The component %2$s is used on %1$d pages. Tick \"Delete Even If In Use\" if that is intended."
 msgstr ""
 
 #. translators: %s: absolute file path.
-#: includes/class-sdc-admin.php:1846
+#: includes/class-sdc-admin.php:1844
 #, php-format
-msgid "Die Datei %s ließ sich nicht löschen."
+msgid "The file %s could not be deleted."
 msgstr ""
 
-#: includes/class-sdc-admin.php:1877
-msgid "Für diese Komponente wurde keine lesbare definition.json gefunden."
+#: includes/class-sdc-admin.php:1881
+msgid "The definition file is not readable."
 msgstr ""
 
-#: includes/class-sdc-admin.php:1883
-msgid "Die Definitionsdatei ist nicht lesbar."
+#: includes/class-sdc-admin.php:1905
+msgid "No file was selected."
 msgstr ""
 
-#: includes/class-sdc-admin.php:1907
-msgid "Es wurde keine Datei ausgewählt."
+#: includes/class-sdc-admin.php:1919
+#: includes/class-sdc-admin.php:1929
+msgid "The uploaded file did not arrive."
 msgstr ""
 
-#: includes/class-sdc-admin.php:1921
-#: includes/class-sdc-admin.php:1931
-msgid "Die hochgeladene Datei ist nicht angekommen."
+#: includes/class-sdc-admin.php:1923
+msgid "The upload failed."
 msgstr ""
 
-#: includes/class-sdc-admin.php:1925
-msgid "Der Upload ist fehlgeschlagen."
-msgstr ""
-
-#: includes/class-sdc-admin.php:1937
-msgid "Die Datei ist zu groß für eine Komponente."
+#: includes/class-sdc-admin.php:1935
+msgid "The file is too large for a component."
 msgstr ""
 
 #. translators: %s: component type.
-#: includes/class-sdc-admin.php:1954
+#: includes/class-sdc-admin.php:1952
 #, php-format
-msgid "Eine Komponente mit dem Typ %s gibt es bereits. Import überschreibt nichts."
+msgid "A component with the type %s already exists. Import overwrites nothing."
 msgstr ""
 
 #. translators: %s: JSON parser message.
-#: includes/class-sdc-admin.php:1977
+#: includes/class-sdc-admin.php:1975
 #, php-format
-msgid "Die Datei ist kein gültiges JSON: %s"
+msgid "The file is not valid JSON: %s"
 msgstr ""
 
 #. translators: %s: key prefix.
-#: includes/class-sdc-admin.php:1990
+#: includes/class-sdc-admin.php:1988
 #, php-format
-msgid "Der Gruppen-Key fehlt oder beginnt nicht mit %s."
+msgid "The group key is missing or does not start with %s."
 msgstr ""
 
-#: includes/class-sdc-admin.php:2005
-msgid "Die Definition hat keinen Titel."
+#: includes/class-sdc-admin.php:2003
+msgid "The definition has no title."
 msgstr ""
 
-#: includes/class-sdc-admin.php:2037
-msgid "Es fehlt der Typ der Komponente."
+#: includes/class-sdc-admin.php:2035
+msgid "The component type is missing."
 msgstr ""
 
 #. translators: %s: submitted type.
-#: includes/class-sdc-admin.php:2045
+#: includes/class-sdc-admin.php:2043
 #, php-format
-msgid "Der Typ „%s\" ist nicht erlaubt: nur Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit Buchstabe oder Ziffer. Unterstriche gehen nicht, weil jeder Typ auch ein Blockname wird („sdcpb/<typ>\")."
+msgid "The type \"%s\" is not allowed: only lowercase letters, digits and hyphens, starting with a letter or digit. Underscores do not work because every type also becomes a block name (\"sdcpb/<type>\")."
 msgstr ""
 
-#: includes/class-sdc-admin.php:2053
-msgid "Der Typ ist zu lang (maximal 40 Zeichen)."
+#: includes/class-sdc-admin.php:2051
+msgid "The type is too long (40 characters maximum)."
 msgstr ""
 
 #. translators: %s: JSON parser message.
-#: includes/class-sdc-admin.php:2164
+#: includes/class-sdc-admin.php:2162
 #, php-format
-msgid "Die Felder sind kein gültiges JSON: %s"
+msgid "The fields are not valid JSON: %s"
 msgstr ""
 
-#: includes/class-sdc-admin.php:2173
-msgid "Die Felder müssen eine Liste sein: [ {…}, {…} ]."
+#: includes/class-sdc-admin.php:2171
+msgid "The fields must be a list: [ {…}, {…} ]."
 msgstr ""
 
 #. translators: 1: nesting level, 2: entry number.
-#: includes/class-sdc-admin.php:2208
+#: includes/class-sdc-admin.php:2206
 #, php-format
-msgid "Feld %2$d auf Ebene %1$d ist kein Objekt."
+msgid "Field %2$d on level %1$d is not an object."
 msgstr ""
 
 #. translators: 1: entry number, 2: nesting level.
-#: includes/class-sdc-admin.php:2222
+#: includes/class-sdc-admin.php:2220
 #, php-format
-msgid "Feld %1$d auf Ebene %2$d hat keinen gültigen Namen (a–z, 0–9, _)."
+msgid "Field %1$d on level %2$d has no valid name (a–z, 0–9, _)."
 msgstr ""
 
 #. translators: %s: field name.
-#: includes/class-sdc-admin.php:2234
+#: includes/class-sdc-admin.php:2232
 #, php-format
-msgid "Der Feldname %s kommt doppelt vor. Zwei Felder einer Ebene brauchen verschiedene Namen."
+msgid "The field name %s appears twice. Two fields on one level need different names."
 msgstr ""
 
 #. translators: %s: field name.
-#: includes/class-sdc-admin.php:2248
+#: includes/class-sdc-admin.php:2246
 #, php-format
-msgid "Feld %s hat keinen Typ."
+msgid "Field %s has no type."
 msgstr ""
 
 #. translators: 1: field type, 2: field name.
-#: includes/class-sdc-admin.php:2259
+#: includes/class-sdc-admin.php:2257
 #, php-format
-msgid "Den Feldtyp „%1$s\" (Feld %2$s) kennt der Host nicht."
+msgid "The host does not know the field type \"%1$s\" (field %2$s)."
 msgstr ""
 
 #. translators: %s: absolute directory path.
-#: includes/class-sdc-admin.php:2395
+#: includes/class-sdc-admin.php:2393
 #, php-format
-msgid "Der Ordner %s existiert bereits."
+msgid "The folder %s already exists."
 msgstr ""
 
 #. translators: %s: absolute directory path.
-#: includes/class-sdc-admin.php:2406
-#: includes/class-sdc-view.php:694
+#: includes/class-sdc-admin.php:2404
+#: includes/class-sdc-view.php:707
 #, php-format
-msgid "Der Ordner %s ließ sich nicht anlegen."
+msgid "The folder %s could not be created."
 msgstr ""
 
-#: includes/class-sdc-admin.php:2417
-msgid "Die Definition ließ sich nicht als JSON schreiben."
+#: includes/class-sdc-admin.php:2415
+msgid "The definition could not be written as JSON."
 msgstr ""
 
 #. translators: %s: absolute file path.
-#: includes/class-sdc-admin.php:2438
-#: includes/class-sdc-view.php:709
+#: includes/class-sdc-admin.php:2436
+#: includes/class-sdc-view.php:722
 #, php-format
-msgid "Die Datei %s ließ sich nicht schreiben."
+msgid "The file %s could not be written."
 msgstr ""
 
-#: includes/class-sdc-admin.php:2656
-msgid "nicht platziert"
+#: includes/class-sdc-admin.php:2654
+msgid "not placed"
 msgstr ""
 
 #. translators: 1: number of pages, 2: number of placements on those pages.
-#: includes/class-sdc-admin.php:2661
+#: includes/class-sdc-admin.php:2659
 #, php-format
-msgid "%1$d Seite, %2$d Instanz"
-msgid_plural "%1$d Seiten, %2$d Instanzen"
+msgid "%1$d page, %2$d instance"
+msgid_plural "%1$d pages, %2$d instances"
 msgstr[0] ""
 msgstr[1] ""
 
 #: includes/class-sdc-block.php:251
 #: assets/block.js:1175
-msgid "SDC-Komponente (alt)"
+msgid "SDC Component (legacy)"
 msgstr ""
 
 #: includes/class-sdc-block.php:252
-msgid "Komponente aus einer früheren Fassung. Neue Seiten nutzen den Block der jeweiligen Komponente."
+msgid "A component from an earlier version. New pages use the block of the respective component."
 msgstr ""
 
 #. translators: %s: component label.
 #: includes/class-sdc-block.php:391
 #, php-format
-msgid "%s: noch keine Inhalte."
+msgid "%s: no content yet."
 msgstr ""
 
 #: includes/class-sdc-block.php:395
 #: assets/block.js:1022
-msgid "Werte rechts in der Seitenleiste eintragen."
+msgid "Enter the values in the sidebar on the right."
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:358
-msgid "Feld"
+#: includes/class-sdc-field-editor.php:76
+msgid "Text Line"
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:359
-msgid "Unterfeld"
+#: includes/class-sdc-field-editor.php:77
+#: includes/class-sdc-field-editor.php:88
+#: includes/class-sdc-field-editor.php:98
+#: includes/class-sdc-field-editor.php:103
+#: includes/class-sdc-field-editor.php:116
+#: includes/class-sdc-field-editor.php:128
+#: includes/class-sdc-field-editor.php:136
+msgid "Text"
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:360
-#: includes/class-sdc-field-editor.php:473
-msgid "Feld hinzufügen"
+#: includes/class-sdc-field-editor.php:79
+#: includes/class-sdc-field-editor.php:91
+#: includes/class-sdc-field-editor.php:109
+#: includes/class-sdc-field-editor.php:130
+#: includes/class-sdc-field-editor.php:138
+msgid "Placeholder"
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:361
-msgid "Unterfeld hinzufügen"
+#: includes/class-sdc-field-editor.php:80
+#: includes/class-sdc-field-editor.php:92
+#: includes/class-sdc-field-editor.php:108
+#: includes/class-sdc-field-editor.php:121
+#: includes/class-sdc-field-editor.php:131
+#: includes/class-sdc-field-editor.php:139
+#: includes/class-sdc-field-editor.php:147
+#: includes/class-sdc-field-editor.php:192
+#: includes/class-sdc-field-editor.php:200
+#: includes/class-sdc-field-editor.php:209
+msgid "Default Value"
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:362
-msgid "Feldname"
+#: includes/class-sdc-field-editor.php:81
+#: includes/class-sdc-field-editor.php:93
+msgid "Maximum Characters"
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:363
-#: includes/class-sdc-field-editor.php:382
-msgid "Beschriftung"
+#: includes/class-sdc-field-editor.php:82
+#: includes/class-sdc-field-editor.php:110
+#: includes/class-sdc-field-editor.php:122
+msgid "Before"
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:364
-msgid "Feldtyp"
+#: includes/class-sdc-field-editor.php:83
+#: includes/class-sdc-field-editor.php:111
+#: includes/class-sdc-field-editor.php:123
+msgid "After"
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:365
-msgid "Hinweis im Editor"
+#: includes/class-sdc-field-editor.php:87
+msgid "Multiline Text"
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:366
-msgid "Pflichtfeld"
+#: includes/class-sdc-field-editor.php:90
+msgid "Rows in the Input Field"
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:367
-msgid "Einstellungen"
+#: includes/class-sdc-field-editor.php:97
+msgid "Formatted Text"
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:368
-msgid "Unterfelder"
+#: includes/class-sdc-field-editor.php:102
+msgid "Number"
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:369
-#: assets/block.js:547
-#: assets/block.js:658
-#: assets/block.js:824
-msgid "Entfernen"
+#: includes/class-sdc-field-editor.php:105
+#: includes/class-sdc-field-editor.php:118
+msgid "Smallest Value"
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:370
-msgid "Nach oben"
+#: includes/class-sdc-field-editor.php:106
+#: includes/class-sdc-field-editor.php:119
+msgid "Largest Value"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:107
+#: includes/class-sdc-field-editor.php:120
+msgid "Step"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:115
+msgid "Slider"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:127
+msgid "Email Address"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:135
+msgid "Link URL"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:143
+#: assets/block.js:541
+msgid "Select"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:144
+#: includes/class-sdc-field-editor.php:163
+#: includes/class-sdc-field-editor.php:180
+#: includes/class-sdc-field-editor.php:197
+#: includes/class-sdc-field-editor.php:205
+msgid "Choice"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:146
+#: includes/class-sdc-field-editor.php:165
+#: includes/class-sdc-field-editor.php:182
+#: includes/class-sdc-field-editor.php:199
+msgid "Choices"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:148
+msgid "Allow Multiple Selections"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:151
+#: includes/class-sdc-field-editor.php:225
+#: includes/class-sdc-field-editor.php:241
+#: includes/class-sdc-field-editor.php:257
+msgid "Return Value"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:155
+#: includes/class-sdc-field-editor.php:376
+#: includes/class-sdc-field-editor.php:395
+msgid "Label"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:162
+msgid "Checkboxes"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:168
+#: includes/class-sdc-field-editor.php:185
+#: assets/block.js:780
+#: assets/block.js:827
+msgid "Layout"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:175
+msgid "Default Value (values, comma-separated)"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:179
+msgid "Radio Buttons"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:196
+msgid "Button Group"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:204
+msgid "Yes/No"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:216
+msgid "Show as Toggle"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:220
+msgid "Image"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:221
+#: includes/class-sdc-field-editor.php:237
+#: includes/class-sdc-field-editor.php:253
+msgid "Media"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:236
+msgid "File"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:252
+msgid "Link"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:267
+msgid "Repeater"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:268
+#: includes/class-sdc-field-editor.php:288
+msgid "Structure"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:271
+msgid "Label of the Add Button"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:274
+#: includes/class-sdc-field-editor.php:293
+msgid "Editor Display"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:278
+#: includes/class-sdc-field-editor.php:296
+msgid "Blocks"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:282
+msgid "Minimum Rows"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:283
+msgid "Maximum Rows"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:287
+msgid "Group"
 msgstr ""
 
 #: includes/class-sdc-field-editor.php:371
-msgid "Nach unten"
+msgid "Field"
 msgstr ""
 
 #: includes/class-sdc-field-editor.php:372
-msgid "Einklappen"
+msgid "Subfield"
 msgstr ""
 
 #: includes/class-sdc-field-editor.php:373
-msgid "Ausklappen"
+#: includes/class-sdc-field-editor.php:486
+msgid "Add Field"
 msgstr ""
 
 #: includes/class-sdc-field-editor.php:374
-#: includes/class-sdc-field-editor.php:470
-msgid "Noch keine Felder. Unten einen Feldtyp wählen und hinzufügen."
+msgid "Add Subfield"
 msgstr ""
 
 #: includes/class-sdc-field-editor.php:375
-msgid "Dieses Feld samt Einstellungen entfernen?"
+msgid "Field Name"
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:376
-msgid "Der neue Typ ist keine Sammlung. Die Unterfelder dieses Feldes werden entfernt. Fortfahren?"
+#: includes/class-sdc-field-editor.php:377
+msgid "Field Type"
 msgstr ""
 
-#. translators: %s: field name that is missing
 #: includes/class-sdc-field-editor.php:378
-#, php-format
-msgid "Jedes Feld braucht einen Namen. Fehlt er bei: %s"
+msgid "Hint in the Editor"
 msgstr ""
 
-#. translators: %s: field name that occurs twice
+#: includes/class-sdc-field-editor.php:379
+msgid "Required"
+msgstr ""
+
 #: includes/class-sdc-field-editor.php:380
-#, php-format
-msgid "Dieser Feldname kommt doppelt vor: %s"
+msgid "Settings"
 msgstr ""
 
 #: includes/class-sdc-field-editor.php:381
-msgid "Wert"
+msgid "Subfields"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:382
+#: assets/block.js:547
+#: assets/block.js:658
+#: assets/block.js:824
+msgid "Remove"
 msgstr ""
 
 #: includes/class-sdc-field-editor.php:383
-msgid "Möglichkeit hinzufügen"
+msgid "Move Up"
 msgstr ""
 
 #: includes/class-sdc-field-editor.php:384
-msgid "a–z, 0–9 und _ . Wird aus der Beschriftung gebildet, solange du ihn nicht selbst änderst."
+msgid "Move Down"
 msgstr ""
 
 #: includes/class-sdc-field-editor.php:385
-msgid "Das JSON wurde aus den Feldern neu geschrieben."
+msgid "Collapse"
 msgstr ""
 
-#. translators: %s: parser message
+#: includes/class-sdc-field-editor.php:386
+msgid "Expand"
+msgstr ""
+
 #: includes/class-sdc-field-editor.php:387
-#, php-format
-msgid "Das JSON im Textfeld ist fehlerhaft und wurde nicht überschrieben: %s"
+#: includes/class-sdc-field-editor.php:483
+msgid "No fields yet. Choose a field type below and add it."
 msgstr ""
 
 #: includes/class-sdc-field-editor.php:388
-msgid "Dieser Feldtyp hat hier keine eigenen Einstellungen. Alles, was im JSON steht, bleibt beim Speichern erhalten — ändern lässt er sich nur dort."
+msgid "Remove this field and its settings?"
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:466
-msgid "Feldtyp wählen, hinzufügen, Einstellungen ausfüllen. Das JSON für die definition.json entsteht daraus."
+#: includes/class-sdc-field-editor.php:389
+msgid "The new type is not a collection. The subfields of this field will be removed. Continue?"
+msgstr ""
+
+#. translators: %s: field name that is missing
+#: includes/class-sdc-field-editor.php:391
+#, php-format
+msgid "Every field needs a name. Missing for: %s"
+msgstr ""
+
+#. translators: %s: field name that occurs twice
+#: includes/class-sdc-field-editor.php:393
+#, php-format
+msgid "This field name appears twice: %s"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:394
+msgid "Value"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:396
+msgid "Add Choice"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:397
+msgid "a–z, 0–9 and _ . Built from the label as long as you do not change it yourself."
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:398
+msgid "The JSON was rewritten from the fields."
+msgstr ""
+
+#. translators: %s: parser message
+#: includes/class-sdc-field-editor.php:400
+#, php-format
+msgid "The JSON in the text box is faulty and was not overwritten: %s"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:401
+msgid "This field type has no settings of its own here. Everything in the JSON is preserved on save — it can only be changed there."
 msgstr ""
 
 #: includes/class-sdc-field-editor.php:479
-msgid "JSON direkt bearbeiten"
+msgid "Choose a field type, add it, fill in the settings. The JSON for the definition.json is built from that."
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:480
-msgid "Wird aus den Feldern oben gefüllt und beim Absenden mitgeschickt. Wer hier von Hand ändert, klickt danach „JSON übernehmen“."
+#: includes/class-sdc-field-editor.php:492
+msgid "Edit JSON Directly"
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:485
-msgid "JSON übernehmen"
+#: includes/class-sdc-field-editor.php:493
+msgid "Filled from the fields above and submitted with the form. If you change it by hand, click \"Apply JSON\" afterwards."
 msgstr ""
 
-#: includes/class-sdc-field-editor.php:508
-msgid "Feldtyp für das neue Feld"
+#: includes/class-sdc-field-editor.php:498
+msgid "Apply JSON"
+msgstr ""
+
+#: includes/class-sdc-field-editor.php:521
+msgid "Field type for the new field"
 msgstr ""
 
 #. translators: 1: component type, 2: post ID.
 #: includes/class-sdc-frontend.php:441
 #, php-format
-msgid "SDC Page Builder: Komponententyp \"%1$s\" hat keine Ansicht (Seite %2$d)"
+msgid "SDC Page Builder: component type \"%1$s\" has no view (page %2$d)"
 msgstr ""
 
 #. translators: %s: component type.
 #: includes/class-sdc-frontend.php:457
 #, php-format
-msgid "Komponententyp \"%s\" hat keine Ansicht"
+msgid "Component type \"%s\" has no view"
 msgstr ""
 
-#: includes/class-sdc-frontend.php:747
-#: includes/class-sdc-view.php:1168
-msgid "Ja"
+#. translators: 1: component type, 2: file and line, 3: error message, 4: post ID.
+#: includes/class-sdc-frontend.php:489
+#, php-format
+msgid "SDC Page Builder: view of \"%1$s\" failed (%2$s): %3$s (page %4$d)"
 msgstr ""
 
-#: includes/class-sdc-frontend.php:747
-msgid "Nein"
+#. translators: 1: component type, 2: file and line.
+#: includes/class-sdc-frontend.php:507
+#, php-format
+msgid "View of \"%1$s\" failed (%2$s)"
 msgstr ""
 
-#: includes/class-sdc-migration.php:484
-msgid "SDC: Komponenten aus der Metabox in Blöcke übernommen."
+#: includes/class-sdc-frontend.php:825
+#: includes/class-sdc-view.php:1181
+msgid "Yes"
+msgstr ""
+
+#: includes/class-sdc-frontend.php:825
+msgid "No"
+msgstr ""
+
+#: includes/class-sdc-migration.php:516
+msgid "SDC: components carried over from the metabox into blocks."
 msgstr ""
 
 #: includes/class-sdc-renderer.php:177
 #: assets/block.js:682
 #: assets/block.js:857
-msgid "Zeile hinzufügen"
+msgid "Add Row"
 msgstr ""
 
 #: includes/class-sdc-renderer.php:271
-msgid "Zeile entfernen"
+msgid "Remove Row"
 msgstr ""
 
 #: includes/class-sdc-rest.php:103
-msgid "Seite nicht gefunden."
+msgid "Page not found."
 msgstr ""
 
 #: includes/class-sdc-rest.php:146
-msgid "components muss ein Array sein."
+msgid "components must be an array."
 msgstr ""
 
 #: includes/class-sdc-rest.php:155
-msgid "Komponente ohne Typ."
+msgid "Component without a type."
 msgstr ""
 
 #. translators: %s: component type
 #: includes/class-sdc-rest.php:161
 #, php-format
-msgid "Unbekannter Komponententyp: %s"
+msgid "Unknown component type: %s"
 msgstr ""
 
 #. translators: 1: component position, 2: component type, 3: field label
 #: includes/class-sdc-rest.php:184
 #, php-format
-msgid "Komponente %1$d (%2$s): Pflichtfeld \"%3$s\" ist leer."
+msgid "Component %1$d (%2$s): required field \"%3$s\" is empty."
 msgstr ""
 
 #: includes/class-sdc-rest.php:196
-msgid "Das Dokument wurde abgelehnt. Gespeichert wurde nichts."
+msgid "The document was rejected. Nothing was saved."
 msgstr ""
 
 #. translators: %s: absolute path of the stylesheet.
 #: includes/class-sdc-style-editor.php:77
 #, php-format
-msgid "Die Styles dieser Komponente kommen aus %s. Diese Datei gehört zum Theme und wird beim nächsten Deploy überschrieben, deshalb ist sie hier nicht bearbeitbar."
+msgid "This component's styles come from %s. That file belongs to the theme and would be overwritten by the next deploy, so it cannot be edited here."
 msgstr ""
 
 #: includes/class-sdc-style-editor.php:85
-msgid "Styles, schreibgeschützt"
+msgid "Styles, read-only"
 msgstr ""
 
 #: includes/class-sdc-style-editor.php:99
@@ -861,29 +1081,29 @@ msgstr ""
 #. translators: 1: opening code tag, 2: closing code tag, 3: component type.
 #: includes/class-sdc-style-editor.php:111
 #, php-format
-msgid "Alles, was in die Datei gehört, ohne %1$sstyle%2$s-Tag. Wird inline im Kopf der Seite ausgegeben, und nur für die Komponenten, die auf ihr stehen. Der Wrapper heißt %3$s: Regeln darunter greifen nur in dieser Komponente."
+msgid "Everything that belongs in the file, without the %1$s %2$s tag. It is printed inline in the page head, and only for the components that appear on that page. The wrapper is called %3$s: rules below it apply only inside this component."
 msgstr ""
 
 #. translators: %s: path relative to the WordPress root.
 #: includes/class-sdc-style-editor.php:123
 #, php-format
-msgid "Datei: %s. Leer lassen heißt: die Komponente bringt keine eigenen Styles mit."
+msgid "File: %s. Leaving it empty means the component brings no styles of its own."
 msgstr ""
 
 #: includes/class-sdc-style-editor.php:142
-msgid "Startgerüst einfügen"
+msgid "Insert Starter Skeleton"
 msgstr ""
 
 #: includes/class-sdc-style-editor.php:148
-msgid "Speichert die Komponente und ersetzt den Text oben durch ein leeres Gerüst mit dem richtigen Selektor. Was jetzt dort steht, geht dabei verloren."
+msgid "Saves the component and replaces the text above with an empty skeleton carrying the right selector. Whatever is there now is lost."
 msgstr ""
 
-#: includes/class-sdc-style-editor.php:152
-msgid "Speichert die Komponente und füllt den Text oben mit einem Gerüst, das mit dem Selektor dieser Komponente anfängt."
+#: includes/class-sdc-style-editor.php:151
+msgid "Saves the component and fills the text above with a skeleton that starts with this component's selector."
 msgstr ""
 
-#: includes/class-sdc-style-editor.php:228
-msgid "Diese Styles darfst du nicht ändern."
+#: includes/class-sdc-style-editor.php:226
+msgid "You are not allowed to change these styles."
 msgstr ""
 
 #: includes/class-sdc-view-editor.php:68
@@ -891,165 +1111,165 @@ msgid "render.php"
 msgstr ""
 
 #: includes/class-sdc-view-editor.php:73
-msgid "Bestimmt, wie diese Komponente ausgegeben wird. Markup mit PHP-Inseln, wie ein Theme-Template. Leer lassen heißt: die Felder werden generisch ausgegeben."
+msgid "Determines how this component is rendered. Markup with PHP islands, like a theme template. Leaving it empty means the fields are rendered generically."
 msgstr ""
 
 #. translators: 1: name of the type variable, 2: name of the data variable, 3: name of the component variable.
 #: includes/class-sdc-view-editor.php:85
 #, php-format
-msgid "Verfügbar sind %1$s (Typ), %2$s (Feldwerte) und %3$s (der Komponenten-Eintrag), dazu die Helfer unten. Ein Syntaxfehler wird beim Speichern abgelehnt, die Seite bleibt also heil."
+msgid "Available are %1$s (type), %2$s (field values) and %3$s (the component entry), plus the helpers below. A syntax error is rejected on save, so the page stays intact."
 msgstr ""
 
 #: includes/class-sdc-view-editor.php:97
-msgid "Sobald Felder gespeichert sind, lässt sich hier eine Ansicht aus ihnen erzeugen."
+msgid "Once fields are saved, a view can be generated from them here."
 msgstr ""
 
 #: includes/class-sdc-view-editor.php:116
-msgid "Ansicht aus Feldern erzeugen"
+msgid "Generate View from Fields"
 msgstr ""
 
 #. translators: %s: component type.
 #: includes/class-sdc-view-editor.php:125
 #, php-format
-msgid "Speichert die Komponente und ersetzt den Text oben durch eine Ansicht, die aus den Feldern von „%s\" erzeugt ist. Was jetzt dort steht, geht dabei verloren."
+msgid "Saves the component and replaces the text above with a view generated from the fields of \"%s\". Whatever is there now is lost."
 msgstr ""
 
 #. translators: %s: component type.
 #: includes/class-sdc-view-editor.php:132
 #, php-format
-msgid "Speichert die Komponente und füllt den Text oben mit einer Ansicht, die aus den Feldern von „%s\" erzeugt ist."
+msgid "Saves the component and fills the text above with a view generated from the fields of \"%s\"."
 msgstr ""
 
 #: includes/class-sdc-view-editor.php:152
-msgid "Helfer"
+msgid "Helpers"
 msgstr ""
 
 #: includes/class-sdc-view-editor.php:155
-msgid "Jeder Helfer escapt von sich aus. Wer eigenes Markup braucht, nimmt sdcpb_value() und escapt selbst."
+msgid "Every helper escapes on its own. If you need your own markup, use sdcpb_value() and escape yourself."
 msgstr ""
 
 #: includes/class-sdc-view-editor.php:225
-msgid "Diese Ansicht darfst du nicht ändern."
+msgid "You are not allowed to change this view."
 msgstr ""
 
-#: includes/class-sdc-view.php:296
-msgid "Die Styles enthalten „</style“. Das beendet das <style>-Element, in dem die Komponenten-Styles ausgeliefert werden — der Rest der Seite würde als HTML gelesen. Schreib den Selektor anders, dann speichert es."
+#: includes/class-sdc-view.php:309
+msgid "The CSS contains the marker that closes a style element. It would end the element the component styles are delivered in — the rest of the page would be read as HTML. Write the selector differently and it will save."
 msgstr ""
 
-#: includes/class-sdc-view.php:303
-msgid "Das hier ist CSS, kein PHP: „<?“ wird als Text ausgegeben und nicht ausgeführt. Für Markup ist die Ansicht (render.php) zuständig."
+#: includes/class-sdc-view.php:316
+msgid "This is CSS, not PHP: \"<?\" is printed as text and not executed. Markup is the view's job (render.php)."
 msgstr ""
 
-#: includes/class-sdc-view.php:314
-msgid "Ein Kommentar ist nicht geschlossen (/* ohne */). Alles danach bliebe auf der Seite ungestylt, weil alle Komponenten-Styles in einem gemeinsamen <style>-Element stehen."
+#: includes/class-sdc-view.php:327
+msgid "A comment is not closed (/* without */). Everything after it would stay unstyled on the page, because all component styles are delivered together in one block in the page head."
 msgstr ""
 
 #. translators: 1: number of opening braces, 2: number of closing braces.
-#: includes/class-sdc-view.php:326
+#: includes/class-sdc-view.php:339
 #, php-format
-msgid "Die Klammern passen nicht: %1$d geöffnet, %2$d geschlossen. Eine Regel bleibt damit offen und der Browser verwirft, was folgt."
+msgid "The braces do not match: %1$d opened, %2$d closed. A rule stays open and the browser discards what follows."
 msgstr ""
 
-#: includes/class-sdc-view.php:404
-#: includes/class-sdc-view.php:656
-msgid "Dieser Komponententyp ist kein gültiger Dateiname."
+#: includes/class-sdc-view.php:417
+#: includes/class-sdc-view.php:669
+msgid "This component type is not a valid file name."
 msgstr ""
 
 #. translators: 1: line number, 2: parser message.
-#: includes/class-sdc-view.php:622
+#: includes/class-sdc-view.php:635
 #, php-format
-msgid "Die Ansicht hat einen PHP-Syntaxfehler in Zeile %1$d: %2$s"
+msgid "The view has a PHP syntax error on line %1$d: %2$s"
 msgstr ""
 
 #. translators: %s: parser message.
-#: includes/class-sdc-view.php:632
+#: includes/class-sdc-view.php:645
 #, php-format
-msgid "Die Ansicht ließ sich nicht prüfen: %s"
+msgid "The view could not be checked: %s"
 msgstr ""
 
 #. translators: %s: absolute file path.
-#: includes/class-sdc-view.php:737
+#: includes/class-sdc-view.php:750
 #, php-format
-msgid "Die Datei %s ließ sich nicht entfernen."
+msgid "The file %s could not be removed."
 msgstr ""
 
-#: includes/class-sdc-view.php:971
-msgid "Feldwert als Text, HTML escapt. Mehrfachauswahl wird mit Komma verbunden."
+#: includes/class-sdc-view.php:984
+msgid "Field value as text, HTML-escaped. Multi-selects are joined with a comma."
 msgstr ""
 
-#: includes/class-sdc-view.php:975
-msgid "Feldwert als HTML, durch wp_kses_post. Für formatierbaren Text und Textareas mit Absätzen."
+#: includes/class-sdc-view.php:988
+msgid "Field value as HTML, through wp_kses_post. For formatted text and textareas with paragraphs."
 msgstr ""
 
-#: includes/class-sdc-view.php:979
-msgid "Feldwert für ein Attribut, escapt. Für eigene Tags statt der Helfer unten."
+#: includes/class-sdc-view.php:992
+msgid "Field value for an attribute, escaped. For your own tags instead of the helpers below."
 msgstr ""
 
-#: includes/class-sdc-view.php:983
-msgid "Feldwert als Adresse, escapt und auf http(s)/relative Ziele geprüft."
+#: includes/class-sdc-view.php:996
+msgid "Field value as a URL, escaped and checked for http(s)/relative targets."
 msgstr ""
 
-#: includes/class-sdc-view.php:987
-msgid "Bild-Tag mit Adresse, Alt-Text und Maßen. Nimmt Anhang-Array, ID oder Adresse."
+#: includes/class-sdc-view.php:1000
+msgid "Image tag with URL, alt text and dimensions. Accepts an attachment array, an ID or a URL."
 msgstr ""
 
-#: includes/class-sdc-view.php:991
-msgid "Nur die Adresse des Bildes, escapt — für srcset, JSON-LD oder ein eigenes Tag. Nimmt Anhang-Array, ID oder Adresse."
+#: includes/class-sdc-view.php:1004
+msgid "Just the image URL, escaped — for srcset, JSON-LD or a tag of your own. Accepts an attachment array, an ID or a URL."
 msgstr ""
 
-#: includes/class-sdc-view.php:995
-msgid "Setzt das Bild als CSS-Variable an das Element: style=\"--sdc-image:url(…)\". Ohne Bild erscheint kein Attribut. In der CSS-Datei dann background-image: var( --sdc-image, none )."
+#: includes/class-sdc-view.php:1008
+msgid "Sets the image on the element as a CSS variable: style=\"--sdc-image:url(…)\". Without an image no attribute appears. In the CSS file then background-image: var( --sdc-image, none )."
 msgstr ""
 
-#: includes/class-sdc-view.php:999
-msgid "Verweis-Tag mit Beschriftung aus dem Feld. Drittes Argument setzt die Beschriftung."
+#: includes/class-sdc-view.php:1012
+msgid "Link tag with a label from the field. A third argument sets the label."
 msgstr ""
 
-#: includes/class-sdc-view.php:1003
-msgid "Verweis auf eine Datei, mit deren Titel als Beschriftung."
+#: includes/class-sdc-view.php:1016
+msgid "Link to a file, with its title as the label."
 msgstr ""
 
-#: includes/class-sdc-view.php:1007
-msgid "Wahr, wenn das Feld einen Wert hat. Für bedingte Blöcke."
+#: includes/class-sdc-view.php:1020
+msgid "True when the field has a value. For conditional blocks."
 msgstr ""
 
-#: includes/class-sdc-view.php:1011
-msgid "Rohwert ohne Ausgabe, für eigene Logik. Punkte sprechen Unterfelder an: cta.title."
+#: includes/class-sdc-view.php:1024
+msgid "Raw value without output, for logic of your own. Dots address subfields: cta.title."
 msgstr ""
 
-#: includes/class-sdc-view.php:1015
-msgid "Schleife über die Zeilen einer Wiederholung. Hilferufe darin bekommen $row als letztes Argument: sdcpb_text( 'q', $row ), sdcpb_image( 'bild', 'large', array(), $row )."
+#: includes/class-sdc-view.php:1028
+msgid "Loop over the rows of a repeater. Helper calls inside it take $row as the last argument: sdcpb_text( 'quote', $row ), sdcpb_image( 'image', 'large', array(), $row )."
 msgstr ""
 
-#: includes/class-sdc-view.php:1019
-msgid "Die Standardausgabe aller Felder dieser Komponente, wenn nur das Drumherum eigen sein soll."
+#: includes/class-sdc-view.php:1032
+msgid "The default output of all fields of this component, when only the surrounding markup should be your own."
 msgstr ""
 
-#: includes/class-sdc-view.php:1023
-msgid "Baut eine Klassenliste aus nicht-leeren Teilen, escapt für ein class-Attribut."
+#: includes/class-sdc-view.php:1036
+msgid "Builds a class list from non-empty parts, escaped for a class attribute."
 msgstr ""
 
 #. translators: %s: component type.
-#: includes/class-sdc-view.php:1071
+#: includes/class-sdc-view.php:1084
 #, php-format
-msgid "Aus den Feldern von „%s“ erzeugt. Ersetzt, was jetzt im Feld steht."
+msgid "Generated from the fields of \"%s\". Replaces what is in the field now."
 msgstr ""
 
 #. translators: 1: hours, 2: minutes.
 #: schemas/movie/render.php:41
 #, php-format
-msgid "%1$d Std. %2$d Min."
+msgid "%1$dh %2$dm"
 msgstr ""
 
 #. translators: %d: minutes.
 #: schemas/movie/render.php:43
 #, php-format
-msgid "%d Min."
+msgid "%d min"
 msgstr ""
 
 #. translators: Term in a component's fact list.
 #: schemas/movie/render.php:69
-msgid "Regie"
+msgid "Director"
 msgstr ""
 
 #. translators: Term in a component's fact list.
@@ -1061,43 +1281,43 @@ msgstr ""
 #. translators: Term in a component's fact list.
 #: schemas/movie/render.php:73
 #: schemas/series/render.php:111
-msgid "Laufzeit"
+msgid "Runtime"
 msgstr ""
 
 #. translators: %s: original title of the component.
 #: schemas/movie/render.php:102
 #: schemas/series/render.php:130
 #, php-format
-msgid "Originaltitel: %s"
+msgid "Original title: %s"
 msgstr ""
 
 #. translators: Term in a component's fact list.
 #: schemas/movie/render.php:121
 #: schemas/series/render.php:148
-msgid "Bewertung"
+msgid "Rating"
 msgstr ""
 
 #. translators: 1: score, 2: maximum.
 #: schemas/movie/render.php:135
 #, php-format
-msgid "%1$s von %2$s"
+msgid "%1$s by %2$s"
 msgstr ""
 
 #. translators: Heading above the cast list.
 #: schemas/movie/render.php:153
-msgid "Besetzung"
+msgid "Cast"
 msgstr ""
 
 #. translators: %s: name of the character.
 #: schemas/movie/render.php:172
 #, php-format
-msgid "als %s"
+msgid "as %s"
 msgstr ""
 
 #. translators: %s: first year of the series.
 #: schemas/series/render.php:75
 #, php-format
-msgid "seit %s"
+msgid "since %s"
 msgstr ""
 
 #. translators: 1: number of seasons, 2: number of episodes.
@@ -1110,8 +1330,8 @@ msgstr ""
 #: schemas/series/render.php:92
 #: schemas/series/render.php:173
 #, php-format
-msgid "%d Staffel"
-msgid_plural "%d Staffeln"
+msgid "%d season"
+msgid_plural "%d seasons"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -1119,119 +1339,110 @@ msgstr[1] ""
 #: schemas/series/render.php:97
 #: schemas/series/render.php:196
 #, php-format
-msgid "%d Folge"
-msgid_plural "%d Folgen"
+msgid "%d episode"
+msgid_plural "%d episodes"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: Term in a component's fact list.
 #: schemas/series/render.php:105
-msgid "Idee"
+msgid "Idea"
 msgstr ""
 
 #. translators: Term in a component's fact list.
 #: schemas/series/render.php:107
-msgid "Sender"
+msgid "Network"
 msgstr ""
 
 #. translators: %s: season number.
 #: schemas/series/render.php:183
 #, php-format
-msgid "Staffel %s"
+msgid "Season %s"
 msgstr ""
 
 #: schemas/testimonials/render.php:56
-msgid "Kundenstimmen"
+msgid "Testimonials"
 msgstr ""
 
 #. translators: %d: number of tracks.
 #: schemas/vinyl/render.php:144
 #, php-format
-msgid "%d Track"
-msgid_plural "%d Tracks"
+msgid "%d track"
+msgid_plural "%d tracks"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: side of the record, e.g. A.
 #: schemas/vinyl/render.php:170
 #, php-format
-msgid "Seite %s"
+msgid "Page %s"
 msgstr ""
 
 #: sdc-page-builder.php:124
-msgid "SDC Page Builder benötigt Advanced Custom Fields oder Secure Custom Fields. Bitte eines der beiden Plugins aktivieren."
+msgid "SDC Page Builder requires Advanced Custom Fields or Secure Custom Fields. Please activate one of the two."
 msgstr ""
 
 #: assets/block.js:257
 #: assets/block.js:782
-msgid "— bitte wählen —"
+msgid "— please choose —"
 msgstr ""
 
 #: assets/block.js:453
-msgid "Dateien auswählen"
+msgid "Select Files"
 msgstr ""
 
 #: assets/block.js:454
-msgid "Bild auswählen"
+msgid "Select Image"
 msgstr ""
 
 #: assets/block.js:454
-msgid "Datei auswählen"
+msgid "Select File"
 msgstr ""
 
 #: assets/block.js:458
-msgid "Übernehmen"
+msgid "Apply"
 msgstr ""
 
 #: assets/block.js:515
-msgid "Anhang"
+msgid "Attachment"
 msgstr ""
 
 #: assets/block.js:540
-msgid "Ersetzen"
-msgstr ""
-
-#: assets/block.js:541
-msgid "Auswählen"
+msgid "Replace"
 msgstr ""
 
 #: assets/block.js:580
-msgid "Linktext"
+msgid "Link Text"
 msgstr ""
 
 #: assets/block.js:587
-msgid "Ziel (URL)"
+msgid "Target (URL)"
 msgstr ""
 
 #: assets/block.js:778
-msgid "Diese Zeile hat kein Layout. Es wird nichts angezeigt."
-msgstr ""
-
-#: assets/block.js:780
-#: assets/block.js:827
-msgid "Layout"
+msgid "This row has no layout. Nothing is displayed."
 msgstr ""
 
 #: assets/block.js:852
-msgid "Dieses Feld hat keine Layouts."
+msgid "This field has no layouts."
 msgstr ""
 
 #: assets/block.js:1000
-msgid "ServerSideRender fehlt — Vorschau nicht verfügbar."
+msgid "ServerSideRender is missing — preview not available."
 msgstr ""
 
 #: assets/block.js:1021
-msgid "noch keine Inhalte."
+msgid "no content yet."
 msgstr ""
 
 #: assets/block.js:1100
-msgid "Diese Komponente gibt es auf dieser Seite nicht (mehr)."
+msgid "This component no longer exists on this page."
 msgstr ""
 
 #: assets/block.js:1154
-msgid "Komponente aus dem SDC-Baukasten."
+msgid "Component from the SDC builder."
 msgstr ""
 
 #: assets/block.js:1176
-msgid "Komponente aus einer früheren Fassung."
+msgid "Component from an earlier version."
 msgstr ""

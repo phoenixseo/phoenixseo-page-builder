@@ -67,11 +67,11 @@
 }
 
 .sdc-testimonials__quote p::before {
-	content: "„";
+	content: open-quote;
 }
 
 .sdc-testimonials__quote p::after {
-	content: "“";
+	content: close-quote;
 }
 
 .sdc-testimonials__caption {

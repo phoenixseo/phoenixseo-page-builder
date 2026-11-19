@@ -122,7 +122,7 @@ class Sdcpb_Block {
 			$categories,
 			array(
 				'slug'  => self::CATEGORY,
-				'title' => __( 'SDC-Komponenten', 'sdc-page-builder' ),
+				'title' => __( 'SDC Components', 'sdc-page-builder' ),
 				'icon'  => 'layout',
 			)
 		);
@@ -248,8 +248,8 @@ class Sdcpb_Block {
 			self::LEGACY,
 			array(
 				'api_version'     => 3,
-				'title'           => __( 'SDC-Komponente (alt)', 'sdc-page-builder' ),
-				'description'     => __( 'Komponente aus einer früheren Fassung. Neue Seiten nutzen den Block der jeweiligen Komponente.', 'sdc-page-builder' ),
+				'title'           => __( 'SDC Component (legacy)', 'sdc-page-builder' ),
+				'description'     => __( 'A component from an earlier version. New pages use the block of the respective component.', 'sdc-page-builder' ),
 				'category'        => self::CATEGORY,
 				'icon'            => 'layout',
 				'keywords'        => array( 'sdc', 'legacy' ),
@@ -388,11 +388,11 @@ class Sdcpb_Block {
 				esc_html(
 					sprintf(
 						/* translators: %s: component label. */
-						__( '%s: noch keine Inhalte.', 'sdc-page-builder' ),
+						__( '%s: no content yet.', 'sdc-page-builder' ),
 						(string) Sdcpb_Schema::get( $type )['label']
 					)
 				),
-				esc_html__( 'Werte rechts in der Seitenleiste eintragen.', 'sdc-page-builder' )
+				esc_html__( 'Enter the values in the sidebar on the right.', 'sdc-page-builder' )
 			);
 		}
 
@@ -621,7 +621,7 @@ class Sdcpb_Block {
 	/**
 	 * Deliver the component styles of the page being rendered.
 	 *
-	 * Inline by default: one `<style>` for the whole page, versioned by a hash
+	 * Inline by default: one stylesheet for the whole page, versioned by a hash
 	 * of its contents. That is a deliberate answer to caching plugins.
 	 * Autoptimize, WP Rocket and friends combine, defer and *remove unused*
 	 * external stylesheets, and a component's CSS arriving as a separate late

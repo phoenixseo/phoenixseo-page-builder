@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       SDC Page Builder
  * Plugin URI:        https://github.com/phoenixseo/sdc-page-builder
- * Description:       Komponentenbasierter Page Builder: ACF- oder SCF-Felder als Bausteine, ein Block pro Komponententyp, im Editor serverseitig gerendert.
- * Version:           0.2.1
+ * Description:       Component-based page builder: ACF or SCF fields as building blocks, one block per component type, rendered server-side in the editor.
+ * Version:           0.3.0
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            PHOENIXSEO – Frank Pfabigan
@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SDCPB_VERSION', '0.2.1' );
+define( 'SDCPB_VERSION', '0.3.0' );
 define( 'SDCPB_FILE', __FILE__ );
 define( 'SDCPB_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SDCPB_URL', plugin_dir_url( __FILE__ ) );
@@ -121,7 +121,7 @@ function sdcpb_missing_host_notice() {
 	}
 	printf(
 		'<div class="notice notice-warning"><p>%s</p></div>',
-		esc_html__( 'SDC Page Builder benötigt Advanced Custom Fields oder Secure Custom Fields. Bitte eines der beiden Plugins aktivieren.', 'sdc-page-builder' )
+		esc_html__( 'SDC Page Builder requires Advanced Custom Fields or Secure Custom Fields. Please activate one of the two.', 'sdc-page-builder' )
 	);
 }
 

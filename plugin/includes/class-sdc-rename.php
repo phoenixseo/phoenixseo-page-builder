@@ -366,7 +366,7 @@ class Sdcpb_Rename {
 			WP_CLI::error( 'Mindestens ein Datenbank-Statement ist fehlgeschlagen; der Lauf ist nicht als erledigt markiert.' );
 		}
 
-		WP_CLI::success( 'Daten tragen das Präfix sdcpb.' );
+		WP_CLI::success( 'Data carries the sdcpb prefix.' );
 	}
 }
 

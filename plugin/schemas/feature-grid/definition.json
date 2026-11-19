@@ -1,26 +1,26 @@
 {
     "key": "group_sdcpb_component_feature-grid",
-    "title": "Feature-Raster",
-    "sdcpb_description": "Merkmale in einem Raster: Symbol, Titel, Text und optionaler Link pro Karte.",
+    "title": "Feature grid",
+    "sdcpb_description": "Features in a grid: icon, title, text and an optional link per card.",
     "sdcpb_icon": "grid-view",
     "sdcpb_version": 1,
     "fields": [
         {
             "key": "field_sdc_feature-grid_heading",
-            "label": "Überschrift",
+            "label": "Heading",
             "name": "heading",
             "type": "text",
-            "instructions": "Optional. Leer lassen, wenn das Raster ohne Titel starten soll.",
+            "instructions": "Optional. Leave empty if the grid should start without a title.",
             "required": 0,
             "default_value": "",
             "placeholder": ""
         },
         {
             "key": "field_sdc_feature-grid_intro",
-            "label": "Einleitung",
+            "label": "Intro",
             "name": "intro",
             "type": "textarea",
-            "instructions": "Optional. Ein bis zwei Sätze über dem Raster.",
+            "instructions": "Optional. One or two sentences above the grid.",
             "required": 0,
             "rows": 3,
             "default_value": "",
@@ -28,32 +28,32 @@
         },
         {
             "key": "field_sdc_feature-grid_items",
-            "label": "Merkmale",
+            "label": "Features",
             "name": "items",
             "type": "repeater",
-            "instructions": "Eine Karte pro Zeile. Die Reihenfolge hier ist die Reihenfolge auf der Seite.",
+            "instructions": "One card per row. The order here is the order on the page.",
             "required": 0,
             "layout": "table",
-            "button_label": "Merkmal hinzufügen",
+            "button_label": "Add feature",
             "sub_fields": [
                 {
                     "key": "field_sdc_feature-grid_item_icon",
-                    "label": "Symbol",
+                    "label": "Icon",
                     "name": "icon",
                     "type": "select",
-                    "instructions": "Wird als Strichsymbol ausgegeben, nicht als Bild.",
+                    "instructions": "Rendered as a line icon, not as an image.",
                     "required": 0,
                     "default_value": "check",
                     "choices": {
-                        "check": "Häkchen",
-                        "bolt": "Blitz",
-                        "shield": "Schild",
-                        "chart": "Diagramm"
+                        "check": "Check",
+                        "bolt": "Bolt",
+                        "shield": "Shield",
+                        "chart": "Chart"
                     }
                 },
                 {
                     "key": "field_sdc_feature-grid_item_title",
-                    "label": "Titel",
+                    "label": "Title",
                     "name": "title",
                     "type": "text",
                     "required": 1
@@ -71,7 +71,7 @@
                     "label": "Link",
                     "name": "link",
                     "type": "link",
-                    "instructions": "Optional. Macht den Titel der Karte anklickbar.",
+                    "instructions": "Optional. Makes the card title clickable.",
                     "required": 0,
                     "return_format": "array"
                 }

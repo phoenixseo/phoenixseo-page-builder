@@ -88,7 +88,7 @@ class ViewEditorTest extends Sdcpb_TestCase {
 
 		$this->assertStringContainsString( 'name="sdcpb_view_body"', $html );
 		$this->assertStringContainsString( 'id="sdcpb_view_body"', $html );
-		$this->assertStringContainsString( 'Ansicht', $html );
+		$this->assertStringContainsString( 'a view can be generated', $html );
 	}
 
 	/**
@@ -359,7 +359,7 @@ class ViewEditorTest extends Sdcpb_TestCase {
 		// The panel sits inside the form and before its end: a form that
 		// stops early has no save button, which is how the TypeError showed.
 		$this->assertStringContainsString( '</form>', $html );
-		$this->assertStringContainsString( 'Komponente speichern', $html );
+		$this->assertStringContainsString( 'Save Component', $html );
 		$this->assertLessThan( strpos( $html, '</form>' ), strpos( $html, 'sdcpb_view_body' ) );
 	}
 

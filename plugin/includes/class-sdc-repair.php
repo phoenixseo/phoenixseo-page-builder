@@ -69,7 +69,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			$pages = $this->pages( $assoc_args );
 
 			if ( null === $pages ) {
-				WP_CLI::error( 'Seite nicht gefunden oder kein unterstützter Inhaltstyp.' );
+				WP_CLI::error( 'Page not found or not a supported post type.' );
 			}
 
 			$found   = 0;
@@ -98,7 +98,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				// update failed, or the document changed under it. Either way
 				// the page is as it was, and staying quiet would read as
 				// success.
-				WP_CLI::warning( sprintf( 'Seite #%d konnte nicht ergänzt werden.', $post->ID ) );
+				WP_CLI::warning( sprintf( 'Page #%d could not be completed.', $post->ID ) );
 			}
 
 			if ( 0 === $found ) {
@@ -111,7 +111,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				return;
 			}
 
-			WP_CLI::success( sprintf( '%d betroffene Seite(n), %d ergänzt.', $found, $written ) );
+			WP_CLI::success( sprintf( '%d affected page(s), %d completed.', $found, $written ) );
 		}
 
 		/**

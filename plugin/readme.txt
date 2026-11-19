@@ -4,7 +4,7 @@ Tags: page builder, components, acf, custom fields, blocks
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.2.1
+Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://ko-fi.com/phoenixseo
@@ -116,6 +116,43 @@ All three are the shipped examples, rendered by the plugin's own frontend
 output — no mockup, no theme involved. The content is sample data.
 
 == Changelog ==
+
+= 0.3.0 =
+* Changed: the source strings are English. Before, a plugin installed on an
+  English site rendered German — the source language is the fallback, so no
+  translation could fix it. Every `__()` call, the admin screens, the field
+  type labels and the example components now speak English, and the catalogue
+  ships a German translation in `languages/sdc-page-builder-de_DE.po/.mo`.
+  German sites read exactly as before.
+* Changed: `Sdcpb_Field_Editor::TYPES` is now `definitions()`. A constant
+  initialiser cannot call `__()`, so the 54 field type labels, groups and
+  choice texts were never translatable — they sat in a `const` and reached
+  the screen as literals.
+* Changed: the example components' `definition.json` files are English. Their
+  labels live in JSON, which gettext does not reach; a German editor shows
+  these demo components in English, and its own components in whatever it
+  typed.
+* Fixed: the testimonial quote marks use `open-quote`/`close-quote` instead of
+  typed German quotation marks, so the browser picks the pair for the
+  document's language.
+
+= 0.2.2 =
+* Fixed: a component view that throws no longer takes the page down. Before,
+  an exception inside a `render.php` (a helper that no longer exists, a class
+  renamed by an update) surfaced as WordPress's critical-error page, and the
+  cause sat in a log nobody had open. The exception is now caught, the partial
+  output is discarded so unbalanced markup cannot break the page's layout, and
+  the failure is logged with its file and line. Visitors get a gap; editors see
+  an HTML comment naming the file.
+* Fixed: the migration no longer writes before the permission check. Both
+  entry points — the admin edit link and the REST pre-dispatch filter — now
+  require `edit_post` for the post they would touch, instead of relying on a
+  check that Core only runs afterwards.
+* Fixed: the source contains no stylesheet or script tag literal any more. The
+  guard that rejects the sequence closing an inline stylesheet in a
+  component's CSS builds it from two halves, so a code scanner no longer reads
+  the guard as raw output. The plugin delivers its CSS through
+  `wp_add_inline_style()`; it never printed a tag.
 
 = 0.2.1 =
 * Fixed: every declaration, option, transient, meta key, hook, block name and

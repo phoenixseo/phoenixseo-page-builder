@@ -532,6 +532,8 @@ class MigrationTest extends Sdcpb_TestCase {
 		$post_id = $this->make_page();
 		$this->old_document( $post_id, array( $this->faq_component() ) );
 
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
 		$edit = new WP_REST_Request( 'GET', '/wp/v2/pages/' . $post_id );
 		$edit->set_param( 'context', 'edit' );
 
@@ -539,6 +541,72 @@ class MigrationTest extends Sdcpb_TestCase {
 
 		$this->assertTrue( Sdcpb_Migration::is_migrated( $post_id ) );
 		$this->assertCount( 1, $this->blocks_of( $post_id ) );
+	}
+
+	/**
+	 * The filter runs before the controller's permission check, so it makes
+	 * that check itself: a request that will be rejected must not have
+	 * written to the post on its way there.
+	 */
+	public function test_rest_filter_writes_nothing_without_the_capability() {
+		$post_id = $this->make_page();
+		$this->old_document( $post_id, array( $this->faq_component() ) );
+
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'subscriber' ) ) );
+
+		$edit = new WP_REST_Request( 'GET', '/wp/v2/pages/' . $post_id );
+		$edit->set_param( 'context', 'edit' );
+
+		Sdcpb_Migration::migrate_rest_request( null, rest_get_server(), $edit );
+
+		wp_set_current_user( 0 );
+
+		$this->assertFalse( Sdcpb_Migration::is_migrated( $post_id ) );
+		$this->assertSame( '', get_post_field( 'post_content', $post_id, 'raw' ) );
+	}
+
+	/**
+	 * The admin path reads the post id from the URL and runs before core
+	 * checks the capability for it — an id in the address bar is not
+	 * authorization, so a user without `edit_post` must not cause a write.
+	 */
+	public function test_requested_post_needs_the_capability() {
+		$post_id = $this->make_page();
+		$this->old_document( $post_id, array( $this->faq_component() ) );
+
+		$_GET['post'] = $post_id;
+
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'subscriber' ) ) );
+		Sdcpb_Migration::migrate_requested_post();
+
+		wp_set_current_user( 0 );
+		$this->assertFalse( Sdcpb_Migration::is_migrated( $post_id ) );
+
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		Sdcpb_Migration::migrate_requested_post();
+
+		unset( $_GET['post'] );
+
+		$this->assertTrue( Sdcpb_Migration::is_migrated( $post_id ) );
+		$this->assertCount( 1, $this->blocks_of( $post_id ) );
+	}
+
+	/**
+	 * An address without a post id is not an error, and a missing page is not
+	 * a write either.
+	 */
+	public function test_requested_post_ignores_a_missing_id() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
+		$_GET['post'] = 0;
+		Sdcpb_Migration::migrate_requested_post();
+
+		$_GET['post'] = 999999;
+		Sdcpb_Migration::migrate_requested_post();
+
+		unset( $_GET['post'] );
+
+		$this->assertFalse( Sdcpb_Migration::is_migrated( 999999 ) );
 	}
 
 	/**

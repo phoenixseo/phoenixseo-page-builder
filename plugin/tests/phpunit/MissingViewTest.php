@@ -125,6 +125,16 @@ class MissingViewTest extends Sdcpb_TestCase {
 	 * @return string[]
 	 */
 	private function logged() {
+		return $this->logged_with( 'has no view' );
+	}
+
+	/**
+	 * Log lines containing a given phrase.
+	 *
+	 * @param string $needle Phrase to look for.
+	 * @return string[]
+	 */
+	private function logged_with( $needle ) {
 		$file = $this->log_file;
 		if ( '' === $file || ! is_readable( $file ) ) {
 			return array();
@@ -137,7 +147,7 @@ class MissingViewTest extends Sdcpb_TestCase {
 
 		$out = array();
 		foreach ( explode( "\n", $text ) as $line ) {
-			if ( false !== strpos( $line, 'hat keine Ansicht' ) ) {
+			if ( false !== strpos( $line, $needle ) ) {
 				$out[] = $line;
 			}
 		}
@@ -215,7 +225,7 @@ class MissingViewTest extends Sdcpb_TestCase {
 		$html = Sdcpb_Frontend::render_post( $post_id );
 
 		$this->assertStringContainsString( '<!-- sdc:', $html );
-		$this->assertStringContainsString( 'hat keine Ansicht', $html );
+		$this->assertStringContainsString( 'has no view', $html );
 
 		// The marker is a comment, not content: once comments are gone, the
 		// only thing left may be the page's own wrapper — no text a reader
@@ -223,7 +233,7 @@ class MissingViewTest extends Sdcpb_TestCase {
 		$visible = trim( (string) preg_replace( '/<!--.*?-->/s', '', $html ) );
 		$visible = trim( (string) preg_replace( '#<div class="sdc-page sdc-page--\d+">\s*</div>#', '', $visible ) );
 		$this->assertSame( '', $visible );
-		$this->assertStringNotContainsString( 'hat keine Ansicht', $visible );
+		$this->assertStringNotContainsString( 'has no view', $visible );
 	}
 
 	/**
@@ -584,6 +594,201 @@ class MissingViewTest extends Sdcpb_TestCase {
 		$dirs[] = $this->views;
 
 		return $dirs;
+	}
+
+	/**
+	 * A type whose view throws halfway through.
+	 *
+	 * The template prints a container, then dies — the shape a real one takes
+	 * when it calls a helper that no longer exists, or names a class that was
+	 * renamed. Before this was handled, the fatal took the whole page down:
+	 * the visitor got "there has been a critical error" and the cause sat in
+	 * a log somewhere else.
+	 *
+	 * @param string $body Template body, after the opening tag.
+	 * @return string Type name, or '' on failure.
+	 */
+	private function type_with_throwing_view( $body = "throw new RuntimeException( 'kaputt' );" ) {
+		$type = $this->definition_type(
+			array(
+				array(
+					'key'   => 'field_sdc_k5_broken',
+					'label' => 'Überschrift',
+					'name'  => 'heading',
+					'type'  => 'text',
+				),
+			)
+		);
+
+		if ( '' === $type ) {
+			return '';
+		}
+
+		$dir = $this->views . '/' . $type;
+		if ( ! wp_mkdir_p( $dir ) ) {
+			return '';
+		}
+
+		$written = file_put_contents( $dir . '/render.php', "<?php\n" . $body . "\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Scratch file of this test.
+		$this->reload_host();
+
+		return false === $written ? '' : $type;
+	}
+
+	/*
+	---------------------------------------------------------------------
+	 * A view that throws
+	 * ------------------------------------------------------------------
+	 */
+
+	/**
+	 * A visitor gets a gap, not a fatal.
+	 *
+	 * This is the whole point: an exception inside theme code used to
+	 * escape the renderer and become WordPress's "critical error" page.
+	 */
+	public function test_a_throwing_view_does_not_take_the_page_down() {
+		$this->login_as_editor();
+
+		$type = $this->type_with_throwing_view();
+		if ( '' === $type ) {
+			$this->fail( 'Could not write a throwing view — the test cannot run.' );
+		}
+
+		$post_id = $this->page_with(
+			array(
+				array(
+					'type' => $type,
+					'data' => array(),
+				),
+			)
+		);
+
+		// No exception, and the page still renders around the broken
+		// component: `render_post()` is what a theme calls.
+		$html = Sdcpb_Frontend::render_post( $post_id );
+
+		$this->assertIsString( $html );
+		$this->assertStringContainsString( 'sdc-page', $html, 'The page wrapper survives a broken component.' );
+	}
+
+	/**
+	 * Half a component is discarded, not left in the page.
+	 *
+	 * The template below opens a div and then dies. Keeping that opening tag
+	 * would leave markup unbalanced by definition, so the browser would
+	 * reflow everything after it — one broken component would break the
+	 * page's layout, which is worse than the gap.
+	 */
+	public function test_partial_output_of_a_throwing_view_is_discarded() {
+		$this->login_as_editor();
+
+		$type = $this->type_with_throwing_view(
+			"echo '<div class=\"half-written\">';\nthrow new RuntimeException( 'kaputt' );"
+		);
+		if ( '' === $type ) {
+			$this->fail( 'Could not write a throwing view — the test cannot run.' );
+		}
+
+		$post_id = $this->page_with(
+			array(
+				array(
+					'type' => $type,
+					'data' => array(),
+				),
+			)
+		);
+
+		$html = Sdcpb_Frontend::render_post( $post_id );
+
+		$this->assertStringNotContainsString( 'half-written', $html );
+	}
+
+	/**
+	 * The failure reaches the log, with the file and line that threw.
+	 *
+	 * Without the location, "a component breaks" is a fact the operator
+	 * cannot act on.
+	 */
+	public function test_a_throwing_view_is_logged_with_its_location() {
+		wp_set_current_user( 0 );
+
+		$type = $this->type_with_throwing_view();
+		if ( '' === $type ) {
+			$this->fail( 'Could not write a throwing view — the test cannot run.' );
+		}
+
+		$post_id = $this->page_with(
+			array(
+				array(
+					'type' => $type,
+					'data' => array(),
+				),
+			)
+		);
+
+		Sdcpb_Frontend::render_post( $post_id );
+
+		$lines = $this->logged_with( 'failed' );
+		$this->assertCount( 1, $lines, 'A template that throws has to reach the log.' );
+		$this->assertStringContainsString( $type, $lines[0] );
+		$this->assertStringContainsString( 'render.php:', $lines[0], 'The log line has to name the file and line.' );
+		$this->assertStringContainsString( (string) $post_id, $lines[0] );
+	}
+
+	/**
+	 * The visitor sees nothing where the component was.
+	 */
+	public function test_a_throwing_view_is_invisible_to_visitors() {
+		wp_set_current_user( 0 );
+
+		$type = $this->type_with_throwing_view();
+		if ( '' === $type ) {
+			$this->fail( 'Could not write a throwing view — the test cannot run.' );
+		}
+
+		$post_id = $this->page_with(
+			array(
+				array(
+					'type' => $type,
+					'data' => array(),
+				),
+			)
+		);
+
+		$html = Sdcpb_Frontend::render_post( $post_id );
+
+		$visible = trim( (string) preg_replace( '/<!--.*?-->/s', '', (string) $html ) );
+		$visible = trim( (string) preg_replace( '#<div class="sdc-page sdc-page--\d+">\s*</div>#', '', $visible ) );
+
+		$this->assertSame( '', $visible );
+		$this->assertStringNotContainsString( 'failed', $visible );
+	}
+
+	/**
+	 * An editor gets the marker in the source, with the file to look at.
+	 */
+	public function test_a_throwing_view_is_marked_for_an_editor() {
+		$this->login_as_editor();
+
+		$type = $this->type_with_throwing_view();
+		if ( '' === $type ) {
+			$this->fail( 'Could not write a throwing view — the test cannot run.' );
+		}
+
+		$post_id = $this->page_with(
+			array(
+				array(
+					'type' => $type,
+					'data' => array(),
+				),
+			)
+		);
+
+		$html = Sdcpb_Frontend::render_post( $post_id );
+
+		$this->assertStringContainsString( '<!-- sdc:', $html );
+		$this->assertStringContainsString( 'failed', $html );
 	}
 
 	/**

@@ -59,158 +59,170 @@ class Sdcpb_Field_Editor {
 	 *
 	 * @var array<string,array>
 	 */
-	const TYPES = array(
+	/**
+	 * Every field type the editor offers, its group, and the settings it exposes.
+	 *
+	 * Built when it is asked for rather than held in a constant, because the
+	 * labels are translated: a translated string cannot live in a constant
+	 * initializer, and translating it at file scope would run before the
+	 * textdomain is loaded. The keys here are the ACF type names — they are
+	 * never shown and never translated.
+	 *
+	 * @return array[]
+	 */
+	public static function definitions() {
+		return array(
 		'text'         => array(
-			'label'   => 'Textzeile',
-			'group'   => 'Text',
+			'label'   => __('Text Line', 'sdc-page-builder' ),
+			'group'   => __('Text', 'sdc-page-builder' ),
 			'options' => array(
-				array( 'key' => 'placeholder', 'label' => 'Platzhalter', 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'default_value', 'label' => 'Vorbelegung', 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'maxlength', 'label' => 'Maximale Zeichen', 'kind' => self::KIND_NUMBER, 'min' => 0 ),
-				array( 'key' => 'prepend', 'label' => 'Davor', 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'append', 'label' => 'Danach', 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'placeholder', 'label' => __('Placeholder', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'maxlength', 'label' => __('Maximum Characters', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
+				array( 'key' => 'prepend', 'label' => __('Before', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'append', 'label' => __('After', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'textarea'     => array(
-			'label'   => 'Mehrzeiliger Text',
-			'group'   => 'Text',
+			'label'   => __('Multiline Text', 'sdc-page-builder' ),
+			'group'   => __('Text', 'sdc-page-builder' ),
 			'options' => array(
-				array( 'key' => 'rows', 'label' => 'Zeilen im Eingabefeld', 'kind' => self::KIND_NUMBER, 'min' => 1, 'max' => 40 ),
-				array( 'key' => 'placeholder', 'label' => 'Platzhalter', 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'default_value', 'label' => 'Vorbelegung', 'kind' => self::KIND_TEXTAREA ),
-				array( 'key' => 'maxlength', 'label' => 'Maximale Zeichen', 'kind' => self::KIND_NUMBER, 'min' => 0 ),
+				array( 'key' => 'rows', 'label' => __('Rows in the Input Field', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 1, 'max' => 40 ),
+				array( 'key' => 'placeholder', 'label' => __('Placeholder', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXTAREA ),
+				array( 'key' => 'maxlength', 'label' => __('Maximum Characters', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
 			),
 		),
 		'wysiwyg'      => array(
-			'label'   => 'Formatierter Text',
-			'group'   => 'Text',
+			'label'   => __('Formatted Text', 'sdc-page-builder' ),
+			'group'   => __('Text', 'sdc-page-builder' ),
 			'options' => array(),
 		),
 		'number'       => array(
-			'label'   => 'Zahl',
-			'group'   => 'Text',
+			'label'   => __('Number', 'sdc-page-builder' ),
+			'group'   => __('Text', 'sdc-page-builder' ),
 			'options' => array(
-				array( 'key' => 'min', 'label' => 'Kleinster Wert', 'kind' => self::KIND_NUMBER ),
-				array( 'key' => 'max', 'label' => 'Größter Wert', 'kind' => self::KIND_NUMBER ),
-				array( 'key' => 'step', 'label' => 'Schrittweite', 'kind' => self::KIND_NUMBER, 'min' => 0 ),
-				array( 'key' => 'default_value', 'label' => 'Vorbelegung', 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'placeholder', 'label' => 'Platzhalter', 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'prepend', 'label' => 'Davor', 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'append', 'label' => 'Danach', 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'min', 'label' => __('Smallest Value', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER ),
+				array( 'key' => 'max', 'label' => __('Largest Value', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER ),
+				array( 'key' => 'step', 'label' => __('Step', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'placeholder', 'label' => __('Placeholder', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'prepend', 'label' => __('Before', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'append', 'label' => __('After', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'range'        => array(
-			'label'   => 'Schieberegler',
-			'group'   => 'Text',
+			'label'   => __('Slider', 'sdc-page-builder' ),
+			'group'   => __('Text', 'sdc-page-builder' ),
 			'options' => array(
-				array( 'key' => 'min', 'label' => 'Kleinster Wert', 'kind' => self::KIND_NUMBER ),
-				array( 'key' => 'max', 'label' => 'Größter Wert', 'kind' => self::KIND_NUMBER ),
-				array( 'key' => 'step', 'label' => 'Schrittweite', 'kind' => self::KIND_NUMBER, 'min' => 0 ),
-				array( 'key' => 'default_value', 'label' => 'Vorbelegung', 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'prepend', 'label' => 'Davor', 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'append', 'label' => 'Danach', 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'min', 'label' => __('Smallest Value', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER ),
+				array( 'key' => 'max', 'label' => __('Largest Value', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER ),
+				array( 'key' => 'step', 'label' => __('Step', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'prepend', 'label' => __('Before', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'append', 'label' => __('After', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'email'        => array(
-			'label'   => 'E-Mail-Adresse',
-			'group'   => 'Text',
+			'label'   => __('Email Address', 'sdc-page-builder' ),
+			'group'   => __('Text', 'sdc-page-builder' ),
 			'options' => array(
-				array( 'key' => 'placeholder', 'label' => 'Platzhalter', 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'default_value', 'label' => 'Vorbelegung', 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'placeholder', 'label' => __('Placeholder', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'url'          => array(
-			'label'   => 'Link-Adresse',
-			'group'   => 'Text',
+			'label'   => __('Link URL', 'sdc-page-builder' ),
+			'group'   => __('Text', 'sdc-page-builder' ),
 			'options' => array(
-				array( 'key' => 'placeholder', 'label' => 'Platzhalter', 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'default_value', 'label' => 'Vorbelegung', 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'placeholder', 'label' => __('Placeholder', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'select'       => array(
-			'label'   => 'Auswahlliste',
-			'group'   => 'Auswahl',
+			'label'   => __('Select', 'sdc-page-builder' ),
+			'group'   => __('Choice', 'sdc-page-builder' ),
 			'options' => array(
-				array( 'key' => 'choices', 'label' => 'Auswahlmöglichkeiten', 'kind' => self::KIND_PAIRS ),
-				array( 'key' => 'default_value', 'label' => 'Vorbelegung', 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'multiple', 'label' => 'Mehrfachauswahl erlauben', 'kind' => self::KIND_BOOL ),
+				array( 'key' => 'choices', 'label' => __('Choices', 'sdc-page-builder' ), 'kind' => self::KIND_PAIRS ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'multiple', 'label' => __('Allow Multiple Selections', 'sdc-page-builder' ), 'kind' => self::KIND_BOOL ),
 				array(
 					'key'     => 'return_format',
-					'label'   => 'Rückgabewert',
+					'label'   => __('Return Value', 'sdc-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'value' => 'Wert',
-						'label' => 'Beschriftung',
+						'label' => __('Label', 'sdc-page-builder' ),
 						'array' => 'Wert und Beschriftung',
 					),
 				),
 			),
 		),
 		'checkbox'     => array(
-			'label'   => 'Mehrfaches Ankreuzen',
-			'group'   => 'Auswahl',
+			'label'   => __('Checkboxes', 'sdc-page-builder' ),
+			'group'   => __('Choice', 'sdc-page-builder' ),
 			'options' => array(
-				array( 'key' => 'choices', 'label' => 'Auswahlmöglichkeiten', 'kind' => self::KIND_PAIRS ),
+				array( 'key' => 'choices', 'label' => __('Choices', 'sdc-page-builder' ), 'kind' => self::KIND_PAIRS ),
 				array(
 					'key'     => 'layout',
-					'label'   => 'Anordnung',
+					'label'   => __('Layout', 'sdc-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'vertical'   => 'Untereinander',
 						'horizontal' => 'Nebeneinander',
 					),
 				),
-				array( 'key' => 'default_value', 'label' => 'Vorbelegung (Werte, mit Komma getrennt)', 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'default_value', 'label' => __('Default Value (values, comma-separated)', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'radio'        => array(
-			'label'   => 'Einfache Auswahl',
-			'group'   => 'Auswahl',
+			'label'   => __('Radio Buttons', 'sdc-page-builder' ),
+			'group'   => __('Choice', 'sdc-page-builder' ),
 			'options' => array(
-				array( 'key' => 'choices', 'label' => 'Auswahlmöglichkeiten', 'kind' => self::KIND_PAIRS ),
+				array( 'key' => 'choices', 'label' => __('Choices', 'sdc-page-builder' ), 'kind' => self::KIND_PAIRS ),
 				array(
 					'key'     => 'layout',
-					'label'   => 'Anordnung',
+					'label'   => __('Layout', 'sdc-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'vertical'   => 'Untereinander',
 						'horizontal' => 'Nebeneinander',
 					),
 				),
-				array( 'key' => 'default_value', 'label' => 'Vorbelegung', 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'button_group' => array(
-			'label'   => 'Knopfleiste',
-			'group'   => 'Auswahl',
+			'label'   => __('Button Group', 'sdc-page-builder' ),
+			'group'   => __('Choice', 'sdc-page-builder' ),
 			'options' => array(
-				array( 'key' => 'choices', 'label' => 'Auswahlmöglichkeiten', 'kind' => self::KIND_PAIRS ),
-				array( 'key' => 'default_value', 'label' => 'Vorbelegung', 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'choices', 'label' => __('Choices', 'sdc-page-builder' ), 'kind' => self::KIND_PAIRS ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'true_false'   => array(
-			'label'   => 'Ja/Nein',
-			'group'   => 'Auswahl',
+			'label'   => __('Yes/No', 'sdc-page-builder' ),
+			'group'   => __('Choice', 'sdc-page-builder' ),
 			'options' => array(
 				array(
 					'key'     => 'default_value',
-					'label'   => 'Vorbelegung',
+					'label'   => __('Default Value', 'sdc-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'0' => 'Nein',
 						'1' => 'Ja',
 					),
 				),
-				array( 'key' => 'ui', 'label' => 'Als Schalter anzeigen', 'kind' => self::KIND_BOOL ),
+				array( 'key' => 'ui', 'label' => __('Show as Toggle', 'sdc-page-builder' ), 'kind' => self::KIND_BOOL ),
 			),
 		),
 		'image'        => array(
-			'label'   => 'Bild',
-			'group'   => 'Medien',
+			'label'   => __('Image', 'sdc-page-builder' ),
+			'group'   => __('Media', 'sdc-page-builder' ),
 			'options' => array(
 				array(
 					'key'     => 'return_format',
-					'label'   => 'Rückgabewert',
+					'label'   => __('Return Value', 'sdc-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'array' => 'Datenfeld',
@@ -221,12 +233,12 @@ class Sdcpb_Field_Editor {
 			),
 		),
 		'file'         => array(
-			'label'   => 'Datei',
-			'group'   => 'Medien',
+			'label'   => __('File', 'sdc-page-builder' ),
+			'group'   => __('Media', 'sdc-page-builder' ),
 			'options' => array(
 				array(
 					'key'     => 'return_format',
-					'label'   => 'Rückgabewert',
+					'label'   => __('Return Value', 'sdc-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'array' => 'Datenfeld',
@@ -237,12 +249,12 @@ class Sdcpb_Field_Editor {
 			),
 		),
 		'link'         => array(
-			'label'   => 'Verweis',
-			'group'   => 'Medien',
+			'label'   => __('Link', 'sdc-page-builder' ),
+			'group'   => __('Media', 'sdc-page-builder' ),
 			'options' => array(
 				array(
 					'key'     => 'return_format',
-					'label'   => 'Rückgabewert',
+					'label'   => __('Return Value', 'sdc-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'url'   => 'Adresse',
@@ -252,43 +264,44 @@ class Sdcpb_Field_Editor {
 			),
 		),
 		'repeater'     => array(
-			'label'      => 'Wiederholung',
-			'group'      => 'Aufbau',
+			'label'      => __('Repeater', 'sdc-page-builder' ),
+			'group'      => __('Structure', 'sdc-page-builder' ),
 			'container'  => true,
 			'options'    => array(
-				array( 'key' => 'button_label', 'label' => 'Beschriftung des Hinzufügen-Knopfs', 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'button_label', 'label' => __('Label of the Add Button', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
 				array(
 					'key'     => 'layout',
-					'label'   => 'Darstellung im Editor',
+					'label'   => __('Editor Display', 'sdc-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'table' => 'Tabelle',
-						'block' => 'Blöcke',
+						'block' => __( 'Blocks', 'sdc-page-builder' ),
 						'row'   => 'Zeilen',
 					),
 				),
-				array( 'key' => 'min', 'label' => 'Mindestanzahl Zeilen', 'kind' => self::KIND_NUMBER, 'min' => 0 ),
-				array( 'key' => 'max', 'label' => 'Höchstanzahl Zeilen', 'kind' => self::KIND_NUMBER, 'min' => 0 ),
+				array( 'key' => 'min', 'label' => __('Minimum Rows', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
+				array( 'key' => 'max', 'label' => __('Maximum Rows', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
 			),
 		),
 		'group'        => array(
-			'label'     => 'Gruppe',
-			'group'     => 'Aufbau',
+			'label'     => __('Group', 'sdc-page-builder' ),
+			'group'     => __('Structure', 'sdc-page-builder' ),
 			'container' => true,
 			'options'   => array(
 				array(
 					'key'     => 'layout',
-					'label'   => 'Darstellung im Editor',
+					'label'   => __('Editor Display', 'sdc-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
-						'block' => 'Blöcke',
+						'block' => __( 'Blocks', 'sdc-page-builder' ),
 						'table' => 'Tabelle',
 						'row'   => 'Zeilen',
 					),
 				),
 			),
 		),
-	);
+		);
+	}
 
 	/**
 	 * Hook the assets.
@@ -355,37 +368,37 @@ class Sdcpb_Field_Editor {
 				// A list, not a map: the picker shows the types in this order.
 				'types'  => self::types(),
 				'labels' => array(
-					'field'          => __( 'Feld', 'sdc-page-builder' ),
-					'subField'       => __( 'Unterfeld', 'sdc-page-builder' ),
-					'addField'       => __( 'Feld hinzufügen', 'sdc-page-builder' ),
-					'addSubField'    => __( 'Unterfeld hinzufügen', 'sdc-page-builder' ),
-					'name'           => __( 'Feldname', 'sdc-page-builder' ),
-					'label'          => __( 'Beschriftung', 'sdc-page-builder' ),
-					'type'           => __( 'Feldtyp', 'sdc-page-builder' ),
-					'instructions'   => __( 'Hinweis im Editor', 'sdc-page-builder' ),
-					'required'       => __( 'Pflichtfeld', 'sdc-page-builder' ),
-					'options'        => __( 'Einstellungen', 'sdc-page-builder' ),
-					'subFields'      => __( 'Unterfelder', 'sdc-page-builder' ),
-					'remove'         => __( 'Entfernen', 'sdc-page-builder' ),
-					'up'             => __( 'Nach oben', 'sdc-page-builder' ),
-					'down'           => __( 'Nach unten', 'sdc-page-builder' ),
-					'collapse'       => __( 'Einklappen', 'sdc-page-builder' ),
-					'expand'         => __( 'Ausklappen', 'sdc-page-builder' ),
-					'empty'          => __( 'Noch keine Felder. Unten einen Feldtyp wählen und hinzufügen.', 'sdc-page-builder' ),
-					'removeField'    => __( 'Dieses Feld samt Einstellungen entfernen?', 'sdc-page-builder' ),
-					'removeChildren' => __( 'Der neue Typ ist keine Sammlung. Die Unterfelder dieses Feldes werden entfernt. Fortfahren?', 'sdc-page-builder' ),
+					'field'          => __( 'Field', 'sdc-page-builder' ),
+					'subField'       => __( 'Subfield', 'sdc-page-builder' ),
+					'addField'       => __( 'Add Field', 'sdc-page-builder' ),
+					'addSubField'    => __( 'Add Subfield', 'sdc-page-builder' ),
+					'name'           => __( 'Field Name', 'sdc-page-builder' ),
+					'label'          => __( 'Label', 'sdc-page-builder' ),
+					'type'           => __( 'Field Type', 'sdc-page-builder' ),
+					'instructions'   => __( 'Hint in the Editor', 'sdc-page-builder' ),
+					'required'       => __( 'Required', 'sdc-page-builder' ),
+					'options'        => __( 'Settings', 'sdc-page-builder' ),
+					'subFields'      => __( 'Subfields', 'sdc-page-builder' ),
+					'remove'         => __( 'Remove', 'sdc-page-builder' ),
+					'up'             => __( 'Move Up', 'sdc-page-builder' ),
+					'down'           => __( 'Move Down', 'sdc-page-builder' ),
+					'collapse'       => __( 'Collapse', 'sdc-page-builder' ),
+					'expand'         => __( 'Expand', 'sdc-page-builder' ),
+					'empty'          => __( 'No fields yet. Choose a field type below and add it.', 'sdc-page-builder' ),
+					'removeField'    => __( 'Remove this field and its settings?', 'sdc-page-builder' ),
+					'removeChildren' => __( 'The new type is not a collection. The subfields of this field will be removed. Continue?', 'sdc-page-builder' ),
 					/* translators: %s: field name that is missing */
-					'noName'         => __( 'Jedes Feld braucht einen Namen. Fehlt er bei: %s', 'sdc-page-builder' ),
+					'noName'         => __( 'Every field needs a name. Missing for: %s', 'sdc-page-builder' ),
 					/* translators: %s: field name that occurs twice */
-					'duplicateName'  => __( 'Dieser Feldname kommt doppelt vor: %s', 'sdc-page-builder' ),
-					'pairValue'      => __( 'Wert', 'sdc-page-builder' ),
-					'pairLabel'      => __( 'Beschriftung', 'sdc-page-builder' ),
-					'pairAdd'        => __( 'Möglichkeit hinzufügen', 'sdc-page-builder' ),
-					'nameHint'       => __( 'a–z, 0–9 und _ . Wird aus der Beschriftung gebildet, solange du ihn nicht selbst änderst.', 'sdc-page-builder' ),
-					'jsonUpdated'    => __( 'Das JSON wurde aus den Feldern neu geschrieben.', 'sdc-page-builder' ),
+					'duplicateName'  => __( 'This field name appears twice: %s', 'sdc-page-builder' ),
+					'pairValue'      => __( 'Value', 'sdc-page-builder' ),
+					'pairLabel'      => __( 'Label', 'sdc-page-builder' ),
+					'pairAdd'        => __( 'Add Choice', 'sdc-page-builder' ),
+					'nameHint'       => __( 'a–z, 0–9 and _ . Built from the label as long as you do not change it yourself.', 'sdc-page-builder' ),
+					'jsonUpdated'    => __( 'The JSON was rewritten from the fields.', 'sdc-page-builder' ),
 					/* translators: %s: parser message */
-					'jsonBroken'     => __( 'Das JSON im Textfeld ist fehlerhaft und wurde nicht überschrieben: %s', 'sdc-page-builder' ),
-					'unknownType'    => __( 'Dieser Feldtyp hat hier keine eigenen Einstellungen. Alles, was im JSON steht, bleibt beim Speichern erhalten — ändern lässt er sich nur dort.', 'sdc-page-builder' ),
+					'jsonBroken'     => __( 'The JSON in the text box is faulty and was not overwritten: %s', 'sdc-page-builder' ),
+					'unknownType'    => __( 'This field type has no settings of its own here. Everything in the JSON is preserved on save — it can only be changed there.', 'sdc-page-builder' ),
 				),
 			)
 		);
@@ -423,7 +436,7 @@ class Sdcpb_Field_Editor {
 	public static function types() {
 		$out = array();
 
-		foreach ( self::TYPES as $type => $definition ) {
+		foreach ( self::definitions() as $type => $definition ) {
 			$options = array();
 
 			foreach ( (array) $definition['options'] as $option ) {
@@ -449,7 +462,7 @@ class Sdcpb_Field_Editor {
 	 * @return bool
 	 */
 	public static function is_known( $type ) {
-		return isset( self::TYPES[ (string) $type ] );
+		return isset( self::definitions()[ (string) $type ] );
 	}
 
 	/**
@@ -463,26 +476,26 @@ class Sdcpb_Field_Editor {
 
 		printf(
 			'<p class="description">%s</p>',
-			esc_html__( 'Feldtyp wählen, hinzufügen, Einstellungen ausfüllen. Das JSON für die definition.json entsteht daraus.', 'sdc-page-builder' )
+			esc_html__( 'Choose a field type, add it, fill in the settings. The JSON for the definition.json is built from that.', 'sdc-page-builder' )
 		);
 
 		echo '<div class="sdc-fe__list" data-sdc-fe-list></div>';
-		echo '<p class="sdc-fe__empty" data-sdc-fe-empty>' . esc_html__( 'Noch keine Felder. Unten einen Feldtyp wählen und hinzufügen.', 'sdc-page-builder' ) . '</p>';
+		echo '<p class="sdc-fe__empty" data-sdc-fe-empty>' . esc_html__( 'No fields yet. Choose a field type below and add it.', 'sdc-page-builder' ) . '</p>';
 
 		echo '<div class="sdc-fe__add">';
-		self::picker( __( 'Feld hinzufügen', 'sdc-page-builder' ) );
+		self::picker( __( 'Add Field', 'sdc-page-builder' ) );
 		echo '</div>';
 
 		echo '<p class="sdc-fe__error" data-sdc-fe-error role="alert" hidden></p>';
 
 		echo '<details class="sdc-fe__json">';
-		echo '<summary>' . esc_html__( 'JSON direkt bearbeiten', 'sdc-page-builder' ) . '</summary>';
-		echo '<p class="description">' . esc_html__( 'Wird aus den Feldern oben gefüllt und beim Absenden mitgeschickt. Wer hier von Hand ändert, klickt danach „JSON übernehmen“.', 'sdc-page-builder' ) . '</p>';
+		echo '<summary>' . esc_html__( 'Edit JSON Directly', 'sdc-page-builder' ) . '</summary>';
+		echo '<p class="description">' . esc_html__( 'Filled from the fields above and submitted with the form. If you change it by hand, click "Apply JSON" afterwards.', 'sdc-page-builder' ) . '</p>';
 		printf(
 			'<textarea id="sdcpb_fields" name="sdcpb_fields" rows="16" class="large-text code" spellcheck="false">%s</textarea>',
 			esc_textarea( (string) $json )
 		);
-		echo '<p><button type="button" class="button" data-sdc-fe-apply>' . esc_html__( 'JSON übernehmen', 'sdc-page-builder' ) . '</button></p>';
+		echo '<p><button type="button" class="button" data-sdc-fe-apply>' . esc_html__( 'Apply JSON', 'sdc-page-builder' ) . '</button></p>';
 		echo '</details>';
 
 		echo '</div>';
@@ -499,13 +512,13 @@ class Sdcpb_Field_Editor {
 	private static function picker( $button_label ) {
 		$groups = array();
 
-		foreach ( self::TYPES as $type => $definition ) {
+		foreach ( self::definitions() as $type => $definition ) {
 			$groups[ $definition['group'] ][ $type ] = $definition['label'];
 		}
 
 		printf(
 			'<select class="sdc-fe__select" data-sdc-fe-add-type aria-label="%s">',
-			esc_attr__( 'Feldtyp für das neue Feld', 'sdc-page-builder' )
+			esc_attr__( 'Field type for the new field', 'sdc-page-builder' )
 		);
 
 		foreach ( $groups as $group => $types ) {

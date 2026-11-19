@@ -217,6 +217,39 @@ class StyleEditorTest extends Sdcpb_TestCase {
 
 	/*
 	---------------------------------------------------------------------
+	 * The lint
+	 * ------------------------------------------------------------------
+	 */
+
+	/**
+	 * The guard against a stylesheet that would end its own element.
+	 *
+	 * Worth its own test because the sequence is assembled from two halves
+	 * (`Sdcpb_View::STYLE_CLOSE`): a typo in either half would leave the
+	 * check comparing against nothing, and every other test would still
+	 * pass while the guard was dead.
+	 */
+	public function test_the_lint_rejects_a_closing_stylesheet_tag() {
+		$result = Sdcpb_View::lint_style( '.a { color: red; } </style><script>alert(1)</script>' );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'sdcpb_style_tag', $result->get_error_code() );
+	}
+
+	/**
+	 * An unclosed comment is rejected too: its failure mode is a page that
+	 * silently loses its styles, which is the kind of thing nobody traces
+	 * back to the editor.
+	 */
+	public function test_the_lint_rejects_an_unclosed_comment() {
+		$result = Sdcpb_View::lint_style( '.a { color: red; } /* offen' );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'sdcpb_style_comment', $result->get_error_code() );
+	}
+
+	/*
+	---------------------------------------------------------------------
 	 * Permissions
 	 * ------------------------------------------------------------------
 	 */

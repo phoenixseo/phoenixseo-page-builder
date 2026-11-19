@@ -141,7 +141,7 @@ $sdcpb_vinyl_meta = array_filter(
 					echo esc_html(
 						sprintf(
 							/* translators: %d: number of tracks. */
-							_n( '%d Track', '%d Tracks', $sdcpb_vinyl_count, 'sdc-page-builder' ),
+							_n( '%d track', '%d tracks', $sdcpb_vinyl_count, 'sdc-page-builder' ),
 							$sdcpb_vinyl_count
 						)
 					);
@@ -167,7 +167,7 @@ $sdcpb_vinyl_meta = array_filter(
 					<h3 class="sdc-vinyl__side-title">
 						<?php
 						/* translators: %s: side of the record, e.g. A. */
-						printf( esc_html__( 'Seite %s', 'sdc-page-builder' ), esc_html( $sdcpb_vinyl_side ) );
+						printf( esc_html__( 'Page %s', 'sdc-page-builder' ), esc_html( $sdcpb_vinyl_side ) );
 						?>
 					</h3>
 

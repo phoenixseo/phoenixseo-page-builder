@@ -1,7 +1,7 @@
 {
     "key": "group_sdcpb_component_series",
-    "title": "Serie",
-    "sdcpb_description": "Eine Serie mit Staffeln und Folgen, Poster und den Angaben, die eine Serienseite braucht.",
+    "title": "Series",
+    "sdcpb_description": "A series with seasons and episodes, poster and the details a series page needs.",
     "sdcpb_icon": "video-alt2",
     "sdcpb_version": 1,
     "fields": [
@@ -10,32 +10,32 @@
             "label": "Poster",
             "name": "poster",
             "type": "image",
-            "instructions": "Hochformat, mindestens 600 px hoch.",
+            "instructions": "Portrait, at least 600 px tall.",
             "required": 0,
             "return_format": "array",
             "preview_size": "medium"
         },
         {
             "key": "field_sdc_series_title",
-            "label": "Titel",
+            "label": "Title",
             "name": "title",
             "type": "text",
             "required": 1
         },
         {
             "key": "field_sdc_series_original_title",
-            "label": "Originaltitel",
+            "label": "Original title",
             "name": "original_title",
             "type": "text",
-            "instructions": "Nur ausfüllen, wenn er sich vom deutschen Titel unterscheidet.",
+            "instructions": "Only fill in if it differs from the original title.",
             "required": 0
         },
         {
             "key": "field_sdc_series_first_year",
-            "label": "Erstes Jahr",
+            "label": "First year",
             "name": "first_year",
             "type": "number",
-            "instructions": "Jahr der ersten Folge.",
+            "instructions": "Year of the first episode.",
             "required": 0,
             "min": 1920,
             "max": 2100,
@@ -43,10 +43,10 @@
         },
         {
             "key": "field_sdc_series_last_year",
-            "label": "Letztes Jahr",
+            "label": "Last year",
             "name": "last_year",
             "type": "number",
-            "instructions": "Leer lassen, solange die Serie läuft. Die Ansicht schreibt dann „seit“ statt einer Spanne.",
+            "instructions": "Leave empty while the series is running. The view then writes \"since\" instead of a span.",
             "required": 0,
             "min": 1920,
             "max": 2100,
@@ -54,15 +54,15 @@
         },
         {
             "key": "field_sdc_series_creator",
-            "label": "Idee",
+            "label": "Idea",
             "name": "creator",
             "type": "text",
-            "instructions": "Wer die Serie erfunden hat, nicht wer sie produziert hat.",
+            "instructions": "Who invented the series, not who produced it.",
             "required": 0
         },
         {
             "key": "field_sdc_series_network",
-            "label": "Sender oder Dienst",
+            "label": "Network or service",
             "name": "network",
             "type": "text",
             "required": 0
@@ -72,15 +72,15 @@
             "label": "Genre",
             "name": "genre",
             "type": "text",
-            "instructions": "Mehrere durch Komma trennen.",
+            "instructions": "Separate several with commas.",
             "required": 0
         },
         {
             "key": "field_sdc_series_rating",
-            "label": "Bewertung",
+            "label": "Rating",
             "name": "rating",
             "type": "number",
-            "instructions": "Von 0 bis 10, eine Nachkommastelle.",
+            "instructions": "From 0 to 10, one decimal place.",
             "required": 0,
             "min": 0,
             "max": 10,
@@ -88,20 +88,20 @@
         },
         {
             "key": "field_sdc_series_seasons",
-            "label": "Staffeln",
+            "label": "Seasons",
             "name": "seasons",
             "type": "repeater",
-            "instructions": "Eine Zeile pro Staffel, die Reihenfolge ist die Reihenfolge der Ausstrahlung.",
+            "instructions": "One line per season; the order is the broadcast order.",
             "required": 0,
             "layout": "table",
-            "button_label": "Staffel hinzufügen",
+            "button_label": "Add season",
             "sub_fields": [
                 {
                     "key": "field_sdc_series_season_number",
-                    "label": "Staffel",
+                    "label": "Season",
                     "name": "number",
                     "type": "number",
-                    "instructions": "Die Nummer, unter der die Staffel läuft. Leer nummeriert die Ansicht fortlaufend.",
+                    "instructions": "The number the season runs under. Empty numbers them in sequence in the view.",
                     "required": 0,
                     "min": 1,
                     "max": 100,
@@ -109,10 +109,10 @@
                 },
                 {
                     "key": "field_sdc_series_season_year",
-                    "label": "Jahr",
+                    "label": "Year",
                     "name": "year",
                     "type": "number",
-                    "instructions": "Jahr der Erstausstrahlung dieser Staffel.",
+                    "instructions": "Year this season first aired.",
                     "required": 0,
                     "min": 1920,
                     "max": 2100,
@@ -120,17 +120,17 @@
                 },
                 {
                     "key": "field_sdc_series_season_episodes",
-                    "label": "Folgen",
+                    "label": "Episodes",
                     "name": "episodes",
                     "type": "repeater",
-                    "instructions": "Die Reihenfolge hier ist die Reihenfolge der Ausstrahlung. Die Folgennummer vergibt die Ansicht.",
+                    "instructions": "The order here is the broadcast order. The view assigns the episode number.",
                     "required": 0,
                     "layout": "table",
-                    "button_label": "Folge hinzufügen",
+                    "button_label": "Add episode",
                     "sub_fields": [
                         {
                             "key": "field_sdc_series_episode_title",
-                            "label": "Titel",
+                            "label": "Title",
                             "name": "title",
                             "type": "text",
                             "required": 1
@@ -141,10 +141,10 @@
         },
         {
             "key": "field_sdc_series_synopsis",
-            "label": "Worum es geht",
+            "label": "What it is about",
             "name": "synopsis",
             "type": "textarea",
-            "instructions": "Drei bis fünf Sätze, ohne Spoiler.",
+            "instructions": "Three to five sentences, no spoilers.",
             "required": 0,
             "rows": 5
         },
@@ -153,7 +153,7 @@
             "label": "Link",
             "name": "link",
             "type": "link",
-            "instructions": "Optional. Trailer oder Streaming.",
+            "instructions": "Optional. Trailer or streaming.",
             "required": 0,
             "return_format": "array"
         }

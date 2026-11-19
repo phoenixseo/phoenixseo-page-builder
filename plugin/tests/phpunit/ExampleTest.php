@@ -94,14 +94,14 @@ class ExampleTest extends Sdcpb_TestCase {
 
 		$html = Sdcpb_Block::render( 'vinyl', array( 'data' => $data ) );
 
-		$this->assertStringContainsString( 'Seite A', $html );
-		$this->assertStringContainsString( 'Seite B', $html );
+		$this->assertStringContainsString( 'Page A', $html );
+		$this->assertStringContainsString( 'Page B', $html );
 		$this->assertStringContainsString( 'Come Together', $html );
 		$this->assertStringContainsString( 'Here Comes the Sun', $html );
 		$this->assertStringContainsString( '<ol class="sdc-vinyl__tracks"', $html );
 
 		// 4:20 + 3:03 + 3:05 = 10:28.
-		$this->assertStringContainsString( '3 Tracks · 10:28', $html );
+		$this->assertStringContainsString( '3 tracks · 10:28', $html );
 
 		// Both facts, printed once: the label line holds year, label, number.
 		$this->assertStringContainsString( '1969 · Apple · PCS 7088', $html );
@@ -137,10 +137,10 @@ class ExampleTest extends Sdcpb_TestCase {
 			)
 		);
 
-		$this->assertStringContainsString( '2 Tracks', $html );
+		$this->assertStringContainsString( '2 tracks', $html );
 
 		// The known track still shows its own length; only the total is gone.
-		$this->assertStringNotContainsString( '2 Tracks · ', $html, 'A partial sum must not be printed as a total.' );
+		$this->assertStringNotContainsString( '2 tracks · ', $html, 'A partial sum must not be printed as a total.' );
 	}
 
 	/**
@@ -162,7 +162,7 @@ class ExampleTest extends Sdcpb_TestCase {
 			)
 		);
 
-		$this->assertStringContainsString( 'Seite A', $html );
+		$this->assertStringContainsString( 'Page A', $html );
 		$this->assertStringContainsString( 'Erster', $html );
 	}
 
@@ -194,18 +194,18 @@ class ExampleTest extends Sdcpb_TestCase {
 		$html = Sdcpb_Block::render( 'movie', array( 'data' => $data ) );
 
 		$this->assertStringContainsString( '<dl class="sdc-movie__facts"', $html );
-		$this->assertStringContainsString( '<dt class="sdc-movie__term">Regie</dt>', $html );
+		$this->assertStringContainsString( '<dt class="sdc-movie__term">Director</dt>', $html );
 		$this->assertStringContainsString( 'Stanley Kubrick', $html );
 
 		// 95 minutes, not "95".
-		$this->assertStringContainsString( '1 Std. 35 Min.', $html );
+		$this->assertStringContainsString( '1h 35m', $html );
 
 		// A meter without its range is a number without context.
 		$this->assertStringContainsString( 'max="10"', $html );
 		$this->assertStringContainsString( 'value="8.4"', $html );
 		$this->assertStringContainsString( '8,4 / 10', $html );
 
-		$this->assertStringContainsString( 'als Dr. Seltsam', $html );
+		$this->assertStringContainsString( 'as Dr. Seltsam', $html );
 		$this->assertStringContainsString( '(1964)', $html );
 
 		$this->assertStringNotContainsString( 'data-sdc-name', $html );
@@ -266,12 +266,12 @@ class ExampleTest extends Sdcpb_TestCase {
 		$html = Sdcpb_Block::render( 'series', array( 'data' => $data ) );
 
 		$this->assertStringContainsString( '<details class="sdc-series__season">', $html );
-		$this->assertStringContainsString( 'Staffel 1', $html );
-		$this->assertStringContainsString( 'Staffel 2', $html );
+		$this->assertStringContainsString( 'Season 1', $html );
+		$this->assertStringContainsString( 'Season 2', $html );
 
 		// Two seasons, three episodes, counted rather than maintained.
-		$this->assertStringContainsString( '2 Staffeln, 3 Folgen', $html );
-		$this->assertStringContainsString( 'seit 2019', $html );
+		$this->assertStringContainsString( '2 seasons, 3 episodes', $html );
+		$this->assertStringContainsString( 'since 2019', $html );
 		$this->assertStringContainsString( '<ol class="sdc-series__episodes"', $html );
 		$this->assertStringContainsString( '8 / 10', $html );
 
@@ -280,7 +280,7 @@ class ExampleTest extends Sdcpb_TestCase {
 
 	/**
 	 * Two years print as a span, and a season the author left blank does not
-	 * become "Staffel 5, 0 Folgen".
+	 * become "Season 5, 0 episodes".
 	 */
 	public function test_series_prints_a_span_and_drops_an_empty_season() {
 		$html = Sdcpb_Block::render(
@@ -305,8 +305,8 @@ class ExampleTest extends Sdcpb_TestCase {
 
 		// An en dash, not a hyphen.
 		$this->assertStringContainsString( '2001–2004', $html );
-		$this->assertStringContainsString( '1 Staffel, 1 Folge', $html );
-		$this->assertStringNotContainsString( 'Staffel 2', $html );
+		$this->assertStringContainsString( '1 season, 1 episode', $html );
+		$this->assertStringNotContainsString( 'Season 2', $html );
 	}
 
 	/**

@@ -78,14 +78,36 @@ class Sdcpb_Migration {
 
 	/**
 	 * Migrate the post named in the admin URL.
+	 *
+	 * The URL is core's own edit link (`post.php?post=123&action=edit`), which
+	 * WordPress builds without any plugin nonce, so a nonce cannot be checked
+	 * here — and one that the link cannot carry would be a check nobody ever
+	 * passes. What decides the request instead is the capability that link
+	 * itself demands: without `edit_post` on *this* post WordPress stops the
+	 * request anyway, and the write must not happen on the way to that stop.
+	 *
+	 * Nothing but the post id is taken from the request, and the content that
+	 * gets written is read from the post's own stored document — there is no
+	 * value in the URL, the body or the headers that can influence *what* is
+	 * written, only *which* page is looked at. The write is idempotent: on a
+	 * page that needs nothing it writes nothing, and a second call is a no-op.
 	 */
 	public static function migrate_requested_post() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- reading a post id, not acting on a form.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Core's edit link carries no nonce; the write is authorized by edit_post on this exact post below.
 		$post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
 
-		if ( $post_id > 0 ) {
-			self::migrate_post( $post_id );
+		if ( $post_id <= 0 ) {
+			return;
 		}
+
+		// A post id in a URL is not authorization. This runs on
+		// `load-post.php`, before core checks that this user may edit this
+		// post, so the same check is made here first.
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
+		self::migrate_post( $post_id );
 	}
 
 	/**
@@ -124,7 +146,17 @@ class Sdcpb_Migration {
 			return $result;
 		}
 
-		self::migrate_post( (int) $matches[2] );
+		$post_id = (int) $matches[2];
+
+		// `rest_pre_dispatch` runs before the controller checks permissions,
+		// so an unauthorized request would reach this write on its way to the
+		// 401. `context=edit` is what the editor asks for and what requires
+		// `edit_post`; the write only happens once that capability is there.
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return $result;
+		}
+
+		self::migrate_post( $post_id );
 
 		return $result;
 	}
@@ -481,7 +513,7 @@ class Sdcpb_Migration {
 			wp_update_post(
 				array(
 					'ID'           => $revision->ID,
-					'post_excerpt' => __( 'SDC: Komponenten aus der Metabox in Blöcke übernommen.', 'sdc-page-builder' ),
+					'post_excerpt' => __( 'SDC: components carried over from the metabox into blocks.', 'sdc-page-builder' ),
 				)
 			);
 		}

@@ -1,51 +1,51 @@
 {
     "key": "group_sdcpb_component_stats",
-    "title": "Kennzahlen",
-    "sdcpb_description": "Drei bis vier Zahlen mit Beschriftung, als Definitionsliste ausgezeichnet.",
+    "title": "Key figures",
+    "sdcpb_description": "Three to four labelled numbers, marked up as a definition list.",
     "sdcpb_icon": "chart-bar",
     "sdcpb_version": 1,
     "fields": [
         {
             "key": "field_sdc_stats_heading",
-            "label": "Überschrift",
+            "label": "Heading",
             "name": "heading",
             "type": "text",
-            "instructions": "Optional. Für Lesegeräte ist die Überschrift die Beschriftung der Liste.",
+            "instructions": "Optional. For screen readers the heading is the caption of the list.",
             "required": 0,
             "default_value": "",
             "placeholder": ""
         },
         {
             "key": "field_sdc_stats_items",
-            "label": "Kennzahlen",
+            "label": "Key figures",
             "name": "items",
             "type": "repeater",
-            "instructions": "Eine Kennzahl pro Zeile. Drei oder vier lesen sich gut, mehr wird eng.",
+            "instructions": "One figure per row. Three or four read well; more gets tight.",
             "required": 0,
             "layout": "table",
-            "button_label": "Kennzahl hinzufügen",
+            "button_label": "Add figure",
             "sub_fields": [
                 {
                     "key": "field_sdc_stats_item_value",
-                    "label": "Wert",
+                    "label": "Value",
                     "name": "value",
                     "type": "text",
-                    "instructions": "Zahl mit Einheit, zum Beispiel 12 Jahre oder 98 %.",
+                    "instructions": "A number with a unit, for example 12 years or 98%.",
                     "required": 1
                 },
                 {
                     "key": "field_sdc_stats_item_label",
-                    "label": "Beschriftung",
+                    "label": "Caption",
                     "name": "label",
                     "type": "text",
                     "required": 1
                 },
                 {
                     "key": "field_sdc_stats_item_note",
-                    "label": "Fußnote",
+                    "label": "Footnote",
                     "name": "note",
                     "type": "text",
-                    "instructions": "Optional. Etwa der Stand der Erhebung.",
+                    "instructions": "Optional. For example when the figures were collected.",
                     "required": 0
                 }
             ]

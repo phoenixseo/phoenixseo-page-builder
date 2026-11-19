@@ -8,10 +8,10 @@
  *
  * Three decisions are deliberate:
  *
- * 1. One block per type. A single generic block put "SDC-Komponente" on every
+ * 1. One block per type. A single generic block put "SDC Component" on every
  *    instance, and three FAQ blocks on a page became indistinguishable in the
  *    list view. The type is in the block name now, and `__experimentalLabel`
- *    adds the first value, so "FAQ: Häufige Fragen" tells them apart.
+ *    adds the first value, so "FAQ: Common questions" tells them apart.
  *
  * 2. No typing in the canvas. The preview is the component's own markup, and a
  *    hand-written `render.php` can place its values anywhere — a client-side
@@ -254,7 +254,7 @@
 						SelectControl,
 						Object.assign( {}, common, {
 							value: typeof value === 'string' ? value : '',
-							options: [ { value: '', label: __( '— bitte wählen —', 'sdc-page-builder' ) } ].concat(
+							options: [ { value: '', label: __( '— please choose —', 'sdc-page-builder' ) } ].concat(
 								( field.choices || [] ).map( function ( choice ) {
 									return { value: choice.value, label: choice.label };
 								} )
@@ -450,12 +450,12 @@
 			}
 
 			var title = multiple
-				? __( 'Dateien auswählen', 'sdc-page-builder' )
-				: ( isImage ? __( 'Bild auswählen', 'sdc-page-builder' ) : __( 'Datei auswählen', 'sdc-page-builder' ) );
+				? __( 'Select Files', 'sdc-page-builder' )
+				: ( isImage ? __( 'Select Image', 'sdc-page-builder' ) : __( 'Select File', 'sdc-page-builder' ) );
 
 			var frame = wp.media( {
 				title: title,
-				button: { text: __( 'Übernehmen', 'sdc-page-builder' ) },
+				button: { text: __( 'Apply', 'sdc-page-builder' ) },
 				library: isImage ? { type: 'image' } : {},
 				multiple: multiple ? 'add' : false,
 			} );
@@ -512,7 +512,7 @@
 				el(
 					'span',
 					{ className: 'sdc-block__media-name' },
-					info.name || ( __( 'Anhang', 'sdc-page-builder' ) + ' ' + id )
+					info.name || ( __( 'Attachment', 'sdc-page-builder' ) + ' ' + id )
 				)
 			);
 		} );
@@ -537,14 +537,14 @@
 						disabled: ! window.wp || ! wp.media,
 					},
 					ids.length || url
-						? __( 'Ersetzen', 'sdc-page-builder' )
-						: __( 'Auswählen', 'sdc-page-builder' )
+						? __( 'Replace', 'sdc-page-builder' )
+						: __( 'Select', 'sdc-page-builder' )
 				),
 				ids.length || url
 					? el(
 						Button,
 						{ variant: 'link', isDestructive: true, onClick: remove },
-						__( 'Entfernen', 'sdc-page-builder' )
+						__( 'Remove', 'sdc-page-builder' )
 					)
 					: null
 			)
@@ -577,14 +577,14 @@
 				? el( 'p', { className: 'sdc-block__help' }, field.instructions )
 				: null,
 			el( TextControl, {
-				label: __( 'Linktext', 'sdc-page-builder' ),
+				label: __( 'Link Text', 'sdc-page-builder' ),
 				value: current.title || '',
 				onChange: function ( next ) {
 					set( 'title', next );
 				},
 			} ),
 			el( TextControl, {
-				label: __( 'Ziel (URL)', 'sdc-page-builder' ),
+				label: __( 'Target (URL)', 'sdc-page-builder' ),
 				type: 'url',
 				value: current.url || '',
 				onChange: function ( next ) {
@@ -655,7 +655,7 @@
 						onClick: function () {
 							remove( index );
 						},
-					}, __( 'Entfernen', 'sdc-page-builder' ) )
+					}, __( 'Remove', 'sdc-page-builder' ) )
 				),
 				subFields.map( function ( sub ) {
 					return control(
@@ -679,7 +679,7 @@
 			el(
 				Button,
 				{ variant: 'secondary', onClick: add },
-				field.button_label || __( 'Zeile hinzufügen', 'sdc-page-builder' )
+				field.button_label || __( 'Add Row', 'sdc-page-builder' )
 			)
 		);
 	}
@@ -775,11 +775,11 @@
 					'div',
 					{ key: 'row-' + index, className: 'sdc-block__row' },
 					el( 'div', { className: 'sdc-block__row-head' }, el( 'span', null, field.label + ' ' + ( index + 1 ) ) ),
-					el( 'p', { className: 'sdc-block__help' }, __( 'Diese Zeile hat kein Layout. Es wird nichts angezeigt.', 'sdc-page-builder' ) ),
+					el( 'p', { className: 'sdc-block__help' }, __( 'This row has no layout. Nothing is displayed.', 'sdc-page-builder' ) ),
 					el( SelectControl, {
 						label: __( 'Layout', 'sdc-page-builder' ),
 						value: '',
-						options: [ { value: '', label: __( '— bitte wählen —', 'sdc-page-builder' ) } ].concat( options ),
+						options: [ { value: '', label: __( '— please choose —', 'sdc-page-builder' ) } ].concat( options ),
 						onChange: function ( next ) {
 							if ( ! next ) {
 								return;
@@ -821,7 +821,7 @@
 						onClick: function () {
 							remove( index );
 						},
-					}, __( 'Entfernen', 'sdc-page-builder' ) )
+					}, __( 'Remove', 'sdc-page-builder' ) )
 				),
 				el( SelectControl, {
 					label: __( 'Layout', 'sdc-page-builder' ),
@@ -849,12 +849,12 @@
 			{ key: key, className: 'sdc-block__flexible', 'data-sdc-field': field.name },
 			el( 'p', { className: 'sdc-block__link-label' }, field.label ),
 			field.instructions ? el( 'p', { className: 'sdc-block__help' }, field.instructions ) : null,
-			layouts.length ? items : el( 'p', { className: 'sdc-block__help' }, __( 'Dieses Feld hat keine Layouts.', 'sdc-page-builder' ) ),
+			layouts.length ? items : el( 'p', { className: 'sdc-block__help' }, __( 'This field has no layouts.', 'sdc-page-builder' ) ),
 			layouts.length
 				? el(
 					Button,
 					{ variant: 'secondary', onClick: add },
-					field.button_label || __( 'Zeile hinzufügen', 'sdc-page-builder' )
+					field.button_label || __( 'Add Row', 'sdc-page-builder' )
 				)
 				: null
 		);
@@ -884,7 +884,7 @@
 	/**
 	 * The first value in the data that reads as a title.
 	 *
-	 * Used for the list view and the breadcrumb: "FAQ: Häufige Fragen" tells
+	 * Used for the list view and the breadcrumb: "FAQ: Common questions" tells
 	 * three blocks apart, "FAQ" three times does not.
 	 *
 	 * @param {Object} definition Component definition.
@@ -997,7 +997,7 @@
 		}, [ isMounted ] );
 
 		if ( ! ServerSideRender ) {
-			return el( 'p', null, __( 'ServerSideRender fehlt — Vorschau nicht verfügbar.', 'sdc-page-builder' ) );
+			return el( 'p', null, __( 'ServerSideRender is missing — preview not available.', 'sdc-page-builder' ) );
 		}
 
 		if ( ! isMounted && ! selected ) {
@@ -1018,8 +1018,8 @@
 					return el(
 						'div',
 						{ className: 'sdc-block__empty' },
-						el( 'p', null, definition.label + ': ' + __( 'noch keine Inhalte.', 'sdc-page-builder' ) ),
-						el( 'p', { className: 'sdc-block__help' }, __( 'Werte rechts in der Seitenleiste eintragen.', 'sdc-page-builder' ) )
+						el( 'p', null, definition.label + ': ' + __( 'no content yet.', 'sdc-page-builder' ) ),
+						el( 'p', { className: 'sdc-block__help' }, __( 'Enter the values in the sidebar on the right.', 'sdc-page-builder' ) )
 					);
 				},
 			} )
@@ -1097,7 +1097,7 @@
 						el(
 							'div',
 							{ className: 'sdc-block__empty' },
-							el( 'p', null, __( 'Diese Komponente gibt es auf dieser Seite nicht (mehr).', 'sdc-page-builder' ) ),
+							el( 'p', null, __( 'This component no longer exists on this page.', 'sdc-page-builder' ) ),
 							el( 'p', { className: 'sdc-block__help' }, props.attributes.type || '' )
 						)
 					);
@@ -1144,14 +1144,14 @@
 	 * One block per component, named after the component.
 	 *
 	 * `__experimentalLabel` gets its own definition from the closure, so the
-	 * list view shows "FAQ: Häufige Fragen" and three FAQ blocks on a page are
+	 * list view shows "FAQ: Common questions" and three FAQ blocks on a page are
 	 * tellable apart.
 	 */
 	function registerComponent( type, definition ) {
 		registerBlock( {
 			name: prefix + type,
 			title: definition.label,
-			description: definition.description || __( 'Komponente aus dem SDC-Baukasten.', 'sdc-page-builder' ),
+			description: definition.description || __( 'Component from the SDC builder.', 'sdc-page-builder' ),
 			icon: definition.icon,
 			keywords: [ 'sdc', type ],
 			supports: noSupports,
@@ -1172,8 +1172,8 @@
 	function registerLegacy() {
 		registerBlock( {
 			name: 'sdcpb/component',
-			title: __( 'SDC-Komponente (alt)', 'sdc-page-builder' ),
-			description: __( 'Komponente aus einer früheren Fassung.', 'sdc-page-builder' ),
+			title: __( 'SDC Component (legacy)', 'sdc-page-builder' ),
+			description: __( 'Component from an earlier version.', 'sdc-page-builder' ),
 			icon: 'layout',
 			keywords: [ 'sdc', 'legacy' ],
 			attributes: {

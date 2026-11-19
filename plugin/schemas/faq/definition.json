@@ -1,40 +1,40 @@
 {
     "key": "group_sdcpb_component_faq",
     "title": "FAQ",
-    "sdcpb_description": "Frage-Antwort-Liste mit optionaler Überschrift.",
+    "sdcpb_description": "A question-and-answer list with an optional heading.",
     "sdcpb_icon": "editor-help",
     "sdcpb_version": 1,
     "fields": [
         {
             "key": "field_sdc_faq_heading",
-            "label": "Überschrift",
+            "label": "Heading",
             "name": "heading",
             "type": "text",
-            "instructions": "Optional. Leer lassen, wenn die Komponente ohne Titel starten soll.",
+            "instructions": "Optional. Leave empty if the component should start without a title.",
             "required": 0,
             "default_value": "",
             "placeholder": ""
         },
         {
             "key": "field_sdc_faq_items",
-            "label": "Einträge",
+            "label": "Items",
             "name": "items",
             "type": "repeater",
-            "instructions": "Eine Zeile pro Frage.",
+            "instructions": "One line per question.",
             "required": 0,
             "layout": "table",
-            "button_label": "Frage hinzufügen",
+            "button_label": "Add question",
             "sub_fields": [
                 {
                     "key": "field_sdc_faq_item_q",
-                    "label": "Frage",
+                    "label": "Question",
                     "name": "q",
                     "type": "text",
                     "required": 1
                 },
                 {
                     "key": "field_sdc_faq_item_a",
-                    "label": "Antwort",
+                    "label": "Answer",
                     "name": "a",
                     "type": "textarea",
                     "required": 1,

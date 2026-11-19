@@ -1,0 +1,917 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: SDC Page Builder\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sdc-page-builder\n"
+"Last-Translator: PHOENIXSEO <plugins@phoenixseo.de>\n"
+"Language-Team: Deutsch\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Domain: sdc-page-builder\n"
+
+
+msgid "SDC Page Builder"
+msgstr ""
+
+msgid "https://github.com/phoenixseo/sdc-page-builder"
+msgstr ""
+
+msgid "Component-based page builder: ACF or SCF fields as building blocks, one block per component type, rendered server-side in the editor."
+msgstr "Komponentenbasierter Page Builder: ACF- oder SCF-Felder als Bausteine, ein Block pro Komponententyp, im Editor serverseitig gerendert."
+
+msgid "PHOENIXSEO – Frank Pfabigan"
+msgstr ""
+
+msgid "https://phoenixseo.de"
+msgstr ""
+
+msgid "SDC Page Builder:"
+msgstr "SDC Page Builder:"
+
+msgid "%1$d page contains a component without a view. It renders nothing until the component is back — check the preview with %2$s."
+msgid_plural "%1$d pages contain a component without a view. They render nothing until the component is back — check the preview with %2$s."
+msgstr[0] "%1$d Seite enthält eine Komponente ohne Ansicht. Sie rendert nichts, bis die Komponente wieder da ist — prüfe die Vorschau mit %2$s."
+msgstr[1] "%1$d Seiten enthalten eine Komponente ohne Ansicht. Sie rendern nichts, bis die Komponente wieder da ist — prüfe die Vorschau mit %2$s."
+
+msgid "SDC Components"
+msgstr "SDC-Komponenten"
+
+msgid "SDC"
+msgstr "SDC"
+
+msgid "No target folder: WP_CONTENT_DIR is not defined."
+msgstr "Kein Zielordner: WP_CONTENT_DIR ist nicht definiert."
+
+msgid "The folder %s cannot be created. The web server needs write access to wp-content."
+msgstr "Der Ordner %s lässt sich nicht anlegen. Der Webserver braucht Schreibrecht auf wp-content."
+
+msgid "The folder %s is not writable. Components can only be read here."
+msgstr "Der Ordner %s ist nicht beschreibbar. Komponenten können hier nur gelesen werden."
+
+msgid "You do not have permission to view this page."
+msgstr "Keine Berechtigung für diese Seite."
+
+msgid "The folder %s is not writable. Components are shown, but creating and deleting is locked."
+msgstr "Der Ordner %s ist nicht beschreibbar. Komponenten werden angezeigt, aber Anlegen und Löschen ist gesperrt."
+
+msgid "(unknown)"
+msgstr "(unbekannt)"
+
+msgid "A component is a folder with a definition.json. Components created in the admin live in %s and survive a theme switch. Components in the theme are shipped with it and are read-only here."
+msgstr "Eine Komponente ist ein Ordner mit einer definition.json. Im Backend angelegte Komponenten liegen in %s und überleben einen Theme-Wechsel. Komponenten im Theme sind ausgeliefert und hier schreibgeschützt."
+
+msgid "Vision and Concept"
+msgstr "Vision und Konzept"
+
+msgid "Programming"
+msgstr "Programmierung"
+
+msgid "A plugin by %s"
+msgstr "Ein Plugin von %s"
+
+msgid "November 2026"
+msgstr "November 2026"
+
+msgid "Buy Me a Coffee"
+msgstr "Spendier mir einen Kaffee"
+
+msgid "Existing Components"
+msgstr "Vorhandene Komponenten"
+
+msgid "No components found. The plugin ships hero and faq — if they are missing, ACF or SCF is not active."
+msgstr "Keine Komponenten gefunden. Das Plugin liefert hero und faq mit — fehlen die, ist ACF oder SCF nicht aktiv."
+
+msgid "Component"
+msgstr "Komponente"
+
+msgid "Fields"
+msgstr "Felder"
+
+msgid "Template"
+msgstr "Vorlage"
+
+msgid "Storage"
+msgstr "Ablage"
+
+msgid "Usage"
+msgstr "Verwendung"
+
+msgid "Actions"
+msgstr "Aktionen"
+
+msgid "unknown"
+msgstr "unbekannt"
+
+msgid "wp-content"
+msgstr "wp-content"
+
+msgid "Plugin"
+msgstr "Plugin"
+
+msgid "Theme"
+msgstr "Theme"
+
+msgid "—"
+msgstr "—"
+
+msgid "editable here"
+msgstr "hier verwaltbar"
+
+msgid "read-only"
+msgstr "schreibgeschützt"
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "Export"
+msgstr "Export"
+
+msgid "Duplicate"
+msgstr "Duplizieren"
+
+msgid "New Type"
+msgstr "Neuer Typ"
+
+msgid "Create"
+msgstr "Anlegen"
+
+msgid "Duplicate puts the copy in wp-content/sdc-components/ — there it is editable here."
+msgstr "Duplizieren legt die Kopie in wp-content/sdc-components/ an — dort ist sie hier bearbeitbar."
+
+msgid "Delete component \"%s\" with its definition.json and render.php?"
+msgstr "Komponente „%s\" mit definition.json und render.php löschen?"
+
+msgid "Component \"%1$s\" is used on %2$d pages. Those places will render nothing afterwards. Really delete?"
+msgstr "Komponente „%1$s\" wird auf %2$d Seiten verwendet. Diese Stellen rendern danach nichts mehr. Wirklich löschen?"
+
+msgid "Delete Even If In Use"
+msgstr "Auch bei Verwendung löschen"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "New Component"
+msgstr "Neue Komponente"
+
+msgid "Creating is locked while the target folder is not writable."
+msgstr "Anlegen ist gesperrt, solange der Zielordner nicht beschreibbar ist."
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Lowercase letters, digits and hyphens. The type becomes the folder name, the block name sdcpb/<type>, and part of the group key: group_sdcpb_component_<type>."
+msgstr "Kleinbuchstaben, Ziffern und Bindestriche. Der Typ wird zum Ordnernamen, zum Blocknamen sdcpb/<typ> und zum Teil des Gruppen-Keys: group_sdcpb_component_<typ>."
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Shown in the component picker, e.g. \"Quote\" or \"Pricing Table\"."
+msgstr "Erscheint im Komponenten-Picker, z. B. „Zitat\" oder „Preistabelle\"."
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "Optional. Shown as help text on the picker tile."
+msgstr "Optional. Steht als Hilfetext in der Kachel des Pickers."
+
+msgid "Icon"
+msgstr "Icon"
+
+msgid "Optional. A Dashicon name, e.g. layout, cover-image, format-quote, table."
+msgstr "Optional. Ein Dashicon-Name, z. B. layout, cover-image, format-quote, table."
+
+msgid "View"
+msgstr "Ansicht"
+
+msgid "Create Component"
+msgstr "Komponente anlegen"
+
+msgid "The component %s does not exist."
+msgstr "Die Komponente %s gibt es nicht."
+
+msgid "No readable definition.json was found for this component."
+msgstr "Zu dieser Komponente wurde keine lesbare definition.json gefunden."
+
+msgid "The file %s is not readable or does not contain valid JSON."
+msgstr "Die Datei %s ist nicht lesbar oder enthält kein gültiges JSON."
+
+msgid "Edit Component: %s"
+msgstr "Komponente bearbeiten: %s"
+
+msgid "Saved into the same definition.json. The type stays unchanged: it sits in the group key and in every field key that the page content hangs on. A different type comes from \"Duplicate\"."
+msgstr "Gespeichert wird in dieselbe definition.json. Der Typ bleibt unverändert: er steckt im Gruppen-Key und in jedem Feld-Key, an dem die Inhalte der Seiten hängen. Ein anderer Typ entsteht über „Duplizieren\"."
+
+msgid "This component is not in wp-content/sdc-components/. Theme and plugin components are read-only because the next deploy would overwrite the change. Duplicate it to edit it here."
+msgstr "Diese Komponente liegt nicht in wp-content/sdc-components/. Theme- und Plugin-Komponenten sind schreibgeschützt, weil der nächste Deploy die Änderung überschreiben würde. Dupliziere sie, um sie hier zu bearbeiten."
+
+msgid "Back to Overview"
+msgstr "Zurück zur Übersicht"
+
+msgid "Content"
+msgstr "Inhalt"
+
+msgid "Name, description and the fields offered to editors. This is the part that changes in everyday work."
+msgstr "Name, Beschreibung und die Felder, die der Redaktion angeboten werden. Das ist der Teil, der sich im Alltag ändert."
+
+msgid "View (PHP)"
+msgstr "Ansicht (PHP)"
+
+msgid "How the component is rendered. Optional: without render.php the fields appear in a generic output."
+msgstr "Wie die Komponente ausgegeben wird. Optional: ohne render.php erscheinen die Felder in einer generischen Ausgabe."
+
+msgid "Styles (CSS)"
+msgstr "Styles (CSS)"
+
+msgid "The component's own styling. Optional: without component.css it inherits the theme's styles."
+msgstr "Eigene Gestaltung der Komponente. Optional: ohne component.css erbt sie die Styles des Themes."
+
+msgid "Component Sections"
+msgstr "Bereiche der Komponente"
+
+msgid "Save Component"
+msgstr "Komponente speichern"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Not editable. A new type would create new field keys, and the page content would then hang on fields that no longer exist."
+msgstr "Nicht änderbar. Ein neuer Typ würde neue Feld-Keys erzeugen, und die Inhalte der Seiten hingen danach an Feldern, die es nicht mehr gibt."
+
+msgid "Confirm Field Removal"
+msgstr "Felder entfernen bestätigen"
+
+msgid "Only needed when a field name disappears from the list. The content stays stored in the pages but becomes invisible afterwards."
+msgstr "Nur nötig, wenn ein Feldname aus der Liste verschwindet. Die Inhalte bleiben in den Seiten gespeichert, sind danach aber unsichtbar."
+
+msgid "Example and Available Field Types"
+msgstr "Beispiel und verfügbare Feldtypen"
+
+msgid "One entry per field. Whatever ACF knows on a field may go in too (rows, choices, return_format, sub_fields …)."
+msgstr "Ein Eintrag pro Feld. Was ACF beim Feld kennt, darf mit hinein (rows, choices, return_format, sub_fields …)."
+
+msgid "Host Field Types"
+msgstr "Feldtypen des Hosts"
+
+msgid "Import Component"
+msgstr "Komponente importieren"
+
+msgid "Importing is locked while the target folder is not writable."
+msgstr "Importieren ist gesperrt, solange der Zielordner nicht beschreibbar ist."
+
+msgid "A definition.json from another project — the group key inside it determines the type. Existing types are not overwritten."
+msgstr "Eine definition.json aus einem anderen Projekt — der Gruppen-Key darin bestimmt den Typ. Vorhandene Typen werden nicht überschrieben."
+
+msgid "Import"
+msgstr "Importieren"
+
+msgid "Component created."
+msgstr "Komponente angelegt."
+
+msgid "Component saved."
+msgstr "Komponente gespeichert."
+
+msgid "Component duplicated."
+msgstr "Komponente dupliziert."
+
+msgid "Component deleted."
+msgstr "Komponente gelöscht."
+
+msgid "Component imported."
+msgstr "Komponente importiert."
+
+msgid "The action was not carried out."
+msgstr "Die Aktion wurde nicht ausgeführt."
+
+msgid "You do not have permission to perform this action."
+msgstr "Keine Berechtigung für diese Aktion."
+
+msgid "Unknown action."
+msgstr "Unbekannte Aktion."
+
+msgid "A component with the type %s already exists."
+msgstr "Eine Komponente mit dem Typ %s gibt es bereits."
+
+msgid "The component needs a name."
+msgstr "Die Komponente braucht einen Namen."
+
+msgid "No definition.json was found for the source component."
+msgstr "Zur Quellkomponente wurde keine definition.json gefunden."
+
+msgid "The file %s is not readable."
+msgstr "Die Datei %s ist nicht lesbar."
+
+msgid "The file %s does not contain valid JSON."
+msgstr "Die Datei %s enthält kein gültiges JSON."
+
+msgid "The file %s is not readable or does not contain valid JSON. Without it the component cannot be saved."
+msgstr "Die Datei %s ist nicht lesbar oder enthält kein gültiges JSON. Ohne sie lässt sich die Komponente nicht speichern."
+
+msgid "These fields are missing from the new field list: %s. Their content stays stored in the pages but becomes invisible afterwards. Tick \"Confirm Field Removal\" if that is intended."
+msgstr "Diese Felder fehlen in der neuen Feldliste: %s. Ihre Inhalte bleiben auf den Seiten gespeichert, sind danach aber unsichtbar. Setze „Felder entfernen bestätigen\", wenn das gewollt ist."
+
+msgid "This component is not in wp-content/sdc-components/ — it belongs to the theme or the plugin and is deleted there, not here."
+msgstr "Diese Komponente liegt nicht in wp-content/sdc-components/ — sie gehört zum Theme oder zum Plugin und wird dort gelöscht, nicht hier."
+
+msgid "The component %2$s is used on %1$d pages. Tick \"Delete Even If In Use\" if that is intended."
+msgstr "Die Komponente %2$s steht auf %1$d Seiten. Setze „Auch bei Verwendung löschen\", wenn das gewollt ist."
+
+msgid "The file %s could not be deleted."
+msgstr "Die Datei %s ließ sich nicht löschen."
+
+msgid "The definition file is not readable."
+msgstr "Die Definitionsdatei ist nicht lesbar."
+
+msgid "No file was selected."
+msgstr "Es wurde keine Datei ausgewählt."
+
+msgid "The uploaded file did not arrive."
+msgstr "Die hochgeladene Datei ist nicht angekommen."
+
+msgid "The upload failed."
+msgstr "Der Upload ist fehlgeschlagen."
+
+msgid "The file is too large for a component."
+msgstr "Die Datei ist zu groß für eine Komponente."
+
+msgid "A component with the type %s already exists. Import overwrites nothing."
+msgstr "Eine Komponente mit dem Typ %s gibt es bereits. Import überschreibt nichts."
+
+msgid "The file is not valid JSON: %s"
+msgstr "Die Datei ist kein gültiges JSON: %s"
+
+msgid "The group key is missing or does not start with %s."
+msgstr "Der Gruppen-Key fehlt oder beginnt nicht mit %s."
+
+msgid "The definition has no title."
+msgstr "Die Definition hat keinen Titel."
+
+msgid "The component type is missing."
+msgstr "Es fehlt der Typ der Komponente."
+
+msgid "The type \"%s\" is not allowed: only lowercase letters, digits and hyphens, starting with a letter or digit. Underscores do not work because every type also becomes a block name (\"sdcpb/<type>\")."
+msgstr "Der Typ „%s\" ist nicht erlaubt: nur Kleinbuchstaben, Ziffern und Bindestriche, beginnend mit Buchstabe oder Ziffer. Unterstriche gehen nicht, weil jeder Typ auch ein Blockname wird („sdcpb/<typ>\")."
+
+msgid "The type is too long (40 characters maximum)."
+msgstr "Der Typ ist zu lang (maximal 40 Zeichen)."
+
+msgid "The fields are not valid JSON: %s"
+msgstr "Die Felder sind kein gültiges JSON: %s"
+
+msgid "The fields must be a list: [ {…}, {…} ]."
+msgstr "Die Felder müssen eine Liste sein: [ {…}, {…} ]."
+
+msgid "Field %2$d on level %1$d is not an object."
+msgstr "Feld %2$d auf Ebene %1$d ist kein Objekt."
+
+msgid "Field %1$d on level %2$d has no valid name (a–z, 0–9, _)."
+msgstr "Feld %1$d auf Ebene %2$d hat keinen gültigen Namen (a–z, 0–9, _)."
+
+msgid "The field name %s appears twice. Two fields on one level need different names."
+msgstr "Der Feldname %s kommt doppelt vor. Zwei Felder einer Ebene brauchen verschiedene Namen."
+
+msgid "Field %s has no type."
+msgstr "Feld %s hat keinen Typ."
+
+msgid "The host does not know the field type \"%1$s\" (field %2$s)."
+msgstr "Den Feldtyp „%1$s\" (Feld %2$s) kennt der Host nicht."
+
+msgid "The folder %s already exists."
+msgstr "Der Ordner %s existiert bereits."
+
+msgid "The folder %s could not be created."
+msgstr "Der Ordner %s ließ sich nicht anlegen."
+
+msgid "The definition could not be written as JSON."
+msgstr "Die Definition ließ sich nicht als JSON schreiben."
+
+msgid "The file %s could not be written."
+msgstr "Die Datei %s ließ sich nicht schreiben."
+
+msgid "not placed"
+msgstr "nicht platziert"
+
+msgid "%1$d page, %2$d instance"
+msgid_plural "%1$d pages, %2$d instances"
+msgstr[0] "%1$d Seite, %2$d Instanz"
+msgstr[1] "%1$d Seiten, %2$d Instanzen"
+
+msgid "SDC Component (legacy)"
+msgstr "SDC-Komponente (alt)"
+
+msgid "A component from an earlier version. New pages use the block of the respective component."
+msgstr "Komponente aus einer früheren Fassung. Neue Seiten nutzen den Block der jeweiligen Komponente."
+
+msgid "%s: no content yet."
+msgstr "%s: noch keine Inhalte."
+
+msgid "Enter the values in the sidebar on the right."
+msgstr "Werte rechts in der Seitenleiste eintragen."
+
+msgid "Text Line"
+msgstr "Einzeiliger Text"
+
+msgid "Text"
+msgstr "Text"
+
+msgid "Placeholder"
+msgstr "Platzhalter"
+
+msgid "Default Value"
+msgstr "Standardwert"
+
+msgid "Maximum Characters"
+msgstr "Maximale Zeichenzahl"
+
+msgid "Before"
+msgstr "Davor"
+
+msgid "After"
+msgstr "Danach"
+
+msgid "Multiline Text"
+msgstr "Mehrzeiliger Text"
+
+msgid "Rows in the Input Field"
+msgstr "Zeilen im Eingabefeld"
+
+msgid "Formatted Text"
+msgstr "Formatierter Text"
+
+msgid "Number"
+msgstr "Zahl"
+
+msgid "Smallest Value"
+msgstr "Kleinster Wert"
+
+msgid "Largest Value"
+msgstr "Größter Wert"
+
+msgid "Step"
+msgstr "Schrittweite"
+
+msgid "Slider"
+msgstr "Schieberegler"
+
+msgid "Email Address"
+msgstr "E-Mail-Adresse"
+
+msgid "Link URL"
+msgstr "Link-Adresse"
+
+msgid "Select"
+msgstr "Auswählen"
+
+msgid "Choice"
+msgstr "Auswahl"
+
+msgid "Choices"
+msgstr "Auswahlmöglichkeiten"
+
+msgid "Allow Multiple Selections"
+msgstr "Mehrfachauswahl erlauben"
+
+msgid "Return Value"
+msgstr "Rückgabewert"
+
+msgid "Label"
+msgstr "Beschriftung"
+
+msgid "Checkboxes"
+msgstr "Kontrollkästchen"
+
+msgid "Layout"
+msgstr "Layout"
+
+msgid "Default Value (values, comma-separated)"
+msgstr "Standardwert (Werte, durch Komma getrennt)"
+
+msgid "Radio Buttons"
+msgstr "Optionsfelder"
+
+msgid "Button Group"
+msgstr "Schaltflächengruppe"
+
+msgid "Yes/No"
+msgstr "Ja/Nein"
+
+msgid "Show as Toggle"
+msgstr "Als Schalter anzeigen"
+
+msgid "Image"
+msgstr "Bild"
+
+msgid "Media"
+msgstr "Medium"
+
+msgid "File"
+msgstr "Datei"
+
+msgid "Link"
+msgstr "Link"
+
+msgid "Repeater"
+msgstr "Wiederholer"
+
+msgid "Structure"
+msgstr "Aufbau"
+
+msgid "Label of the Add Button"
+msgstr "Beschriftung der Hinzufügen-Schaltfläche"
+
+msgid "Editor Display"
+msgstr "Darstellung im Editor"
+
+msgid "Blocks"
+msgstr "Blöcke"
+
+msgid "Minimum Rows"
+msgstr "Mindestzahl Zeilen"
+
+msgid "Maximum Rows"
+msgstr "Höchstzahl Zeilen"
+
+msgid "Group"
+msgstr "Gruppe"
+
+msgid "Field"
+msgstr "Feld"
+
+msgid "Subfield"
+msgstr "Unterfeld"
+
+msgid "Add Field"
+msgstr "Feld hinzufügen"
+
+msgid "Add Subfield"
+msgstr "Unterfeld hinzufügen"
+
+msgid "Field Name"
+msgstr "Feldname"
+
+msgid "Field Type"
+msgstr "Feldtyp"
+
+msgid "Hint in the Editor"
+msgstr "Hinweis im Editor"
+
+msgid "Required"
+msgstr "Pflichtfeld"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "Subfields"
+msgstr "Unterfelder"
+
+msgid "Remove"
+msgstr "Entfernen"
+
+msgid "Move Up"
+msgstr "Nach oben"
+
+msgid "Move Down"
+msgstr "Nach unten"
+
+msgid "Collapse"
+msgstr "Einklappen"
+
+msgid "Expand"
+msgstr "Ausklappen"
+
+msgid "No fields yet. Choose a field type below and add it."
+msgstr "Noch keine Felder. Unten einen Feldtyp wählen und hinzufügen."
+
+msgid "Remove this field and its settings?"
+msgstr "Dieses Feld samt Einstellungen entfernen?"
+
+msgid "The new type is not a collection. The subfields of this field will be removed. Continue?"
+msgstr "Der neue Typ ist keine Sammlung. Die Unterfelder dieses Feldes werden entfernt. Fortfahren?"
+
+msgid "Every field needs a name. Missing for: %s"
+msgstr "Jedes Feld braucht einen Namen. Fehlt er bei: %s"
+
+msgid "This field name appears twice: %s"
+msgstr "Dieser Feldname kommt doppelt vor: %s"
+
+msgid "Value"
+msgstr "Wert"
+
+msgid "Add Choice"
+msgstr "Möglichkeit hinzufügen"
+
+msgid "a–z, 0–9 and _ . Built from the label as long as you do not change it yourself."
+msgstr "a–z, 0–9 und _ . Wird aus der Beschriftung gebildet, solange du ihn nicht selbst änderst."
+
+msgid "The JSON was rewritten from the fields."
+msgstr "Das JSON wurde aus den Feldern neu geschrieben."
+
+msgid "The JSON in the text box is faulty and was not overwritten: %s"
+msgstr "Das JSON im Textfeld ist fehlerhaft und wurde nicht überschrieben: %s"
+
+msgid "This field type has no settings of its own here. Everything in the JSON is preserved on save — it can only be changed there."
+msgstr "Dieser Feldtyp hat hier keine eigenen Einstellungen. Alles, was im JSON steht, bleibt beim Speichern erhalten — ändern lässt er sich nur dort."
+
+msgid "Choose a field type, add it, fill in the settings. The JSON for the definition.json is built from that."
+msgstr "Feldtyp wählen, hinzufügen, Einstellungen ausfüllen. Das JSON für die definition.json entsteht daraus."
+
+msgid "Edit JSON Directly"
+msgstr "JSON direkt bearbeiten"
+
+msgid "Filled from the fields above and submitted with the form. If you change it by hand, click \"Apply JSON\" afterwards."
+msgstr "Wird aus den Feldern oben gefüllt und beim Absenden mitgeschickt. Wer hier von Hand ändert, klickt danach „JSON übernehmen“."
+
+msgid "Apply JSON"
+msgstr "JSON übernehmen"
+
+msgid "Field type for the new field"
+msgstr "Feldtyp für das neue Feld"
+
+msgid "SDC Page Builder: component type \"%1$s\" has no view (page %2$d)"
+msgstr "SDC Page Builder: Komponententyp \"%1$s\" hat keine Ansicht (Seite %2$d)"
+
+msgid "Component type \"%s\" has no view"
+msgstr "Komponententyp \"%s\" hat keine Ansicht"
+
+msgid "SDC Page Builder: view of \"%1$s\" failed (%2$s): %3$s (page %4$d)"
+msgstr "SDC Page Builder: Ansicht von \"%1$s\" bricht ab (%2$s): %3$s (Seite %4$d)"
+
+msgid "View of \"%1$s\" failed (%2$s)"
+msgstr "Ansicht von \"%1$s\" bricht ab (%2$s)"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nein"
+
+msgid "SDC: components carried over from the metabox into blocks."
+msgstr "SDC: Komponenten aus der Metabox in Blöcke übernommen."
+
+msgid "Add Row"
+msgstr "Zeile hinzufügen"
+
+msgid "Remove Row"
+msgstr "Zeile entfernen"
+
+msgid "Page not found."
+msgstr "Seite nicht gefunden."
+
+msgid "components must be an array."
+msgstr "components muss ein Array sein."
+
+msgid "Component without a type."
+msgstr "Komponente ohne Typ."
+
+msgid "Unknown component type: %s"
+msgstr "Unbekannter Komponententyp: %s"
+
+msgid "Component %1$d (%2$s): required field \"%3$s\" is empty."
+msgstr "Komponente %1$d (%2$s): Pflichtfeld \"%3$s\" ist leer."
+
+msgid "The document was rejected. Nothing was saved."
+msgstr "Das Dokument wurde abgelehnt. Gespeichert wurde nichts."
+
+msgid "This component's styles come from %s. That file belongs to the theme and would be overwritten by the next deploy, so it cannot be edited here."
+msgstr "Die Styles dieser Komponente kommen aus %s. Diese Datei gehört zum Theme und wird beim nächsten Deploy überschrieben, deshalb ist sie hier nicht bearbeitbar."
+
+msgid "Styles, read-only"
+msgstr "Styles, schreibgeschützt"
+
+msgid "CSS"
+msgstr "CSS"
+
+msgid "Everything that belongs in the file, without the %1$s %2$s tag. It is printed inline in the page head, and only for the components that appear on that page. The wrapper is called %3$s: rules below it apply only inside this component."
+msgstr "Alles, was in die Datei gehört, ohne %1$sstyle%2$s-Tag. Wird inline im Kopf der Seite ausgegeben, und nur für die Komponenten, die auf ihr stehen. Der Wrapper heißt %3$s: Regeln darunter greifen nur in dieser Komponente."
+
+msgid "File: %s. Leaving it empty means the component brings no styles of its own."
+msgstr "Datei: %s. Leer lassen heißt: die Komponente bringt keine eigenen Styles mit."
+
+msgid "Insert Starter Skeleton"
+msgstr "Startgerüst einfügen"
+
+msgid "Saves the component and replaces the text above with an empty skeleton carrying the right selector. Whatever is there now is lost."
+msgstr "Speichert die Komponente und ersetzt den Text oben durch ein leeres Gerüst mit dem richtigen Selektor. Was jetzt dort steht, geht dabei verloren."
+
+msgid "Saves the component and fills the text above with a skeleton that starts with this component's selector."
+msgstr "Speichert die Komponente und füllt den Text oben mit einem Gerüst, das mit dem Selektor dieser Komponente anfängt."
+
+msgid "You are not allowed to change these styles."
+msgstr "Diese Styles darfst du nicht ändern."
+
+msgid "render.php"
+msgstr "render.php"
+
+msgid "Determines how this component is rendered. Markup with PHP islands, like a theme template. Leaving it empty means the fields are rendered generically."
+msgstr "Bestimmt, wie diese Komponente ausgegeben wird. Markup mit PHP-Inseln, wie ein Theme-Template. Leer lassen heißt: die Felder werden generisch ausgegeben."
+
+msgid "Available are %1$s (type), %2$s (field values) and %3$s (the component entry), plus the helpers below. A syntax error is rejected on save, so the page stays intact."
+msgstr "Verfügbar sind %1$s (Typ), %2$s (Feldwerte) und %3$s (der Komponenten-Eintrag), dazu die Helfer unten. Ein Syntaxfehler wird beim Speichern abgelehnt, die Seite bleibt also heil."
+
+msgid "Once fields are saved, a view can be generated from them here."
+msgstr "Sobald Felder gespeichert sind, lässt sich hier eine Ansicht aus ihnen erzeugen."
+
+msgid "Generate View from Fields"
+msgstr "Ansicht aus Feldern erzeugen"
+
+msgid "Saves the component and replaces the text above with a view generated from the fields of \"%s\". Whatever is there now is lost."
+msgstr "Speichert die Komponente und ersetzt den Text oben durch eine Ansicht, die aus den Feldern von „%s\" erzeugt ist. Was jetzt dort steht, geht dabei verloren."
+
+msgid "Saves the component and fills the text above with a view generated from the fields of \"%s\"."
+msgstr "Speichert die Komponente und füllt den Text oben mit einer Ansicht, die aus den Feldern von „%s\" erzeugt ist."
+
+msgid "Helpers"
+msgstr "Helfer"
+
+msgid "Every helper escapes on its own. If you need your own markup, use sdcpb_value() and escape yourself."
+msgstr "Jeder Helfer escapt von sich aus. Wer eigenes Markup braucht, nimmt sdcpb_value() und escapt selbst."
+
+msgid "You are not allowed to change this view."
+msgstr "Diese Ansicht darfst du nicht ändern."
+
+msgid "The CSS contains the marker that closes a style element. It would end the element the component styles are delivered in — the rest of the page would be read as HTML. Write the selector differently and it will save."
+msgstr "Im CSS steht die Marke, die ein Style-Element schließt. Sie beendet das Element, in dem die Komponenten-Styles ausgeliefert werden — der Rest der Seite würde als HTML gelesen. Schreib den Selektor anders, dann speichert es."
+
+msgid "This is CSS, not PHP: \"<?\" is printed as text and not executed. Markup is the view's job (render.php)."
+msgstr "Das hier ist CSS, kein PHP: „<?“ wird als Text ausgegeben und nicht ausgeführt. Für Markup ist die Ansicht (render.php) zuständig."
+
+msgid "A comment is not closed (/* without */). Everything after it would stay unstyled on the page, because all component styles are delivered together in one block in the page head."
+msgstr "Ein Kommentar ist nicht geschlossen (/* ohne */). Alles danach bliebe auf der Seite ungestylt, weil alle Komponenten-Styles gemeinsam in einem Block im Seitenkopf ausgeliefert werden."
+
+msgid "The braces do not match: %1$d opened, %2$d closed. A rule stays open and the browser discards what follows."
+msgstr "Die Klammern passen nicht: %1$d geöffnet, %2$d geschlossen. Eine Regel bleibt damit offen und der Browser verwirft, was folgt."
+
+msgid "This component type is not a valid file name."
+msgstr "Dieser Komponententyp ist kein gültiger Dateiname."
+
+msgid "The view has a PHP syntax error on line %1$d: %2$s"
+msgstr "Die Ansicht hat einen PHP-Syntaxfehler in Zeile %1$d: %2$s"
+
+msgid "The view could not be checked: %s"
+msgstr "Die Ansicht ließ sich nicht prüfen: %s"
+
+msgid "The file %s could not be removed."
+msgstr "Die Datei %s ließ sich nicht entfernen."
+
+msgid "Field value as text, HTML-escaped. Multi-selects are joined with a comma."
+msgstr "Feldwert als Text, HTML escapt. Mehrfachauswahl wird mit Komma verbunden."
+
+msgid "Field value as HTML, through wp_kses_post. For formatted text and textareas with paragraphs."
+msgstr "Feldwert als HTML, durch wp_kses_post. Für formatierbaren Text und Textareas mit Absätzen."
+
+msgid "Field value for an attribute, escaped. For your own tags instead of the helpers below."
+msgstr "Feldwert für ein Attribut, escapt. Für eigene Tags statt der Helfer unten."
+
+msgid "Field value as a URL, escaped and checked for http(s)/relative targets."
+msgstr "Feldwert als Adresse, escapt und auf http(s)/relative Ziele geprüft."
+
+msgid "Image tag with URL, alt text and dimensions. Accepts an attachment array, an ID or a URL."
+msgstr "Bild-Tag mit Adresse, Alt-Text und Maßen. Nimmt Anhang-Array, ID oder Adresse."
+
+msgid "Just the image URL, escaped — for srcset, JSON-LD or a tag of your own. Accepts an attachment array, an ID or a URL."
+msgstr "Nur die Adresse des Bildes, escapt — für srcset, JSON-LD oder ein eigenes Tag. Nimmt Anhang-Array, ID oder Adresse."
+
+msgid "Sets the image on the element as a CSS variable: style=\"--sdc-image:url(…)\". Without an image no attribute appears. In the CSS file then background-image: var( --sdc-image, none )."
+msgstr "Setzt das Bild als CSS-Variable an das Element: style=\"--sdc-image:url(…)\". Ohne Bild erscheint kein Attribut. In der CSS-Datei dann background-image: var( --sdc-image, none )."
+
+msgid "Link tag with a label from the field. A third argument sets the label."
+msgstr "Verweis-Tag mit Beschriftung aus dem Feld. Drittes Argument setzt die Beschriftung."
+
+msgid "Link to a file, with its title as the label."
+msgstr "Verweis auf eine Datei, mit deren Titel als Beschriftung."
+
+msgid "True when the field has a value. For conditional blocks."
+msgstr "Wahr, wenn das Feld einen Wert hat. Für bedingte Blöcke."
+
+msgid "Raw value without output, for logic of your own. Dots address subfields: cta.title."
+msgstr "Rohwert ohne Ausgabe, für eigene Logik. Punkte sprechen Unterfelder an: cta.title."
+
+msgid "Loop over the rows of a repeater. Helper calls inside it take $row as the last argument: sdcpb_text( 'quote', $row ), sdcpb_image( 'image', 'large', array(), $row )."
+msgstr "Über die Zeilen eines Wiederholers laufen. Hilfsaufrufe darin nehmen $row als letztes Argument: sdcpb_text( 'quote', $row ), sdcpb_image( 'image', 'large', array(), $row )."
+
+msgid "The default output of all fields of this component, when only the surrounding markup should be your own."
+msgstr "Die Standardausgabe aller Felder dieser Komponente, wenn nur das Drumherum eigen sein soll."
+
+msgid "Builds a class list from non-empty parts, escaped for a class attribute."
+msgstr "Baut eine Klassenliste aus nicht-leeren Teilen, escapt für ein class-Attribut."
+
+msgid "Generated from the fields of \"%s\". Replaces what is in the field now."
+msgstr "Aus den Feldern von „%s“ erzeugt. Ersetzt, was jetzt im Feld steht."
+
+msgid "%1$dh %2$dm"
+msgstr "%1$d Std. %2$d Min."
+
+msgid "%d min"
+msgstr "%d Min."
+
+msgid "Director"
+msgstr "Regie"
+
+msgid "Genre"
+msgstr "Genre"
+
+msgid "Runtime"
+msgstr "Laufzeit"
+
+msgid "Original title: %s"
+msgstr "Originaltitel: %s"
+
+msgid "Rating"
+msgstr "Bewertung"
+
+msgid "%1$s by %2$s"
+msgstr "%1$s von %2$s"
+
+msgid "Cast"
+msgstr "Besetzung"
+
+msgid "as %s"
+msgstr "als %s"
+
+msgid "since %s"
+msgstr "seit %s"
+
+msgid "%1$s, %2$s"
+msgstr "%1$s, %2$s"
+
+msgid "%d season"
+msgid_plural "%d seasons"
+msgstr[0] "%d Staffel"
+msgstr[1] "%d Staffeln"
+
+msgid "%d episode"
+msgid_plural "%d episodes"
+msgstr[0] "%d Folge"
+msgstr[1] "%d Folgen"
+
+msgid "Idea"
+msgstr "Idee"
+
+msgid "Network"
+msgstr "Sender"
+
+msgid "Season %s"
+msgstr "Staffel %s"
+
+msgid "Testimonials"
+msgstr "Kundenstimmen"
+
+msgid "%d track"
+msgid_plural "%d tracks"
+msgstr[0] "%d Track"
+msgstr[1] "%d Tracks"
+
+msgid "Page %s"
+msgstr "Seite %s"
+
+msgid "SDC Page Builder requires Advanced Custom Fields or Secure Custom Fields. Please activate one of the two."
+msgstr "SDC Page Builder benötigt Advanced Custom Fields oder Secure Custom Fields. Bitte eines der beiden Plugins aktivieren."
+
+msgid "— please choose —"
+msgstr "— bitte wählen —"
+
+msgid "Select Files"
+msgstr "Dateien auswählen"
+
+msgid "Select Image"
+msgstr "Bild auswählen"
+
+msgid "Select File"
+msgstr "Datei auswählen"
+
+msgid "Apply"
+msgstr "Übernehmen"
+
+msgid "Attachment"
+msgstr "Anhang"
+
+msgid "Replace"
+msgstr "Ersetzen"
+
+msgid "Link Text"
+msgstr "Linktext"
+
+msgid "Target (URL)"
+msgstr "Ziel (URL)"
+
+msgid "This row has no layout. Nothing is displayed."
+msgstr "Diese Zeile hat kein Layout. Es wird nichts angezeigt."
+
+msgid "This field has no layouts."
+msgstr "Dieses Feld hat keine Layouts."
+
+msgid "ServerSideRender is missing — preview not available."
+msgstr "ServerSideRender fehlt — Vorschau nicht verfügbar."
+
+msgid "no content yet."
+msgstr "noch keine Inhalte."
+
+msgid "This component no longer exists on this page."
+msgstr "Diese Komponente gibt es auf dieser Seite nicht (mehr)."
+
+msgid "Component from the SDC builder."
+msgstr "Komponente aus dem SDC-Baukasten."
+
+msgid "Component from an earlier version."
+msgstr "Komponente aus einer früheren Fassung."

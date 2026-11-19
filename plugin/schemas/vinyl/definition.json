@@ -1,7 +1,7 @@
 {
     "key": "group_sdcpb_component_vinyl",
-    "title": "Schallplatte",
-    "sdcpb_description": "Ein Album mit Cover, Angaben zur Ausgabe und der vollständigen Trackliste nach Seiten.",
+    "title": "Record",
+    "sdcpb_description": "An album with cover, release details and the full track list by side.",
     "sdcpb_icon": "album",
     "sdcpb_version": 1,
     "fields": [
@@ -10,14 +10,14 @@
             "label": "Cover",
             "name": "cover",
             "type": "image",
-            "instructions": "Quadratisches Bild, mindestens 600 px. Fehlt es, rückt der Text nach oben.",
+            "instructions": "Square image, at least 600 px. Without it, the text moves up.",
             "required": 0,
             "return_format": "array",
             "preview_size": "medium"
         },
         {
             "key": "field_sdc_vinyl_artist",
-            "label": "Interpret",
+            "label": "Artist",
             "name": "artist",
             "type": "text",
             "required": 1
@@ -31,10 +31,10 @@
         },
         {
             "key": "field_sdc_vinyl_year",
-            "label": "Jahr",
+            "label": "Year",
             "name": "year",
             "type": "number",
-            "instructions": "Jahr dieser Ausgabe, nicht der Erstveröffentlichung.",
+            "instructions": "Year of this release, not of the first publication.",
             "required": 0,
             "min": 1900,
             "max": 2100,
@@ -49,10 +49,10 @@
         },
         {
             "key": "field_sdc_vinyl_catalog",
-            "label": "Katalognummer",
+            "label": "Catalogue number",
             "name": "catalog",
             "type": "text",
-            "instructions": "Steht auf dem Rücken des Covers, oft mit Bindestrich: SHVL 804.",
+            "instructions": "Sits on the spine of the cover, often hyphenated: SHVL 804.",
             "required": 0
         },
         {
@@ -60,17 +60,17 @@
             "label": "Tracks",
             "name": "tracks",
             "type": "repeater",
-            "instructions": "Die Reihenfolge hier ist die Reihenfolge auf der Platte. Die Nummer vergibt die Ansicht, sie wird nicht gepflegt.",
+            "instructions": "The order here is the order on the record. The view assigns the number; it is not maintained here.",
             "required": 0,
             "layout": "table",
-            "button_label": "Track hinzufügen",
+            "button_label": "Add track",
             "sub_fields": [
                 {
                     "key": "field_sdc_vinyl_track_side",
-                    "label": "Seite",
+                    "label": "Side",
                     "name": "side",
                     "type": "select",
-                    "instructions": "Tracks derselben Seite stehen auf der Platte zusammen.",
+                    "instructions": "Tracks on the same side sit together on the record.",
                     "required": 0,
                     "default_value": "A",
                     "choices": {
@@ -82,17 +82,17 @@
                 },
                 {
                     "key": "field_sdc_vinyl_track_title",
-                    "label": "Titel",
+                    "label": "Title",
                     "name": "title",
                     "type": "text",
                     "required": 1
                 },
                 {
                     "key": "field_sdc_vinyl_track_duration",
-                    "label": "Länge",
+                    "label": "Length",
                     "name": "duration",
                     "type": "text",
-                    "instructions": "Als m:ss, zum Beispiel 3:42. Leer lassen, wenn sie unbekannt ist.",
+                    "instructions": "As m:ss, for example 3:42. Leave empty if unknown.",
                     "required": 0,
                     "placeholder": "3:42"
                 }

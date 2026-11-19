@@ -77,6 +77,42 @@ def collect(anchored, bare):
     return sorted(entries)
 
 
+# Markup that a source scanner reads as raw output.
+#
+# The wp.org review tool greps the uploaded package; it cannot tell a string
+# that *names* a stylesheet tag apart from code that *prints* one. That is how
+# the same "Use wp_enqueue commands" finding came back twice while the plugin
+# had been enqueuing through wp_add_inline_style() all along. A better
+# explanation in the mail does not change the next scan; not shipping the
+# literal does. This gate is what keeps it that way.
+MARKUP = ("<style", "</style", "<script", "</script")
+
+TEXT_SUFFIXES = (".php", ".js", ".css", ".txt", ".json", ".md", ".html")
+
+
+def check_markup(archive_path):
+    """Scan the built package for stylesheet or script tags in the source."""
+    problems = []
+    hits = 0
+    with zipfile.ZipFile(archive_path) as archive:
+        for name in archive.namelist():
+            if not name.lower().endswith(TEXT_SUFFIXES):
+                continue
+            try:
+                text = archive.read(name).decode("utf-8")
+            except UnicodeDecodeError:
+                continue
+            for number, line in enumerate(text.splitlines(), 1):
+                if any(needle in line.lower() for needle in MARKUP):
+                    hits += 1
+                    if hits <= 5:
+                        print(f"  markup: {name}:{number} {line.strip()[:90]}")
+    print(f"check raw markup: {hits} hit(s)")
+    if hits:
+        problems.append(f"{hits} raw style/script tag literal(s) in the package")
+    return problems
+
+
 def count_captions(readme_path):
     """Number the `1. `-style captions inside the Screenshots section.
 
@@ -178,6 +214,9 @@ def main():
         problems.append(
             f"{captions} caption(s) in readme.txt but {len(numbers)} screenshot file(s)"
         )
+
+    # Nothing in the package may name a style or script tag in source form.
+    problems.extend(check_markup(args.out))
 
 
     # The archive layout is the plugin's install path: one top-level directory,

@@ -74,7 +74,7 @@ class Sdcpb_Style_Editor {
 				esc_html(
 					sprintf(
 						/* translators: %s: absolute path of the stylesheet. */
-						__( 'Die Styles dieser Komponente kommen aus %s. Diese Datei gehört zum Theme und wird beim nächsten Deploy überschrieben, deshalb ist sie hier nicht bearbeitbar.', 'sdc-page-builder' ),
+						__( 'This component\'s styles come from %s. That file belongs to the theme and would be overwritten by the next deploy, so it cannot be edited here.', 'sdc-page-builder' ),
 						self::relative( $effective )
 					)
 				)
@@ -82,7 +82,7 @@ class Sdcpb_Style_Editor {
 
 			printf(
 				'<textarea rows="18" class="large-text code" readonly spellcheck="false" aria-label="%s">%s</textarea>',
-				esc_attr__( 'Styles, schreibgeschützt', 'sdc-page-builder' ),
+				esc_attr__( 'Styles, read-only', 'sdc-page-builder' ),
 				esc_textarea( Sdcpb_View::read_style( $effective ) )
 			);
 
@@ -108,7 +108,7 @@ class Sdcpb_Style_Editor {
 		echo '<p class="description" id="sdc-css-help">';
 		printf(
 			/* translators: 1: opening code tag, 2: closing code tag, 3: component type. */
-			esc_html__( 'Alles, was in die Datei gehört, ohne %1$sstyle%2$s-Tag. Wird inline im Kopf der Seite ausgegeben, und nur für die Komponenten, die auf ihr stehen. Der Wrapper heißt %3$s: Regeln darunter greifen nur in dieser Komponente.', 'sdc-page-builder' ),
+			esc_html__( 'Everything that belongs in the file, without the %1$s %2$s tag. It is printed inline in the page head, and only for the components that appear on that page. The wrapper is called %3$s: rules below it apply only inside this component.', 'sdc-page-builder' ),
 			'<code>&lt;style&gt;</code>',
 			'<code>&lt;/style&gt;</code>',
 			'<code>.sdc-component--' . esc_html( (string) $type ) . '</code>'
@@ -120,7 +120,7 @@ class Sdcpb_Style_Editor {
 			esc_html(
 				sprintf(
 					/* translators: %s: path relative to the WordPress root. */
-					__( 'Datei: %s. Leer lassen heißt: die Komponente bringt keine eigenen Styles mit.', 'sdc-page-builder' ),
+					__( 'File: %s. Leaving it empty means the component brings no styles of its own.', 'sdc-page-builder' ),
 					self::relative( $own )
 				)
 			)
@@ -139,18 +139,16 @@ class Sdcpb_Style_Editor {
 		printf(
 			'<p><button type="submit" name="%1$s" value="1" class="button">%2$s</button></p>',
 			esc_attr( self::SCAFFOLD ),
-			esc_html__( 'Startgerüst einfügen', 'sdc-page-builder' )
+			esc_html__( 'Insert Starter Skeleton', 'sdc-page-builder' )
 		);
 
 		printf(
 			'<p class="description">%s</p>',
 			'' !== trim( $css )
-				? esc_html__(
-					'Speichert die Komponente und ersetzt den Text oben durch ein leeres Gerüst mit dem richtigen Selektor. Was jetzt dort steht, geht dabei verloren.',
+				? esc_html__( 'Saves the component and replaces the text above with an empty skeleton carrying the right selector. Whatever is there now is lost.',
 					'sdc-page-builder'
 				)
-				: esc_html__(
-					'Speichert die Komponente und füllt den Text oben mit einem Gerüst, das mit dem Selektor dieser Komponente anfängt.',
+				: esc_html__( 'Saves the component and fills the text above with a skeleton that starts with this component\'s selector.',
 					'sdc-page-builder'
 				)
 		);
@@ -225,7 +223,7 @@ class Sdcpb_Style_Editor {
 		if ( ! Sdcpb_View::can_edit_style( $type ) ) {
 			return new WP_Error(
 				'sdcpb_style_forbidden',
-				__( 'Diese Styles darfst du nicht ändern.', 'sdc-page-builder' )
+				__( 'You are not allowed to change these styles.', 'sdc-page-builder' )
 			);
 		}
 

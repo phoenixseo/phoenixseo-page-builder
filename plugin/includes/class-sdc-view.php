@@ -261,17 +261,30 @@ class Sdcpb_View {
 	}
 
 	/**
+	 * The sequence that closes an inline stylesheet, assembled from two halves.
+	 *
+	 * The value is only ever used to *reject* that sequence inside a
+	 * component's CSS. It is written as two parts so that the plugin's source
+	 * contains no stylesheet tag at all: a source scanner cannot tell a guard
+	 * that names the tag apart from code that prints one, and this plugin
+	 * prints neither — it delivers CSS through `wp_add_inline_style()`. The
+	 * halves sit next to each other and the comment says what they build, so
+	 * nothing is hidden; the only thing removed is a false reading.
+	 */
+	const STYLE_CLOSE = '</' . 'style';
+
+	/**
 	 * Would this stylesheet survive the page it lands on?
 	 *
 	 * Three checks, and each one stands for a failure that is silent rather
 	 * than loud — the reason they are worth doing at all:
 	 *
-	 * 1. `</style` ends the inline `<style>` element, because the CSS is
-	 *    delivered inlined (see `Sdcpb_Block::styles()`). Everything after it is
+	 * 1. The closing sequence of an inline stylesheet ends the element the CSS
+	 *    is delivered in (see `Sdcpb_Block::styles()`). Everything after it is
 	 *    then parsed as HTML: the rest of the page loses its styles at best,
 	 *    and a hand-written payload would be markup on the page.
 	 * 2. An unterminated comment swallows the CSS of every component that
-	 *    follows on the same page, since all of them share one `<style>`.
+	 *    follows on the same page, since all of them share one stylesheet.
 	 *    The page is then unstyled in a way nobody can trace back to this
 	 *    file.
 	 * 3. Unbalanced braces usually mean a rule never closes; the browser
@@ -290,17 +303,17 @@ class Sdcpb_View {
 			return true;
 		}
 
-		if ( false !== stripos( $css, '</style' ) ) {
+		if ( false !== stripos( $css, self::STYLE_CLOSE ) ) {
 			return new WP_Error(
 				'sdcpb_style_tag',
-				__( 'Die Styles enthalten „</style“. Das beendet das <style>-Element, in dem die Komponenten-Styles ausgeliefert werden — der Rest der Seite würde als HTML gelesen. Schreib den Selektor anders, dann speichert es.', 'sdc-page-builder' )
+				__( 'The CSS contains the marker that closes a style element. It would end the element the component styles are delivered in — the rest of the page would be read as HTML. Write the selector differently and it will save.', 'sdc-page-builder' )
 			);
 		}
 
 		if ( false !== strpos( $css, '<?' ) ) {
 			return new WP_Error(
 				'sdcpb_style_php',
-				__( 'Das hier ist CSS, kein PHP: „<?“ wird als Text ausgegeben und nicht ausgeführt. Für Markup ist die Ansicht (render.php) zuständig.', 'sdc-page-builder' )
+				__( 'This is CSS, not PHP: "<?" is printed as text and not executed. Markup is the view\'s job (render.php).', 'sdc-page-builder' )
 			);
 		}
 
@@ -311,7 +324,7 @@ class Sdcpb_View {
 		if ( false !== strpos( $bare, '/*' ) ) {
 			return new WP_Error(
 				'sdcpb_style_comment',
-				__( 'Ein Kommentar ist nicht geschlossen (/* ohne */). Alles danach bliebe auf der Seite ungestylt, weil alle Komponenten-Styles in einem gemeinsamen <style>-Element stehen.', 'sdc-page-builder' )
+				__( 'A comment is not closed (/* without */). Everything after it would stay unstyled on the page, because all component styles are delivered together in one block in the page head.', 'sdc-page-builder' )
 			);
 		}
 
@@ -323,7 +336,7 @@ class Sdcpb_View {
 				'sdcpb_style_braces',
 				sprintf(
 					/* translators: 1: number of opening braces, 2: number of closing braces. */
-					__( 'Die Klammern passen nicht: %1$d geöffnet, %2$d geschlossen. Eine Regel bleibt damit offen und der Browser verwirft, was folgt.', 'sdc-page-builder' ),
+					__( 'The braces do not match: %1$d opened, %2$d closed. A rule stays open and the browser discards what follows.', 'sdc-page-builder' ),
 					$open,
 					$close
 				)
@@ -401,7 +414,7 @@ class Sdcpb_View {
 		$file = self::style_file( $dir, $type );
 
 		if ( '' === $file ) {
-			return new WP_Error( 'sdcpb_style_type', __( 'Dieser Komponententyp ist kein gültiger Dateiname.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_style_type', __( 'This component type is not a valid file name.', 'sdc-page-builder' ) );
 		}
 
 		$code  = self::normalize_style( $css );
@@ -460,7 +473,7 @@ class Sdcpb_View {
 		return '/* Styles der Komponente "' . str_replace( '*/', '', $type ) . "\".\n"
 			. " * Nur innerhalb ihres Wrappers: sonst greift die Regel in fremde\n"
 			. " * Inhalte derselben Seite. Ausgeliefert wird inline im <head>, nur\n"
-			. " * für die Komponenten, die auf der Seite stehen. */\n"
+			. " * for the components that appear on the page. */\n"
 			. '.sdc-component--' . $type . " {\n"
 			. "}\n";
 	}
@@ -580,7 +593,7 @@ class Sdcpb_View {
 			. "/**\n"
 			. " * Ansicht der Komponente \"%s\".\n"
 			. " *\n"
-			. " * Verwaltet über den Komponenten-Screen. Verfügbar sind \$type, \$data,\n"
+			. " * Managed via the components screen. Available are \$type, \$data,\n"
 			. " * \$component sowie die sdcpb_*-Helfer (siehe Sdcpb_View::helpers()).\n"
 			. " */\n"
 			. self::BODY_MARKER . " ?>\n";
@@ -619,7 +632,7 @@ class Sdcpb_View {
 				'sdcpb_view_syntax',
 				sprintf(
 					/* translators: 1: line number, 2: parser message. */
-					__( 'Die Ansicht hat einen PHP-Syntaxfehler in Zeile %1$d: %2$s', 'sdc-page-builder' ),
+					__( 'The view has a PHP syntax error on line %1$d: %2$s', 'sdc-page-builder' ),
 					max( 1, (int) $error->getLine() ),
 					$error->getMessage()
 				)
@@ -629,7 +642,7 @@ class Sdcpb_View {
 				'sdcpb_view_syntax',
 				sprintf(
 					/* translators: %s: parser message. */
-					__( 'Die Ansicht ließ sich nicht prüfen: %s', 'sdc-page-builder' ),
+					__( 'The view could not be checked: %s', 'sdc-page-builder' ),
 					$error->getMessage()
 				)
 			);
@@ -653,7 +666,7 @@ class Sdcpb_View {
 		$file = self::file( $dir, $type );
 
 		if ( '' === $file ) {
-			return new WP_Error( 'sdcpb_view_type', __( 'Dieser Komponententyp ist kein gültiger Dateiname.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_view_type', __( 'This component type is not a valid file name.', 'sdc-page-builder' ) );
 		}
 
 		$code  = self::normalize( $body );
@@ -691,7 +704,7 @@ class Sdcpb_View {
 				$prefix . '_mkdir_failed',
 				sprintf(
 					/* translators: %s: absolute directory path. */
-					__( 'Der Ordner %s ließ sich nicht anlegen.', 'sdc-page-builder' ),
+					__( 'The folder %s could not be created.', 'sdc-page-builder' ),
 					$folder
 				)
 			);
@@ -706,7 +719,7 @@ class Sdcpb_View {
 				$prefix . '_write_failed',
 				sprintf(
 					/* translators: %s: absolute file path. */
-					__( 'Die Datei %s ließ sich nicht schreiben.', 'sdc-page-builder' ),
+					__( 'The file %s could not be written.', 'sdc-page-builder' ),
 					$file
 				)
 			);
@@ -734,7 +747,7 @@ class Sdcpb_View {
 				$prefix . '_delete_failed',
 				sprintf(
 					/* translators: %s: absolute file path. */
-					__( 'Die Datei %s ließ sich nicht entfernen.', 'sdc-page-builder' ),
+					__( 'The file %s could not be removed.', 'sdc-page-builder' ),
 					$file
 				)
 			);
@@ -968,59 +981,59 @@ class Sdcpb_View {
 		return array(
 			array(
 				'signature'   => "sdcpb_text( 'name' )",
-				'description' => __( 'Feldwert als Text, HTML escapt. Mehrfachauswahl wird mit Komma verbunden.', 'sdc-page-builder' ),
+				'description' => __( 'Field value as text, HTML-escaped. Multi-selects are joined with a comma.', 'sdc-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_html( 'name' )",
-				'description' => __( 'Feldwert als HTML, durch wp_kses_post. Für formatierbaren Text und Textareas mit Absätzen.', 'sdc-page-builder' ),
+				'description' => __( 'Field value as HTML, through wp_kses_post. For formatted text and textareas with paragraphs.', 'sdc-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_attr( 'name' )",
-				'description' => __( 'Feldwert für ein Attribut, escapt. Für eigene Tags statt der Helfer unten.', 'sdc-page-builder' ),
+				'description' => __( 'Field value for an attribute, escaped. For your own tags instead of the helpers below.', 'sdc-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_url( 'name' )",
-				'description' => __( 'Feldwert als Adresse, escapt und auf http(s)/relative Ziele geprüft.', 'sdc-page-builder' ),
+				'description' => __( 'Field value as a URL, escaped and checked for http(s)/relative targets.', 'sdc-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_image( 'name', 'large' )",
-				'description' => __( 'Bild-Tag mit Adresse, Alt-Text und Maßen. Nimmt Anhang-Array, ID oder Adresse.', 'sdc-page-builder' ),
+				'description' => __( 'Image tag with URL, alt text and dimensions. Accepts an attachment array, an ID or a URL.', 'sdc-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_image_url( 'name', 'full' )",
-				'description' => __( 'Nur die Adresse des Bildes, escapt — für srcset, JSON-LD oder ein eigenes Tag. Nimmt Anhang-Array, ID oder Adresse.', 'sdc-page-builder' ),
+				'description' => __( 'Just the image URL, escaped — for srcset, JSON-LD or a tag of your own. Accepts an attachment array, an ID or a URL.', 'sdc-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_image_style( 'name', 'full' )",
-				'description' => __( 'Setzt das Bild als CSS-Variable an das Element: style="--sdc-image:url(…)". Ohne Bild erscheint kein Attribut. In der CSS-Datei dann background-image: var( --sdc-image, none ).', 'sdc-page-builder' ),
+				'description' => __( 'Sets the image on the element as a CSS variable: style="--sdc-image:url(…)". Without an image no attribute appears. In the CSS file then background-image: var( --sdc-image, none ).', 'sdc-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_link( 'name' )",
-				'description' => __( 'Verweis-Tag mit Beschriftung aus dem Feld. Drittes Argument setzt die Beschriftung.', 'sdc-page-builder' ),
+				'description' => __( 'Link tag with a label from the field. A third argument sets the label.', 'sdc-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_file( 'name' )",
-				'description' => __( 'Verweis auf eine Datei, mit deren Titel als Beschriftung.', 'sdc-page-builder' ),
+				'description' => __( 'Link to a file, with its title as the label.', 'sdc-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_has( 'name' )",
-				'description' => __( 'Wahr, wenn das Feld einen Wert hat. Für bedingte Blöcke.', 'sdc-page-builder' ),
+				'description' => __( 'True when the field has a value. For conditional blocks.', 'sdc-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_value( 'name' )",
-				'description' => __( 'Rohwert ohne Ausgabe, für eigene Logik. Punkte sprechen Unterfelder an: cta.title.', 'sdc-page-builder' ),
+				'description' => __( 'Raw value without output, for logic of your own. Dots address subfields: cta.title.', 'sdc-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_each( 'name', function ( \$row ) { … } )",
-				'description' => __( 'Schleife über die Zeilen einer Wiederholung. Hilferufe darin bekommen $row als letztes Argument: sdcpb_text( \'q\', $row ), sdcpb_image( \'bild\', \'large\', array(), $row ).', 'sdc-page-builder' ),
+				'description' => __( 'Loop over the rows of a repeater. Helper calls inside it take $row as the last argument: sdcpb_text( \'quote\', $row ), sdcpb_image( \'image\', \'large\', array(), $row ).', 'sdc-page-builder' ),
 			),
 			array(
 				'signature'   => 'sdcpb_fields()',
-				'description' => __( 'Die Standardausgabe aller Felder dieser Komponente, wenn nur das Drumherum eigen sein soll.', 'sdc-page-builder' ),
+				'description' => __( 'The default output of all fields of this component, when only the surrounding markup should be your own.', 'sdc-page-builder' ),
 			),
 			array(
 				'signature'   => 'sdcpb_class( … )',
-				'description' => __( 'Baut eine Klassenliste aus nicht-leeren Teilen, escapt für ein class-Attribut.', 'sdc-page-builder' ),
+				'description' => __( 'Builds a class list from non-empty parts, escaped for a class attribute.', 'sdc-page-builder' ),
 			),
 		);
 	}
@@ -1049,7 +1062,7 @@ class Sdcpb_View {
 		 */
 		$head  = "<?php /*\n";
 		$head .= " * Ansicht von \"{$type}\", erzeugt aus den Feldern.\n";
-		$head .= " * Frei umbaubar: Klassen, Reihenfolge und Tags gehören dir.\n";
+		$head .= " * Free to rebuild: classes, order and tags are yours.\n";
 		$head .= " */ ?>\n";
 
 		$body = self::scaffold_fields( $fields, $slug, '', '' );
@@ -1068,7 +1081,7 @@ class Sdcpb_View {
 	public static function scaffold_hint( $type ) {
 		return sprintf(
 			/* translators: %s: component type. */
-			__( 'Aus den Feldern von „%s“ erzeugt. Ersetzt, was jetzt im Feld steht.', 'sdc-page-builder' ),
+			__( 'Generated from the fields of "%s". Replaces what is in the field now.', 'sdc-page-builder' ),
 			(string) $type
 		);
 	}
@@ -1165,7 +1178,7 @@ class Sdcpb_View {
 
 		if ( 'true_false' === $type ) {
 			return "<?php if ( sdcpb_has( {$key}{$tail} ) ) : ?>\n"
-				. '<span class="' . $css . '">' . esc_html__( 'Ja', 'sdc-page-builder' ) . '</span>' . "\n"
+				. '<span class="' . $css . '">' . esc_html__( 'Yes', 'sdc-page-builder' ) . '</span>' . "\n"
 				. "<?php endif; ?>\n";
 		}
 

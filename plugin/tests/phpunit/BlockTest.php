@@ -138,7 +138,7 @@ class BlockTest extends Sdcpb_TestCase {
 		);
 
 		$this->assertSame( Sdcpb_Block::CATEGORY, $categories[0]['slug'] );
-		$this->assertSame( 'SDC-Komponenten', $categories[0]['title'] );
+		$this->assertSame( 'SDC Components', $categories[0]['title'] );
 
 		// The theme's categories survive, in their order.
 		$this->assertSame( 'text', $categories[1]['slug'] );
@@ -331,7 +331,7 @@ class BlockTest extends Sdcpb_TestCase {
 		}
 
 		$this->assertStringContainsString( 'sdc-block__empty', $html );
-		$this->assertStringContainsString( 'noch keine Inhalte', $html );
+		$this->assertStringContainsString( 'no content yet', $html );
 	}
 
 	/**

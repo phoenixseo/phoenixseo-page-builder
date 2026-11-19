@@ -723,7 +723,7 @@ class AdminTest extends Sdcpb_TestCase {
 	 */
 	public function test_usage_label_spells_out_the_numbers() {
 		$this->assertSame(
-			'nicht platziert',
+			'not placed',
 			$this->invoke(
 				'usage_label',
 				array(
@@ -734,7 +734,7 @@ class AdminTest extends Sdcpb_TestCase {
 		);
 
 		$this->assertSame(
-			'1 Seite, 1 Instanz',
+			'1 page, 1 instance',
 			$this->invoke(
 				'usage_label',
 				array(
@@ -745,7 +745,7 @@ class AdminTest extends Sdcpb_TestCase {
 		);
 
 		$this->assertSame(
-			'3 Seiten, 4 Instanzen',
+			'3 pages, 4 instances',
 			$this->invoke(
 				'usage_label',
 				array(
@@ -1413,7 +1413,7 @@ class AdminTest extends Sdcpb_TestCase {
 		$this->assertStringContainsString( esc_html( Sdcpb_Admin::AUTHOR_NAME ), $html );
 		$this->assertStringContainsString( esc_html( Sdcpb_Admin::AUTHOR_HOST ), $html );
 		$this->assertStringContainsString( 'href="' . Sdcpb_Admin::COFFEE_URL . '"', $html );
-		$this->assertStringContainsString( esc_html__( 'Spendier mir einen Kaffee', 'sdc-page-builder' ), $html );
+		$this->assertStringContainsString( esc_html__( 'Buy Me a Coffee', 'sdc-page-builder' ), $html );
 	}
 
 	/**
@@ -1441,9 +1441,9 @@ class AdminTest extends Sdcpb_TestCase {
 	public function test_credit_records_who_did_what() {
 		$html = $this->credit_html();
 
-		$this->assertStringContainsString( esc_html__( 'Vision und Konzept', 'sdc-page-builder' ), $html );
-		$this->assertStringContainsString( esc_html( 'Frank Pfabigan und Athena' ), $html );
-		$this->assertStringContainsString( esc_html__( 'Programmierung', 'sdc-page-builder' ), $html );
+		$this->assertStringContainsString( esc_html__( 'Vision and Concept', 'sdc-page-builder' ), $html );
+		$this->assertStringContainsString( esc_html( 'Frank Pfabigan and Athena' ), $html );
+		$this->assertStringContainsString( esc_html__( 'Programming', 'sdc-page-builder' ), $html );
 		$this->assertStringContainsString( esc_html( "Athena's Crew, Neo, Judge" ), $html );
 		$this->assertStringContainsString( esc_html__( 'November 2026', 'sdc-page-builder' ), $html );
 	}

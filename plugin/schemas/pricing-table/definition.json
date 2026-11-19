@@ -1,13 +1,13 @@
 {
     "key": "group_sdcpb_component_pricing-table",
-    "title": "Preise",
-    "sdcpb_description": "Tarifkarten mit Leistungsliste und hervorgehobenem Tarif.",
+    "title": "Pricing",
+    "sdcpb_description": "Plan cards with a feature list and one highlighted plan.",
     "sdcpb_icon": "money-alt",
     "sdcpb_version": 1,
     "fields": [
         {
             "key": "field_sdc_pricing-table_heading",
-            "label": "Überschrift",
+            "label": "Heading",
             "name": "heading",
             "type": "text",
             "instructions": "Optional.",
@@ -17,22 +17,22 @@
         },
         {
             "key": "field_sdc_pricing-table_intro",
-            "label": "Einleitung",
+            "label": "Intro",
             "name": "intro",
             "type": "textarea",
-            "instructions": "Optional. Zum Beispiel ein Hinweis zu Laufzeit oder Netto-Preisen.",
+            "instructions": "Optional. For example a note on the term or net prices.",
             "required": 0,
             "rows": 3
         },
         {
             "key": "field_sdc_pricing-table_plans",
-            "label": "Tarife",
+            "label": "Plans",
             "name": "plans",
             "type": "repeater",
-            "instructions": "Ein Tarif pro Zeile. Die Leistungen sind eine eigene Liste in jeder Zeile.",
+            "instructions": "One plan per row. The features are a list of their own within each row.",
             "required": 0,
             "layout": "table",
-            "button_label": "Tarif hinzufügen",
+            "button_label": "Add plan",
             "sub_fields": [
                 {
                     "key": "field_sdc_pricing-table_plan_name",
@@ -43,42 +43,42 @@
                 },
                 {
                     "key": "field_sdc_pricing-table_plan_price",
-                    "label": "Preis",
+                    "label": "Price",
                     "name": "price",
                     "type": "text",
-                    "instructions": "Zahl und Währung, zum Beispiel 89 €. Keine Rechnung, keine Formatierung.",
+                    "instructions": "Number and currency, for example $89. No calculation, no formatting.",
                     "required": 1
                 },
                 {
                     "key": "field_sdc_pricing-table_plan_period",
-                    "label": "Zeitraum",
+                    "label": "Period",
                     "name": "period",
                     "type": "text",
-                    "instructions": "Optional. Steht klein neben dem Preis, zum Beispiel / Monat.",
+                    "instructions": "Optional. Sits small next to the price, for example / month.",
                     "required": 0
                 },
                 {
                     "key": "field_sdc_pricing-table_plan_description",
-                    "label": "Beschreibung",
+                    "label": "Description",
                     "name": "description",
                     "type": "textarea",
-                    "instructions": "Optional. Ein Satz, für wen der Tarif gedacht ist.",
+                    "instructions": "Optional. One sentence on who the plan is for.",
                     "required": 0,
                     "rows": 2
                 },
                 {
                     "key": "field_sdc_pricing-table_plan_features",
-                    "label": "Leistungen",
+                    "label": "Features",
                     "name": "features",
                     "type": "repeater",
-                    "instructions": "Eine Leistung pro Zeile.",
+                    "instructions": "One feature per row.",
                     "required": 0,
                     "layout": "table",
-                    "button_label": "Leistung hinzufügen",
+                    "button_label": "Add feature",
                     "sub_fields": [
                         {
                             "key": "field_sdc_pricing-table_plan_feature_text",
-                            "label": "Leistung",
+                            "label": "Feature",
                             "name": "text",
                             "type": "text",
                             "required": 1
@@ -90,16 +90,16 @@
                     "label": "Link",
                     "name": "link",
                     "type": "link",
-                    "instructions": "Optional. Ohne Link endet die Karte nach der Leistungsliste.",
+                    "instructions": "Optional. Without a link the card ends after the feature list.",
                     "required": 0,
                     "return_format": "array"
                 },
                 {
                     "key": "field_sdc_pricing-table_plan_highlight",
-                    "label": "Hervorheben",
+                    "label": "Highlight",
                     "name": "highlight",
                     "type": "true_false",
-                    "instructions": "Hebt genau einen Tarif hervor. Mehrere hervorgehobene Tarife heben nichts mehr hervor.",
+                    "instructions": "Highlights exactly one plan. Several highlighted plans highlight nothing.",
                     "required": 0,
                     "ui": 1
                 }

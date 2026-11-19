@@ -48,7 +48,7 @@
 	 * A field name the host will accept: a–z, 0–9, underscore.
 	 *
 	 * Umlauts are transliterated first, because the server's own `clean_name()`
-	 * would delete them: "Überschrift" would arrive as "berschrift".
+	 * would delete them: "Größe" would arrive as "Gre".
 	 *
 	 * @param {string} value Raw text.
 	 * @return {string} Clean name.

@@ -1,26 +1,26 @@
 {
     "key": "group_sdcpb_component_cta-band",
-    "title": "Handlungsband",
-    "sdcpb_description": "Farbiges Band mit einer Aussage und bis zu zwei Handlungsaufrufen.",
+    "title": "Action band",
+    "sdcpb_description": "A coloured band with a statement and up to two calls to action.",
     "sdcpb_icon": "megaphone",
     "sdcpb_version": 1,
     "fields": [
         {
             "key": "field_sdc_cta-band_eyebrow",
-            "label": "Vorzeile",
+            "label": "Eyebrow",
             "name": "eyebrow",
             "type": "text",
-            "instructions": "Optional. Kleine Zeile über der Aussage.",
+            "instructions": "Optional. A small line above the statement.",
             "required": 0,
             "default_value": "",
             "placeholder": ""
         },
         {
             "key": "field_sdc_cta-band_heading",
-            "label": "Aussage",
+            "label": "Statement",
             "name": "heading",
             "type": "text",
-            "instructions": "Ein Satz, der eine Handlung nahelegt.",
+            "instructions": "One sentence that suggests an action.",
             "required": 1,
             "default_value": "",
             "placeholder": ""
@@ -30,40 +30,40 @@
             "label": "Text",
             "name": "text",
             "type": "textarea",
-            "instructions": "Optional. Höchstens zwei Sätze.",
+            "instructions": "Optional. Two sentences at most.",
             "required": 0,
             "rows": 2
         },
         {
             "key": "field_sdc_cta-band_primary",
-            "label": "Erster Link",
+            "label": "First link",
             "name": "primary",
             "type": "link",
-            "instructions": "Der wichtigere der beiden Wege.",
+            "instructions": "The more important of the two paths.",
             "required": 0,
             "return_format": "array"
         },
         {
             "key": "field_sdc_cta-band_secondary",
-            "label": "Zweiter Link",
+            "label": "Second link",
             "name": "secondary",
             "type": "link",
-            "instructions": "Optional. Wird als ruhiger Textlink gesetzt.",
+            "instructions": "Optional. Rendered as a quiet text link.",
             "required": 0,
             "return_format": "array"
         },
         {
             "key": "field_sdc_cta-band_tone",
-            "label": "Farbton",
+            "label": "Tone",
             "name": "tone",
             "type": "select",
-            "instructions": "Drei Varianten, die das Stylesheet des Themes überschreiben kann.",
+            "instructions": "Three variants the theme's stylesheet can override.",
             "required": 0,
             "default_value": "brand",
             "choices": {
-                "brand": "Marke",
-                "dark": "Dunkel",
-                "light": "Hell"
+                "brand": "Brand",
+                "dark": "Dark",
+                "light": "Light"
             }
         }
     ],
