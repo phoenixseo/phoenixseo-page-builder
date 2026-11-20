@@ -19,7 +19,7 @@
  */
 
 if ( ! class_exists( 'Sdcpb_Store' ) ) {
-	echo "Sdcpb_Store not loaded — activate the sdc-page-builder plugin first.\n";
+	echo "Sdcpb_Store not loaded — activate the phoenixseo-page-builder plugin first.\n";
 	exit( 1 );
 }
 

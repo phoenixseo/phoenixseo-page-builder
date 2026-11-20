@@ -1,5 +1,5 @@
 <?php
-/** Messung 1: Seite mit den drei SDC-Komponenten füllen, Input-Zahl der Edit-Maske zählen. */
+/** Messung 1: Seite mit den drei PhoenixSEO-Komponenten füllen, Input-Zahl der Edit-Maske zählen. */
 
 $faq = array();
 for ( $i = 1; $i <= 5; $i++ ) {

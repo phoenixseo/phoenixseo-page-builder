@@ -1,5 +1,5 @@
 /**
- * SDC Page Builder — the tabs on the component screen.
+ * PhoenixSEO Page Builder — the tabs on the component screen.
  *
  * Without this file the screen still works: every panel is in the DOM and
  * visible, one below the other. That is the deliberate fallback for a browser

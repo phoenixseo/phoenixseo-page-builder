@@ -100,10 +100,10 @@ class Sdcpb_Rest {
 		$post_id = (int) $request['id'];
 
 		if ( ! get_post( $post_id ) ) {
-			return new WP_Error( 'sdcpb_not_found', __( 'Page not found.', 'sdc-page-builder' ), array( 'status' => 404 ) );
+			return new WP_Error( 'sdcpb_not_found', __( 'Page not found.', 'phoenixseo-page-builder' ), array( 'status' => 404 ) );
 		}
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return new WP_Error( 'sdcpb_forbidden', __( 'You do not have permission to view this page.', 'sdc-page-builder' ), array( 'status' => 403 ) );
+			return new WP_Error( 'sdcpb_forbidden', __( 'You do not have permission to view this page.', 'phoenixseo-page-builder' ), array( 'status' => 403 ) );
 		}
 		return true;
 	}
@@ -143,7 +143,7 @@ class Sdcpb_Rest {
 		$input   = $request->get_param( 'components' );
 
 		if ( ! is_array( $input ) ) {
-			return new WP_Error( 'sdcpb_invalid', __( 'components must be an array.', 'sdc-page-builder' ), array( 'status' => 400 ) );
+			return new WP_Error( 'sdcpb_invalid', __( 'components must be an array.', 'phoenixseo-page-builder' ), array( 'status' => 400 ) );
 		}
 
 		// Unknown component types are rejected: silently dropping them would
@@ -152,13 +152,13 @@ class Sdcpb_Rest {
 		foreach ( $input as $component ) {
 			$type = is_array( $component ) && isset( $component['type'] ) ? (string) $component['type'] : '';
 			if ( '' === $type ) {
-				return new WP_Error( 'sdcpb_invalid_component', __( 'Component without a type.', 'sdc-page-builder' ), array( 'status' => 400 ) );
+				return new WP_Error( 'sdcpb_invalid_component', __( 'Component without a type.', 'phoenixseo-page-builder' ), array( 'status' => 400 ) );
 			}
 			if ( ! in_array( $type, $known, true ) ) {
 				return new WP_Error(
 					'sdcpb_unknown_component',
 					/* translators: %s: component type */
-					sprintf( __( 'Unknown component type: %s', 'sdc-page-builder' ), $type ),
+					sprintf( __( 'Unknown component type: %s', 'phoenixseo-page-builder' ), $type ),
 					array( 'status' => 400 )
 				);
 			}
@@ -181,7 +181,7 @@ class Sdcpb_Rest {
 				if ( is_string( $value ) ? '' === trim( $value ) : empty( $value ) ) {
 					$content_errors[] = sprintf(
 						/* translators: 1: component position, 2: component type, 3: field label */
-						__( 'Component %1$d (%2$s): required field "%3$s" is empty.', 'sdc-page-builder' ),
+						__( 'Component %1$d (%2$s): required field "%3$s" is empty.', 'phoenixseo-page-builder' ),
 						(int) $index + 1,
 						$type,
 						(string) $field['label']
@@ -193,7 +193,7 @@ class Sdcpb_Rest {
 		if ( $content_errors ) {
 			return new WP_Error(
 				'sdcpb_invalid_document',
-				__( 'The document was rejected. Nothing was saved.', 'sdc-page-builder' ),
+				__( 'The document was rejected. Nothing was saved.', 'phoenixseo-page-builder' ),
 				array(
 					'status' => 422,
 					'errors' => $content_errors,

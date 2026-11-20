@@ -1,5 +1,5 @@
 /**
- * The value rules behind the media fields of the SDC inspector.
+ * The value rules behind the media fields of the PhoenixSEO inspector.
  *
  * These run in plain node — no browser, no WordPress, no build step — because
  * that is the point of `assets/media-field.js`. An image value can be an ID, a

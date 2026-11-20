@@ -136,7 +136,7 @@ class Sdcpb_Renderer {
 		if ( $depth > self::MAX_DEPTH ) {
 			// Measured before this guard existed: depth 4 rendered anyway.
 			// Silently cutting a list would look like an empty list, so say so.
-			error_log( sprintf( 'SDC Page Builder: nesting depth %d exceeds the maximum %d (field "%s").', (int) $depth, self::MAX_DEPTH, (string) $field['name'] ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( sprintf( 'PhoenixSEO Page Builder: nesting depth %d exceeds the maximum %d (field "%s").', (int) $depth, self::MAX_DEPTH, (string) $field['name'] ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			return '';
 		}
 
@@ -174,7 +174,7 @@ class Sdcpb_Renderer {
 
 		$out .= '</div>';
 		$out .= '<button type="button" class="button" data-sdc-add-row>'
-			. esc_html( $field['button_label'] ?? __( 'Add Row', 'sdc-page-builder' ) )
+			. esc_html( $field['button_label'] ?? __( 'Add Row', 'phoenixseo-page-builder' ) )
 			. '</button>';
 		$out .= '</div>';
 
@@ -268,7 +268,7 @@ class Sdcpb_Renderer {
 			esc_attr( (string) $index ),
 			esc_attr( $id ),
 			self::render_fields( $sub, $row, $prefix, $depth ),
-			esc_attr__( 'Remove Row', 'sdc-page-builder' ),
+			esc_attr__( 'Remove Row', 'phoenixseo-page-builder' ),
 			esc_attr( $prefix ),
 			esc_attr( $prefix )
 		);
@@ -285,7 +285,7 @@ class Sdcpb_Renderer {
 	 */
 	private static function render_group( array $field, $value, $prefix, $depth ) {
 		if ( $depth > self::MAX_DEPTH ) {
-			error_log( sprintf( 'SDC Page Builder: nesting depth %d exceeds the maximum %d (field "%s").', (int) $depth, self::MAX_DEPTH, (string) $field['name'] ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( sprintf( 'PhoenixSEO Page Builder: nesting depth %d exceeds the maximum %d (field "%s").', (int) $depth, self::MAX_DEPTH, (string) $field['name'] ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			return '';
 		}
 

@@ -1,6 +1,6 @@
 {
 	"name": "phoenixseo/sdc-page-builder",
-	"description": "Dev tooling for the SDC Page Builder plugin: WPCS, PHPUnit against the WordPress test suite, translation files.",
+	"description": "Dev tooling for the PhoenixSEO Page Builder plugin: WPCS, PHPUnit against the WordPress test suite, translation files.",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
 	"require": {

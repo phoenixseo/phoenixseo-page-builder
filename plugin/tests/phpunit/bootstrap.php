@@ -1,6 +1,6 @@
 <?php
 /**
- * PHPUnit bootstrap for the SDC Page Builder suite.
+ * PHPUnit bootstrap for the PhoenixSEO Page Builder suite.
  *
  * Loads the plugin under test from the directory above `tests/`, so the suite
  * always evaluates the code that ships, not a copy in wp-content/plugins.
@@ -61,7 +61,7 @@ $sdcpb_plugin_install_dir = $sdcpb_wp_dir . '/wp-content/plugins';
 if ( ! is_dir( $sdcpb_plugin_install_dir ) ) {
 	mkdir( $sdcpb_plugin_install_dir, 0777, true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir -- test bootstrap.
 }
-$sdcpb_link = $sdcpb_plugin_install_dir . '/sdc-page-builder';
+$sdcpb_link = $sdcpb_plugin_install_dir . '/phoenixseo-page-builder';
 if ( ! file_exists( $sdcpb_link ) ) {
 	symlink( $sdcpb_plugin_dir, $sdcpb_link );
 }
@@ -120,7 +120,7 @@ tests_add_filter(
 	static function () use ( $sdcpb_host ) {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-		$to_enable = array( 'sdc-page-builder/sdc-page-builder.php' );
+		$to_enable = array( 'phoenixseo-page-builder/phoenixseo-page-builder.php' );
 
 		if ( 'scf' === $sdcpb_host ) {
 			$to_enable[] = 'secure-custom-fields/secure-custom-fields.php';

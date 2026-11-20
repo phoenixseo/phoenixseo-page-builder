@@ -65,12 +65,12 @@ class Sdcpb_View_Editor {
 		printf(
 			'<p><label for="%1$s"><strong>%2$s</strong></label></p>',
 			esc_attr( self::FIELD ),
-			esc_html__( 'render.php', 'sdc-page-builder' )
+			esc_html__( 'render.php', 'phoenixseo-page-builder' )
 		);
 
 		printf(
 			'<p class="description">%s</p>',
-			esc_html__( 'Determines how this component is rendered. Markup with PHP islands, like a theme template. Leaving it empty means the fields are rendered generically.', 'sdc-page-builder' )
+			esc_html__( 'Determines how this component is rendered. Markup with PHP islands, like a theme template. Leaving it empty means the fields are rendered generically.', 'phoenixseo-page-builder' )
 		);
 
 		printf(
@@ -82,7 +82,7 @@ class Sdcpb_View_Editor {
 		echo '<p class="description" id="sdc-view-help">';
 		printf(
 			/* translators: 1: name of the type variable, 2: name of the data variable, 3: name of the component variable. */
-			esc_html__( 'Available are %1$s (type), %2$s (field values) and %3$s (the component entry), plus the helpers below. A syntax error is rejected on save, so the page stays intact.', 'sdc-page-builder' ),
+			esc_html__( 'Available are %1$s (type), %2$s (field values) and %3$s (the component entry), plus the helpers below. A syntax error is rejected on save, so the page stays intact.', 'phoenixseo-page-builder' ),
 			'<code>$type</code>',
 			'<code>$data</code>',
 			'<code>$component</code>'
@@ -94,7 +94,7 @@ class Sdcpb_View_Editor {
 		} else {
 			printf(
 				'<p class="description">%s</p>',
-				esc_html__( 'Once fields are saved, a view can be generated from them here.', 'sdc-page-builder' )
+				esc_html__( 'Once fields are saved, a view can be generated from them here.', 'phoenixseo-page-builder' )
 			);
 		}
 
@@ -113,7 +113,7 @@ class Sdcpb_View_Editor {
 		printf(
 			'<p><button type="submit" name="%1$s" value="1" class="button">%2$s</button></p>',
 			esc_attr( self::GENERATE ),
-			esc_html__( 'Generate View from Fields', 'sdc-page-builder' )
+			esc_html__( 'Generate View from Fields', 'phoenixseo-page-builder' )
 		);
 
 		printf(
@@ -122,14 +122,14 @@ class Sdcpb_View_Editor {
 				? esc_html(
 					sprintf(
 						/* translators: %s: component type. */
-						__( 'Saves the component and replaces the text above with a view generated from the fields of "%s". Whatever is there now is lost.', 'sdc-page-builder' ),
+						__( 'Saves the component and replaces the text above with a view generated from the fields of "%s". Whatever is there now is lost.', 'phoenixseo-page-builder' ),
 						$type
 					)
 				)
 				: esc_html(
 					sprintf(
 						/* translators: %s: component type. */
-						__( 'Saves the component and fills the text above with a view generated from the fields of "%s".', 'sdc-page-builder' ),
+						__( 'Saves the component and fills the text above with a view generated from the fields of "%s".', 'phoenixseo-page-builder' ),
 						$type
 					)
 				)
@@ -149,10 +149,10 @@ class Sdcpb_View_Editor {
 			return;
 		}
 
-		printf( '<h4>%s</h4>', esc_html__( 'Helpers', 'sdc-page-builder' ) );
+		printf( '<h4>%s</h4>', esc_html__( 'Helpers', 'phoenixseo-page-builder' ) );
 		printf(
 			'<p class="description">%s</p>',
-			esc_html__( 'Every helper escapes on its own. If you need your own markup, use sdcpb_value() and escape yourself.', 'sdc-page-builder' )
+			esc_html__( 'Every helper escapes on its own. If you need your own markup, use sdcpb_value() and escape yourself.', 'phoenixseo-page-builder' )
 		);
 
 		echo '<table class="widefat striped" style="max-width:56em;">';
@@ -222,7 +222,7 @@ class Sdcpb_View_Editor {
 		if ( ! Sdcpb_View::can_edit( $type ) ) {
 			return new WP_Error(
 				'sdcpb_view_forbidden',
-				__( 'You are not allowed to change this view.', 'sdc-page-builder' )
+				__( 'You are not allowed to change this view.', 'phoenixseo-page-builder' )
 			);
 		}
 

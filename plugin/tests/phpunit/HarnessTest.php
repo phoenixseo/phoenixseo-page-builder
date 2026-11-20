@@ -27,7 +27,7 @@ class HarnessTest extends Sdcpb_TestCase {
 		$this->assertNotEmpty( $wp_version );
 
 		$header = get_file_data(
-			dirname( __DIR__, 2 ) . '/sdc-page-builder.php',
+			dirname( __DIR__, 2 ) . '/phoenixseo-page-builder.php',
 			array( 'requires_at_least' => 'Requires at least' )
 		);
 

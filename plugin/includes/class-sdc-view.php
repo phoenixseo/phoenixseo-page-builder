@@ -306,14 +306,14 @@ class Sdcpb_View {
 		if ( false !== stripos( $css, self::STYLE_CLOSE ) ) {
 			return new WP_Error(
 				'sdcpb_style_tag',
-				__( 'The CSS contains the marker that closes a style element. It would end the element the component styles are delivered in — the rest of the page would be read as HTML. Write the selector differently and it will save.', 'sdc-page-builder' )
+				__( 'The CSS contains the marker that closes a style element. It would end the element the component styles are delivered in — the rest of the page would be read as HTML. Write the selector differently and it will save.', 'phoenixseo-page-builder' )
 			);
 		}
 
 		if ( false !== strpos( $css, '<?' ) ) {
 			return new WP_Error(
 				'sdcpb_style_php',
-				__( 'This is CSS, not PHP: "<?" is printed as text and not executed. Markup is the view\'s job (render.php).', 'sdc-page-builder' )
+				__( 'This is CSS, not PHP: "<?" is printed as text and not executed. Markup is the view\'s job (render.php).', 'phoenixseo-page-builder' )
 			);
 		}
 
@@ -324,7 +324,7 @@ class Sdcpb_View {
 		if ( false !== strpos( $bare, '/*' ) ) {
 			return new WP_Error(
 				'sdcpb_style_comment',
-				__( 'A comment is not closed (/* without */). Everything after it would stay unstyled on the page, because all component styles are delivered together in one block in the page head.', 'sdc-page-builder' )
+				__( 'A comment is not closed (/* without */). Everything after it would stay unstyled on the page, because all component styles are delivered together in one block in the page head.', 'phoenixseo-page-builder' )
 			);
 		}
 
@@ -336,7 +336,7 @@ class Sdcpb_View {
 				'sdcpb_style_braces',
 				sprintf(
 					/* translators: 1: number of opening braces, 2: number of closing braces. */
-					__( 'The braces do not match: %1$d opened, %2$d closed. A rule stays open and the browser discards what follows.', 'sdc-page-builder' ),
+					__( 'The braces do not match: %1$d opened, %2$d closed. A rule stays open and the browser discards what follows.', 'phoenixseo-page-builder' ),
 					$open,
 					$close
 				)
@@ -414,7 +414,7 @@ class Sdcpb_View {
 		$file = self::style_file( $dir, $type );
 
 		if ( '' === $file ) {
-			return new WP_Error( 'sdcpb_style_type', __( 'This component type is not a valid file name.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_style_type', __( 'This component type is not a valid file name.', 'phoenixseo-page-builder' ) );
 		}
 
 		$code  = self::normalize_style( $css );
@@ -632,7 +632,7 @@ class Sdcpb_View {
 				'sdcpb_view_syntax',
 				sprintf(
 					/* translators: 1: line number, 2: parser message. */
-					__( 'The view has a PHP syntax error on line %1$d: %2$s', 'sdc-page-builder' ),
+					__( 'The view has a PHP syntax error on line %1$d: %2$s', 'phoenixseo-page-builder' ),
 					max( 1, (int) $error->getLine() ),
 					$error->getMessage()
 				)
@@ -642,7 +642,7 @@ class Sdcpb_View {
 				'sdcpb_view_syntax',
 				sprintf(
 					/* translators: %s: parser message. */
-					__( 'The view could not be checked: %s', 'sdc-page-builder' ),
+					__( 'The view could not be checked: %s', 'phoenixseo-page-builder' ),
 					$error->getMessage()
 				)
 			);
@@ -666,7 +666,7 @@ class Sdcpb_View {
 		$file = self::file( $dir, $type );
 
 		if ( '' === $file ) {
-			return new WP_Error( 'sdcpb_view_type', __( 'This component type is not a valid file name.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_view_type', __( 'This component type is not a valid file name.', 'phoenixseo-page-builder' ) );
 		}
 
 		$code  = self::normalize( $body );
@@ -704,7 +704,7 @@ class Sdcpb_View {
 				$prefix . '_mkdir_failed',
 				sprintf(
 					/* translators: %s: absolute directory path. */
-					__( 'The folder %s could not be created.', 'sdc-page-builder' ),
+					__( 'The folder %s could not be created.', 'phoenixseo-page-builder' ),
 					$folder
 				)
 			);
@@ -719,7 +719,7 @@ class Sdcpb_View {
 				$prefix . '_write_failed',
 				sprintf(
 					/* translators: %s: absolute file path. */
-					__( 'The file %s could not be written.', 'sdc-page-builder' ),
+					__( 'The file %s could not be written.', 'phoenixseo-page-builder' ),
 					$file
 				)
 			);
@@ -747,7 +747,7 @@ class Sdcpb_View {
 				$prefix . '_delete_failed',
 				sprintf(
 					/* translators: %s: absolute file path. */
-					__( 'The file %s could not be removed.', 'sdc-page-builder' ),
+					__( 'The file %s could not be removed.', 'phoenixseo-page-builder' ),
 					$file
 				)
 			);
@@ -981,59 +981,59 @@ class Sdcpb_View {
 		return array(
 			array(
 				'signature'   => "sdcpb_text( 'name' )",
-				'description' => __( 'Field value as text, HTML-escaped. Multi-selects are joined with a comma.', 'sdc-page-builder' ),
+				'description' => __( 'Field value as text, HTML-escaped. Multi-selects are joined with a comma.', 'phoenixseo-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_html( 'name' )",
-				'description' => __( 'Field value as HTML, through wp_kses_post. For formatted text and textareas with paragraphs.', 'sdc-page-builder' ),
+				'description' => __( 'Field value as HTML, through wp_kses_post. For formatted text and textareas with paragraphs.', 'phoenixseo-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_attr( 'name' )",
-				'description' => __( 'Field value for an attribute, escaped. For your own tags instead of the helpers below.', 'sdc-page-builder' ),
+				'description' => __( 'Field value for an attribute, escaped. For your own tags instead of the helpers below.', 'phoenixseo-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_url( 'name' )",
-				'description' => __( 'Field value as a URL, escaped and checked for http(s)/relative targets.', 'sdc-page-builder' ),
+				'description' => __( 'Field value as a URL, escaped and checked for http(s)/relative targets.', 'phoenixseo-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_image( 'name', 'large' )",
-				'description' => __( 'Image tag with URL, alt text and dimensions. Accepts an attachment array, an ID or a URL.', 'sdc-page-builder' ),
+				'description' => __( 'Image tag with URL, alt text and dimensions. Accepts an attachment array, an ID or a URL.', 'phoenixseo-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_image_url( 'name', 'full' )",
-				'description' => __( 'Just the image URL, escaped — for srcset, JSON-LD or a tag of your own. Accepts an attachment array, an ID or a URL.', 'sdc-page-builder' ),
+				'description' => __( 'Just the image URL, escaped — for srcset, JSON-LD or a tag of your own. Accepts an attachment array, an ID or a URL.', 'phoenixseo-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_image_style( 'name', 'full' )",
-				'description' => __( 'Sets the image on the element as a CSS variable: style="--sdc-image:url(…)". Without an image no attribute appears. In the CSS file then background-image: var( --sdc-image, none ).', 'sdc-page-builder' ),
+				'description' => __( 'Sets the image on the element as a CSS variable: style="--sdc-image:url(…)". Without an image no attribute appears. In the CSS file then background-image: var( --sdc-image, none ).', 'phoenixseo-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_link( 'name' )",
-				'description' => __( 'Link tag with a label from the field. A third argument sets the label.', 'sdc-page-builder' ),
+				'description' => __( 'Link tag with a label from the field. A third argument sets the label.', 'phoenixseo-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_file( 'name' )",
-				'description' => __( 'Link to a file, with its title as the label.', 'sdc-page-builder' ),
+				'description' => __( 'Link to a file, with its title as the label.', 'phoenixseo-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_has( 'name' )",
-				'description' => __( 'True when the field has a value. For conditional blocks.', 'sdc-page-builder' ),
+				'description' => __( 'True when the field has a value. For conditional blocks.', 'phoenixseo-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_value( 'name' )",
-				'description' => __( 'Raw value without output, for logic of your own. Dots address subfields: cta.title.', 'sdc-page-builder' ),
+				'description' => __( 'Raw value without output, for logic of your own. Dots address subfields: cta.title.', 'phoenixseo-page-builder' ),
 			),
 			array(
 				'signature'   => "sdcpb_each( 'name', function ( \$row ) { … } )",
-				'description' => __( 'Loop over the rows of a repeater. Helper calls inside it take $row as the last argument: sdcpb_text( \'quote\', $row ), sdcpb_image( \'image\', \'large\', array(), $row ).', 'sdc-page-builder' ),
+				'description' => __( 'Loop over the rows of a repeater. Helper calls inside it take $row as the last argument: sdcpb_text( \'quote\', $row ), sdcpb_image( \'image\', \'large\', array(), $row ).', 'phoenixseo-page-builder' ),
 			),
 			array(
 				'signature'   => 'sdcpb_fields()',
-				'description' => __( 'The default output of all fields of this component, when only the surrounding markup should be your own.', 'sdc-page-builder' ),
+				'description' => __( 'The default output of all fields of this component, when only the surrounding markup should be your own.', 'phoenixseo-page-builder' ),
 			),
 			array(
 				'signature'   => 'sdcpb_class( … )',
-				'description' => __( 'Builds a class list from non-empty parts, escaped for a class attribute.', 'sdc-page-builder' ),
+				'description' => __( 'Builds a class list from non-empty parts, escaped for a class attribute.', 'phoenixseo-page-builder' ),
 			),
 		);
 	}
@@ -1081,7 +1081,7 @@ class Sdcpb_View {
 	public static function scaffold_hint( $type ) {
 		return sprintf(
 			/* translators: %s: component type. */
-			__( 'Generated from the fields of "%s". Replaces what is in the field now.', 'sdc-page-builder' ),
+			__( 'Generated from the fields of "%s". Replaces what is in the field now.', 'phoenixseo-page-builder' ),
 			(string) $type
 		);
 	}
@@ -1178,7 +1178,7 @@ class Sdcpb_View {
 
 		if ( 'true_false' === $type ) {
 			return "<?php if ( sdcpb_has( {$key}{$tail} ) ) : ?>\n"
-				. '<span class="' . $css . '">' . esc_html__( 'Yes', 'sdc-page-builder' ) . '</span>' . "\n"
+				. '<span class="' . $css . '">' . esc_html__( 'Yes', 'phoenixseo-page-builder' ) . '</span>' . "\n"
 				. "<?php endif; ?>\n";
 		}
 

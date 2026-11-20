@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate plugin/languages/sdc-page-builder-de_DE.po from the POT.
+"""Generate plugin/languages/phoenixseo-page-builder-de_DE.po from the POT.
 
 The source language of the plugin is English. German lives here as a real
 translation: change a string in the code, rerun `make-pot.sh`, rerun this
@@ -9,8 +9,8 @@ purpose (names, URLs).
 import re
 import sys
 
-POT = "plugin/languages/sdc-page-builder.pot"
-OUT = "plugin/languages/sdc-page-builder-de_DE.po"
+POT = "plugin/languages/phoenixseo-page-builder.pot"
+OUT = "plugin/languages/phoenixseo-page-builder-de_DE.po"
 
 # English -> German. Only the strings that came from the German source and
 # the ones the i18n conversion introduced by hand.
@@ -63,6 +63,19 @@ DE = {
     # --- view helper documentation ---
     "Loop over the rows of a repeater. Helper calls inside it take $row as the last argument: sdcpb_text( 'quote', $row ), sdcpb_image( 'image', 'large', array(), $row ).":
         "Über die Zeilen eines Wiederholers laufen. Hilfsaufrufe darin nehmen $row als letztes Argument: sdcpb_text( 'quote', $row ), sdcpb_image( 'image', 'large', array(), $row ).",
+
+    # --- the strings the rename to PhoenixSEO Page Builder changed ---
+    "PhoenixSEO Components": "PhoenixSEO-Komponenten",
+    "PhoenixSEO Component (legacy)": "PhoenixSEO-Komponente (alt)",
+    'PhoenixSEO Page Builder: component type "%1$s" has no view (page %2$d)':
+        'PhoenixSEO Page Builder: Komponententyp "%1$s" hat keine Ansicht (Seite %2$d)',
+    'PhoenixSEO Page Builder: view of "%1$s" failed (%2$s): %3$s (page %4$d)':
+        'PhoenixSEO Page Builder: Ansicht von "%1$s" bricht ab (%2$s): %3$s (Seite %4$d)',
+    "Components carried over from the metabox into blocks.":
+        "Komponenten aus der Metabox in Blöcke übernommen.",
+    "PhoenixSEO Page Builder requires Advanced Custom Fields or Secure Custom Fields. Please activate one of the two.":
+        "PhoenixSEO Page Builder benötigt Advanced Custom Fields oder Secure Custom Fields. Bitte aktiviere eines der beiden.",
+    "Component from the PhoenixSEO builder.": "Komponente aus dem PhoenixSEO-Builder.",
 }
 
 # Plural pairs: (english singular, english plural) -> (german singular, german plural)
@@ -80,7 +93,9 @@ DE_PLURAL = {
 
 # Deliberately untranslated: names and URLs.
 KEEP_AS_IS = {
-    "SDC Page Builder",
+    "PhoenixSEO Page Builder",
+    "PhoenixSEO Page Builder:",
+    "Page Builder",
     "https://github.com/phoenixseo/sdc-page-builder",
     "PHOENIXSEO – Frank Pfabigan",
     "https://phoenixseo.de",
@@ -88,8 +103,8 @@ KEEP_AS_IS = {
 
 HEADER = '''msgid ""
 msgstr ""
-"Project-Id-Version: SDC Page Builder\\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sdc-page-builder\\n"
+"Project-Id-Version: PhoenixSEO Page Builder\\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/phoenixseo-page-builder\\n"
 "Last-Translator: PHOENIXSEO <plugins@phoenixseo.de>\\n"
 "Language-Team: Deutsch\\n"
 "Language: de_DE\\n"
@@ -97,7 +112,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\\n"
 "Content-Transfer-Encoding: 8bit\\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\\n"
-"X-Domain: sdc-page-builder\\n"
+"X-Domain: phoenixseo-page-builder\\n"
 '''
 
 
@@ -143,7 +158,7 @@ def main():
     translated = untranslated = 0
     missing = []
 
-    for context, msgid, plural in parse_pot("plugin/languages/sdc-page-builder.pot"):
+    for context, msgid, plural in parse_pot("plugin/languages/phoenixseo-page-builder.pot"):
         head = ""
         if context:
             head += "msgctxt %s\n" % quote(context)

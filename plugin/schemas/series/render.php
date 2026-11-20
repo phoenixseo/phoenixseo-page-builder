@@ -72,7 +72,7 @@ if ( '' !== $sdcpb_series_first && '' !== $sdcpb_series_last && $sdcpb_series_fi
 	$sdcpb_series_years = $sdcpb_series_first . '–' . $sdcpb_series_last;
 } elseif ( '' !== $sdcpb_series_first && '' === $sdcpb_series_last ) {
 	/* translators: %s: first year of the series. */
-	$sdcpb_series_years = sprintf( __( 'since %s', 'sdc-page-builder' ), $sdcpb_series_first );
+	$sdcpb_series_years = sprintf( __( 'since %s', 'phoenixseo-page-builder' ), $sdcpb_series_first );
 } else {
 	$sdcpb_series_years = $sdcpb_series_first;
 }
@@ -86,15 +86,15 @@ $sdcpb_series_run = array( $sdcpb_series_years );
 if ( $sdcpb_series_seasons ) {
 	$sdcpb_series_run[] = sprintf(
 		/* translators: 1: number of seasons, 2: number of episodes. */
-		__( '%1$s, %2$s', 'sdc-page-builder' ),
+		__( '%1$s, %2$s', 'phoenixseo-page-builder' ),
 		sprintf(
 			/* translators: %d: number of seasons. */
-			_n( '%d season', '%d seasons', count( $sdcpb_series_seasons ), 'sdc-page-builder' ),
+			_n( '%d season', '%d seasons', count( $sdcpb_series_seasons ), 'phoenixseo-page-builder' ),
 			count( $sdcpb_series_seasons )
 		),
 		sprintf(
 			/* translators: %d: number of episodes. */
-			_n( '%d episode', '%d episodes', $sdcpb_series_total, 'sdc-page-builder' ),
+			_n( '%d episode', '%d episodes', $sdcpb_series_total, 'phoenixseo-page-builder' ),
 			$sdcpb_series_total
 		)
 	);
@@ -102,13 +102,13 @@ if ( $sdcpb_series_seasons ) {
 
 $sdcpb_series_facts = array(
 	/* translators: Term in a component's fact list. */
-	'creator' => array( __( 'Idea', 'sdc-page-builder' ), Sdcpb_View::to_text( Sdcpb_View::resolve( 'creator' ) ) ),
+	'creator' => array( __( 'Idea', 'phoenixseo-page-builder' ), Sdcpb_View::to_text( Sdcpb_View::resolve( 'creator' ) ) ),
 	/* translators: Term in a component's fact list. */
-	'network' => array( __( 'Network', 'sdc-page-builder' ), Sdcpb_View::to_text( Sdcpb_View::resolve( 'network' ) ) ),
+	'network' => array( __( 'Network', 'phoenixseo-page-builder' ), Sdcpb_View::to_text( Sdcpb_View::resolve( 'network' ) ) ),
 	/* translators: Term in a component's fact list. */
-	'genre'   => array( __( 'Genre', 'sdc-page-builder' ), Sdcpb_View::to_text( Sdcpb_View::resolve( 'genre' ) ) ),
+	'genre'   => array( __( 'Genre', 'phoenixseo-page-builder' ), Sdcpb_View::to_text( Sdcpb_View::resolve( 'genre' ) ) ),
 	/* translators: Term in a component's fact list. */
-	'run'     => array( __( 'Runtime', 'sdc-page-builder' ), implode( ' · ', array_filter( $sdcpb_series_run, 'strlen' ) ) ),
+	'run'     => array( __( 'Runtime', 'phoenixseo-page-builder' ), implode( ' · ', array_filter( $sdcpb_series_run, 'strlen' ) ) ),
 );
 
 $sdcpb_series_id = wp_unique_id( 'sdc-series-' );
@@ -127,7 +127,7 @@ $sdcpb_series_id = wp_unique_id( 'sdc-series-' );
 			<p class="sdc-series__original">
 				<?php
 				/* translators: %s: original title of the component. */
-				printf( esc_html__( 'Original title: %s', 'sdc-page-builder' ), esc_html( Sdcpb_View::to_text( Sdcpb_View::resolve( 'original_title' ) ) ) );
+				printf( esc_html__( 'Original title: %s', 'phoenixseo-page-builder' ), esc_html( Sdcpb_View::to_text( Sdcpb_View::resolve( 'original_title' ) ) ) );
 				?>
 			</p>
 		<?php endif; ?>
@@ -145,7 +145,7 @@ $sdcpb_series_id = wp_unique_id( 'sdc-series-' );
 			<?php if ( is_numeric( Sdcpb_View::resolve( 'rating' ) ) && (float) Sdcpb_View::resolve( 'rating' ) >= 0 && (float) Sdcpb_View::resolve( 'rating' ) <= 10 ) : ?>
 				<div class="sdc-series__fact">
 					<?php /* translators: Term in a component's fact list. */ ?>
-					<dt class="sdc-series__term"><?php esc_html_e( 'Rating', 'sdc-page-builder' ); ?></dt>
+					<dt class="sdc-series__term"><?php esc_html_e( 'Rating', 'phoenixseo-page-builder' ); ?></dt>
 					<dd class="sdc-series__value">
 						<?php
 						$sdcpb_series_score = (float) Sdcpb_View::resolve( 'rating' );
@@ -170,7 +170,7 @@ $sdcpb_series_id = wp_unique_id( 'sdc-series-' );
 				<h3 class="sdc-series__seasons-title">
 					<?php
 					/* translators: %d: number of seasons. */
-					printf( esc_html( _n( '%d season', '%d seasons', count( $sdcpb_series_seasons ), 'sdc-page-builder' ) ), count( $sdcpb_series_seasons ) );
+					printf( esc_html( _n( '%d season', '%d seasons', count( $sdcpb_series_seasons ), 'phoenixseo-page-builder' ) ), count( $sdcpb_series_seasons ) );
 					?>
 				</h3>
 
@@ -180,7 +180,7 @@ $sdcpb_series_id = wp_unique_id( 'sdc-series-' );
 							<span class="sdc-series__season-name">
 								<?php
 								/* translators: %s: season number. */
-								printf( esc_html__( 'Season %s', 'sdc-page-builder' ), esc_html( $sdcpb_series_season['number'] ) );
+								printf( esc_html__( 'Season %s', 'phoenixseo-page-builder' ), esc_html( $sdcpb_series_season['number'] ) );
 								?>
 							</span>
 
@@ -193,7 +193,7 @@ $sdcpb_series_id = wp_unique_id( 'sdc-series-' );
 									<?php
 									printf(
 										/* translators: %d: number of episodes. */
-										esc_html( _n( '%d episode', '%d episodes', count( $sdcpb_series_season['episodes'] ), 'sdc-page-builder' ) ),
+										esc_html( _n( '%d episode', '%d episodes', count( $sdcpb_series_season['episodes'] ), 'phoenixseo-page-builder' ) ),
 										count( $sdcpb_series_season['episodes'] )
 									);
 									?>

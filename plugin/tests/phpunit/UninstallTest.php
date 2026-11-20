@@ -57,7 +57,7 @@ class UninstallTest extends Sdcpb_TestCase {
 		// WordPress defines this before loading uninstall.php; without it the
 		// file exits, which would kill this test process silently.
 		if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-			define( 'WP_UNINSTALL_PLUGIN', 'sdc-page-builder/sdc-page-builder.php' );
+			define( 'WP_UNINSTALL_PLUGIN', 'phoenixseo-page-builder/phoenixseo-page-builder.php' );
 		}
 
 		if ( $opted_in && ! defined( 'SDCPB_DELETE_DATA_ON_UNINSTALL' ) ) {

@@ -1,10 +1,10 @@
-=== SDC Page Builder ===
+=== PhoenixSEO Page Builder ===
 Contributors: phoenixseoluebeck
 Tags: page builder, components, acf, custom fields, blocks
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.3.0
+Stable tag: 0.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://ko-fi.com/phoenixseo
@@ -13,7 +13,7 @@ Reusable page components as native blocks: pick one from the inserter, edit its 
 
 == Description ==
 
-SDC Page Builder turns a page into a list of components. A component is a field group — heading, rich text, repeater, link, image — and every component type is its own block in the block inserter, collected under *SDC components*.
+PhoenixSEO Page Builder turns a page into a list of components. A component is a field group — heading, rich text, repeater, link, image — and every component type is its own block in the block inserter, collected under *PhoenixSEO components*.
 
 The page stores which components it uses and what values they hold, never how they look. Change a component's markup and every instance on every page changes with it — no per-page migration, and no page carrying a stale copy of the design.
 
@@ -34,14 +34,14 @@ Agencies and developers who build the same page patterns repeatedly (hero, FAQ, 
 = Features =
 
 * **A block per component type** — each component is separately insertable, searchable by its own name, and distinguishable in the list view.
-* **The category comes first** — *SDC components* sits at the top of the inserter, not somewhere below the core blocks.
+* **The category comes first** — *PhoenixSEO components* sits at the top of the inserter, not somewhere below the core blocks.
 * **Server-rendered** — the canvas shows the real frontend markup, so a layout bug is visible before the page is published.
 * **Component types as JSON schemas** — no PHP class per type. Editor, REST layer and frontend are type-agnostic.
 * **Only the fields its schema defines** — a component accepts exactly its own fields; nothing can be smuggled in as raw HTML by accident.
 * **Escaped output** — stored values are escaped per field type (`esc_html`, `wp_kses_post`, `esc_attr`); the editor's data attributes never reach the frontend.
 * **Permission-aware** — the REST routes check the capability to edit that specific page.
 * **Backend overview** — a catalogue screen lists every component type with its fields and how many pages use it, and refuses to delete a type that is still placed.
-* **i18n-ready** — all strings use the text domain `sdc-page-builder`; a POT file ships in `languages/`.
+* **i18n-ready** — all strings use the text domain `phoenixseo-page-builder`; a POT file ships in `languages/`.
 * **Your components live in your theme** — drop a folder with a JSON field group (and optionally a `render.php`) into your theme; plugin updates never touch them.
 
 = Where do I put my own components? =
@@ -74,9 +74,9 @@ Without either, the plugin renders generic markup (`div.sdc-component--<type>`, 
 == Installation ==
 
 1. Install and activate either [Advanced Custom Fields](https://wordpress.org/plugins/advanced-custom-fields/) or [Secure Custom Fields](https://wordpress.org/plugins/secure-custom-fields/). The plugin does nothing without one of them and says so in the admin.
-2. Upload the `sdc-page-builder` folder to `/wp-content/plugins/`, or install the plugin through the WordPress *Plugins* screen.
+2. Upload the `phoenixseo-page-builder` folder to `/wp-content/plugins/`, or install the plugin through the WordPress *Plugins* screen.
 3. Activate the plugin through the *Plugins* screen.
-4. Edit a page, open the inserter and pick a component under *SDC components*.
+4. Edit a page, open the inserter and pick a component under *PhoenixSEO components*.
 
 Pages written by a pre-release version of this plugin, which kept components in a meta row instead of in the content, are converted to blocks the first time they are opened in the editor. The meta row stays as a backup; from then on the editor writes blocks.
 
@@ -117,12 +117,21 @@ output — no mockup, no theme involved. The content is sample data.
 
 == Changelog ==
 
+= 0.3.1 =
+* Changed: the plugin is called *PhoenixSEO Page Builder*. The directory review
+  could not accept "SDC Page Builder": "Page Builder" on its own is generic, and
+  "SDC" named neither the plugin nor its author. The text domain follows the name
+  and is now `phoenixseo-page-builder`, the main file is
+  `phoenixseo-page-builder.php`, and the shipped catalogue is
+  `languages/phoenixseo-page-builder-de_DE.po/.mo`. Block names, post meta and
+  component folders are unchanged, so an existing site keeps working as it was.
+
 = 0.3.0 =
 * Changed: the source strings are English. Before, a plugin installed on an
   English site rendered German — the source language is the fallback, so no
   translation could fix it. Every `__()` call, the admin screens, the field
   type labels and the example components now speak English, and the catalogue
-  ships a German translation in `languages/sdc-page-builder-de_DE.po/.mo`.
+  ships a German translation in `languages/phoenixseo-page-builder-de_DE.po/.mo`.
   German sites read exactly as before.
 * Changed: `Sdcpb_Field_Editor::TYPES` is now `definitions()`. A constant
   initialiser cannot call `__()`, so the 54 field type labels, groups and
@@ -194,7 +203,7 @@ output — no mockup, no theme involved. The content is sample data.
 = 0.1.0 =
 * Initial release.
 * One block per component type, registered from the component's JSON definition.
-* A dedicated *SDC components* block category, first in the inserter.
+* A dedicated *PhoenixSEO components* block category, first in the inserter.
 * Server-side rendering, so the editor canvas shows the frontend markup.
 * Component types defined as JSON schemas; editor, REST and frontend are type-agnostic.
 * Field editing in the block sidebar; click a component to select it.

@@ -22,7 +22,7 @@ CLI=wp-env-test-scf-e54e6b03-cli-1
 DEV=/tmp/sdc-wpmin
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
-MIN="$(sed -n 's/^ \* Requires at least: *//p' "$ROOT/plugin/sdc-page-builder.php" | head -1)"
+MIN="$(sed -n 's/^ \* Requires at least: *//p' "$ROOT/plugin/phoenixseo-page-builder.php" | head -1)"
 if [ -z "$MIN" ]; then
 	echo "No 'Requires at least' in the plugin header." >&2
 	exit 2

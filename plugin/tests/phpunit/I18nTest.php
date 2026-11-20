@@ -20,9 +20,9 @@ class I18nTest extends Sdcpb_TestCase {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		$data = get_plugin_data( dirname( __DIR__, 2 ) . '/sdc-page-builder.php', false, false );
+		$data = get_plugin_data( dirname( __DIR__, 2 ) . '/phoenixseo-page-builder.php', false, false );
 
-		$this->assertSame( 'sdc-page-builder', $data['TextDomain'] );
+		$this->assertSame( 'phoenixseo-page-builder', $data['TextDomain'] );
 		$this->assertSame( '/languages', $data['DomainPath'] );
 	}
 
@@ -35,13 +35,13 @@ class I18nTest extends Sdcpb_TestCase {
 	 * The header test above pins the header this depends on.
 	 */
 	public function test_plugin_does_not_load_its_own_textdomain() {
-		$source = (string) file_get_contents( dirname( __DIR__, 2 ) . '/sdc-page-builder.php' );
+		$source = (string) file_get_contents( dirname( __DIR__, 2 ) . '/phoenixseo-page-builder.php' );
 
 		// The call with the argument, not the bare name: the comment where the
 		// call used to be names the function in prose, and that prose is what
 		// keeps the next reader from adding it back.
 		$this->assertStringNotContainsString(
-			"load_plugin_textdomain( 'sdc-page-builder' )",
+			"load_plugin_textdomain( 'phoenixseo-page-builder' )",
 			$source,
 			'load_plugin_textdomain() is back in the plugin file — wordpress.org loads the domain itself'
 		);
@@ -56,7 +56,7 @@ class I18nTest extends Sdcpb_TestCase {
 	 */
 	public function test_textdomain_is_not_loaded_before_init() {
 		$this->assertFalse(
-			is_textdomain_loaded( 'sdc-page-builder' ),
+			is_textdomain_loaded( 'phoenixseo-page-builder' ),
 			'The textdomain was loaded before init — WordPress 6.7+ logs a notice for that'
 		);
 	}
@@ -71,7 +71,7 @@ class I18nTest extends Sdcpb_TestCase {
 	 * character in a `msgid` means a source string went back to German.
 	 */
 	public function test_source_strings_carry_no_german_characters() {
-		$pot = dirname( __DIR__, 2 ) . '/languages/sdc-page-builder.pot';
+		$pot = dirname( __DIR__, 2 ) . '/languages/phoenixseo-page-builder.pot';
 		$ids = self::pot_entries( (string) file_get_contents( $pot ) );
 
 		$german = array();
@@ -100,19 +100,19 @@ class I18nTest extends Sdcpb_TestCase {
 	 * produced an empty catalog would pass the other one.
 	 */
 	public function test_shipped_german_catalog_translates_a_real_string() {
-		$mo_file = dirname( __DIR__, 2 ) . '/languages/sdc-page-builder-de_DE.mo';
-		$this->assertFileExists( $mo_file, 'languages/sdc-page-builder-de_DE.mo is missing — run test-scf/make-po.py' );
+		$mo_file = dirname( __DIR__, 2 ) . '/languages/phoenixseo-page-builder-de_DE.mo';
+		$this->assertFileExists( $mo_file, 'languages/phoenixseo-page-builder-de_DE.mo is missing — run test-scf/make-po.py' );
 
-		unload_textdomain( 'sdc-page-builder' );
-		$loaded = load_textdomain( 'sdc-page-builder', $mo_file, 'de_DE' );
+		unload_textdomain( 'phoenixseo-page-builder' );
+		$loaded = load_textdomain( 'phoenixseo-page-builder', $mo_file, 'de_DE' );
 
 		try {
-			$translated = __( 'Save Component', 'sdc-page-builder' );
-			$plural_one = sprintf( _n( '%d season', '%d seasons', 1, 'sdc-page-builder' ), 1 );
-			$plural_two = sprintf( _n( '%d season', '%d seasons', 3, 'sdc-page-builder' ), 3 );
+			$translated = __( 'Save Component', 'phoenixseo-page-builder' );
+			$plural_one = sprintf( _n( '%d season', '%d seasons', 1, 'phoenixseo-page-builder' ), 1 );
+			$plural_two = sprintf( _n( '%d season', '%d seasons', 3, 'phoenixseo-page-builder' ), 3 );
 		} finally {
 			// A leaked catalog would translate strings for every later test.
-			unload_textdomain( 'sdc-page-builder' );
+			unload_textdomain( 'phoenixseo-page-builder' );
 		}
 
 		$this->assertTrue( $loaded, 'load_textdomain() rejected the shipped catalog' );
@@ -143,15 +143,15 @@ class I18nTest extends Sdcpb_TestCase {
 		);
 		$this->assertTrue( $mo->export_to_file( $mo_file ) );
 
-		unload_textdomain( 'sdc-page-builder' );
-		$loaded = load_textdomain( 'sdc-page-builder', $mo_file, 'de_DE' );
+		unload_textdomain( 'phoenixseo-page-builder' );
+		$loaded = load_textdomain( 'phoenixseo-page-builder', $mo_file, 'de_DE' );
 
 		try {
-			$result = __( 'Save Component', 'sdc-page-builder' );
+			$result = __( 'Save Component', 'phoenixseo-page-builder' );
 		} finally {
 			// Leaving the probe catalog loaded would translate this string for
 			// every test that runs after this one.
-			unload_textdomain( 'sdc-page-builder' );
+			unload_textdomain( 'phoenixseo-page-builder' );
 		}
 
 		wp_delete_file( $mo_file );
@@ -164,11 +164,11 @@ class I18nTest extends Sdcpb_TestCase {
 	 * The POT file exists, names the domain, and is not a hand-written stub.
 	 */
 	public function test_pot_file_declares_the_domain() {
-		$pot = dirname( __DIR__, 2 ) . '/languages/sdc-page-builder.pot';
-		$this->assertFileExists( $pot, 'languages/sdc-page-builder.pot is missing' );
+		$pot = dirname( __DIR__, 2 ) . '/languages/phoenixseo-page-builder.pot';
+		$this->assertFileExists( $pot, 'languages/phoenixseo-page-builder.pot is missing' );
 
 		$contents = (string) file_get_contents( $pot );
-		$this->assertStringContainsString( 'X-Domain: sdc-page-builder', $contents );
+		$this->assertStringContainsString( 'X-Domain: phoenixseo-page-builder', $contents );
 
 		// Placeholder left by the generator would be a broken report link.
 		$this->assertStringNotContainsString( 'wordpress.org/support/plugin/plugin', $contents );
@@ -185,7 +185,7 @@ class I18nTest extends Sdcpb_TestCase {
 	 * short one.
 	 */
 	public function test_pot_covers_every_source_string_and_carries_no_orphans() {
-		$pot  = dirname( __DIR__, 2 ) . '/languages/sdc-page-builder.pot';
+		$pot  = dirname( __DIR__, 2 ) . '/languages/phoenixseo-page-builder.pot';
 		$ids  = self::pot_entries( (string) file_get_contents( $pot ) );
 		$have = array();
 
@@ -261,7 +261,7 @@ class I18nTest extends Sdcpb_TestCase {
 		$files   = glob( $base . '/includes/*.php' );
 		$files   = array_merge( $files, glob( $base . '/assets/*.js' ) );
 		$files   = array_merge( $files, glob( $base . '/schemas/*/render.php' ) );
-		$files[] = $base . '/sdc-page-builder.php';
+		$files[] = $base . '/phoenixseo-page-builder.php';
 
 		return array_values( array_filter( $files, 'is_file' ) );
 	}
@@ -397,7 +397,7 @@ class I18nTest extends Sdcpb_TestCase {
 	 */
 	public function test_all_translation_calls_use_the_plugin_domain() {
 		$files   = glob( dirname( __DIR__, 2 ) . '/includes/*.php' );
-		$files[] = dirname( __DIR__, 2 ) . '/sdc-page-builder.php';
+		$files[] = dirname( __DIR__, 2 ) . '/phoenixseo-page-builder.php';
 
 		$wrong = array();
 		foreach ( $files as $file ) {
@@ -406,7 +406,7 @@ class I18nTest extends Sdcpb_TestCase {
 				foreach ( $m[1] as $domain ) {
 					// `_n()` puts the domain third; the pattern above catches the
 					// singular and plural string, so only real differences count.
-					if ( 'sdc-page-builder' !== $domain && false === strpos( $domain, ' ' ) ) {
+					if ( 'phoenixseo-page-builder' !== $domain && false === strpos( $domain, ' ' ) ) {
 						$wrong[ $domain ] = basename( $file );
 					}
 				}

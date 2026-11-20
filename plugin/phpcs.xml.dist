@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<ruleset name="SDC Page Builder">
-	<description>WordPress Coding Standards for the SDC Page Builder plugin.</description>
+<ruleset name="PhoenixSEO Page Builder">
+	<description>WordPress Coding Standards for the PhoenixSEO Page Builder plugin.</description>
 
-	<file>sdc-page-builder.php</file>
+	<file>phoenixseo-page-builder.php</file>
 	<file>includes</file>
 	<file>uninstall.php</file>
 	<file>tests/phpunit</file>
@@ -38,7 +38,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="sdc-page-builder"/>
+				<element value="phoenixseo-page-builder"/>
 			</property>
 		</properties>
 	</rule>

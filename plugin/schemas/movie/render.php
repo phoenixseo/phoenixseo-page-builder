@@ -38,9 +38,9 @@ if ( is_numeric( Sdcpb_View::resolve( 'runtime' ) ) ) {
 	if ( $sdcpb_movie_minutes > 0 ) {
 		$sdcpb_movie_runtime = $sdcpb_movie_minutes >= 60
 			/* translators: 1: hours, 2: minutes. */
-			? sprintf( __( '%1$dh %2$dm', 'sdc-page-builder' ), intdiv( $sdcpb_movie_minutes, 60 ), $sdcpb_movie_minutes % 60 )
+			? sprintf( __( '%1$dh %2$dm', 'phoenixseo-page-builder' ), intdiv( $sdcpb_movie_minutes, 60 ), $sdcpb_movie_minutes % 60 )
 			/* translators: %d: minutes. */
-			: sprintf( __( '%d min', 'sdc-page-builder' ), $sdcpb_movie_minutes );
+			: sprintf( __( '%d min', 'phoenixseo-page-builder' ), $sdcpb_movie_minutes );
 	}
 }
 
@@ -66,11 +66,11 @@ if ( null !== $sdcpb_movie_rating ) {
 
 $sdcpb_movie_facts = array(
 	/* translators: Term in a component's fact list. */
-	'director' => array( __( 'Director', 'sdc-page-builder' ), Sdcpb_View::to_text( Sdcpb_View::resolve( 'director' ) ) ),
+	'director' => array( __( 'Director', 'phoenixseo-page-builder' ), Sdcpb_View::to_text( Sdcpb_View::resolve( 'director' ) ) ),
 	/* translators: Term in a component's fact list. */
-	'genre'    => array( __( 'Genre', 'sdc-page-builder' ), Sdcpb_View::to_text( Sdcpb_View::resolve( 'genre' ) ) ),
+	'genre'    => array( __( 'Genre', 'phoenixseo-page-builder' ), Sdcpb_View::to_text( Sdcpb_View::resolve( 'genre' ) ) ),
 	/* translators: Term in a component's fact list. */
-	'runtime'  => array( __( 'Runtime', 'sdc-page-builder' ), $sdcpb_movie_runtime ),
+	'runtime'  => array( __( 'Runtime', 'phoenixseo-page-builder' ), $sdcpb_movie_runtime ),
 );
 
 $sdcpb_movie_id = wp_unique_id( 'sdc-movie-' );
@@ -99,7 +99,7 @@ $sdcpb_movie_id = wp_unique_id( 'sdc-movie-' );
 			<p class="sdc-movie__original">
 				<?php
 				/* translators: %s: original title of the component. */
-				printf( esc_html__( 'Original title: %s', 'sdc-page-builder' ), esc_html( Sdcpb_View::to_text( Sdcpb_View::resolve( 'original_title' ) ) ) );
+				printf( esc_html__( 'Original title: %s', 'phoenixseo-page-builder' ), esc_html( Sdcpb_View::to_text( Sdcpb_View::resolve( 'original_title' ) ) ) );
 				?>
 			</p>
 		<?php endif; ?>
@@ -118,7 +118,7 @@ $sdcpb_movie_id = wp_unique_id( 'sdc-movie-' );
 				<?php if ( null !== $sdcpb_movie_rating ) : ?>
 					<div class="sdc-movie__fact">
 						<?php /* translators: Term in a component's fact list. */ ?>
-						<dt class="sdc-movie__term"><?php esc_html_e( 'Rating', 'sdc-page-builder' ); ?></dt>
+						<dt class="sdc-movie__term"><?php esc_html_e( 'Rating', 'phoenixseo-page-builder' ); ?></dt>
 						<dd class="sdc-movie__value sdc-movie__rating">
 							<?php
 							/*
@@ -132,7 +132,7 @@ $sdcpb_movie_id = wp_unique_id( 'sdc-movie-' );
 								esc_attr( (string) $sdcpb_movie_rating ),
 								esc_html(
 									/* translators: 1: score, 2: maximum. */
-									sprintf( __( '%1$s by %2$s', 'sdc-page-builder' ), $sdcpb_movie_score, '10' )
+									sprintf( __( '%1$s by %2$s', 'phoenixseo-page-builder' ), $sdcpb_movie_score, '10' )
 								),
 								esc_html( $sdcpb_movie_score . ' / 10' )
 							);
@@ -150,7 +150,7 @@ $sdcpb_movie_id = wp_unique_id( 'sdc-movie-' );
 		<?php if ( sdcpb_has( 'cast' ) ) : ?>
 			<div class="sdc-movie__cast">
 				<?php /* translators: Heading above the cast list. */ ?>
-				<h3 class="sdc-movie__cast-title"><?php esc_html_e( 'Cast', 'sdc-page-builder' ); ?></h3>
+				<h3 class="sdc-movie__cast-title"><?php esc_html_e( 'Cast', 'phoenixseo-page-builder' ); ?></h3>
 
 				<ul class="sdc-movie__cast-list">
 					<?php
@@ -169,7 +169,7 @@ $sdcpb_movie_id = wp_unique_id( 'sdc-movie-' );
 							if ( sdcpb_has( 'role', $row ) ) {
 								echo '<span class="sdc-movie__role">';
 								/* translators: %s: name of the character. */
-								printf( esc_html__( 'as %s', 'sdc-page-builder' ), esc_html( Sdcpb_View::to_text( Sdcpb_View::resolve( 'role', $row ) ) ) );
+								printf( esc_html__( 'as %s', 'phoenixseo-page-builder' ), esc_html( Sdcpb_View::to_text( Sdcpb_View::resolve( 'role', $row ) ) ) );
 								echo '</span>';
 							}
 

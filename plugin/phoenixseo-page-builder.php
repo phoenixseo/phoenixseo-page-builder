@@ -1,16 +1,16 @@
 <?php
 /**
- * Plugin Name:       SDC Page Builder
+ * Plugin Name:       PhoenixSEO Page Builder
  * Plugin URI:        https://github.com/phoenixseo/sdc-page-builder
  * Description:       Component-based page builder: ACF or SCF fields as building blocks, one block per component type, rendered server-side in the editor.
- * Version:           0.3.0
+ * Version:           0.3.1
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            PHOENIXSEO – Frank Pfabigan
  * Author URI:        https://phoenixseo.de
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       sdc-page-builder
+ * Text Domain:       phoenixseo-page-builder
  * Domain Path:       /languages
  *
  * @package SdcPageBuilder
@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SDCPB_VERSION', '0.3.0' );
+define( 'SDCPB_VERSION', '0.3.1' );
 define( 'SDCPB_FILE', __FILE__ );
 define( 'SDCPB_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SDCPB_URL', plugin_dir_url( __FILE__ ) );
@@ -79,7 +79,7 @@ require_once SDCPB_DIR . 'includes/class-sdc-rename.php';
  * Translations are not loaded here.
  *
  * Since WordPress 4.6 a plugin hosted on wordpress.org is translated by core:
- * it loads `wp-content/languages/plugins/sdc-page-builder-<locale>.mo`, which is
+ * it loads `wp-content/languages/plugins/phoenixseo-page-builder-<locale>.mo`, which is
  * where language packs are installed, and it does so just in time. Calling
  * `load_plugin_textdomain()` on top of that loads the same catalog a second
  * time from the plugin directory, which is why the plugin review asks for the
@@ -121,7 +121,7 @@ function sdcpb_missing_host_notice() {
 	}
 	printf(
 		'<div class="notice notice-warning"><p>%s</p></div>',
-		esc_html__( 'SDC Page Builder requires Advanced Custom Fields or Secure Custom Fields. Please activate one of the two.', 'sdc-page-builder' )
+		esc_html__( 'PhoenixSEO Page Builder requires Advanced Custom Fields or Secure Custom Fields. Please activate one of the two.', 'phoenixseo-page-builder' )
 	);
 }
 

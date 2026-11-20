@@ -282,13 +282,13 @@ class Sdcpb_Admin {
 
 		printf(
 			'<div class="notice notice-warning"><p><strong>%1$s</strong> %2$s</p></div>',
-			esc_html__( 'SDC Page Builder:', 'sdc-page-builder' ),
+			esc_html__( 'PhoenixSEO Page Builder:', 'phoenixseo-page-builder' ),
 			esc_html(
 				sprintf(
 					/* translators: 1: number of pages, 2: WP-CLI command. */
 					_n( '%1$d page contains a component without a view. It renders nothing until the component is back — check the preview with %2$s.', '%1$d pages contain a component without a view. They render nothing until the component is back — check the preview with %2$s.',
 						$count,
-						'sdc-page-builder'
+						'phoenixseo-page-builder'
 					),
 					$count,
 					'wp sdc-pb repair'
@@ -302,8 +302,8 @@ class Sdcpb_Admin {
 	 */
 	public static function menu() {
 		add_menu_page(
-			esc_html__( 'SDC Components', 'sdc-page-builder' ),
-			esc_html__( 'SDC', 'sdc-page-builder' ),
+			esc_html__( 'PhoenixSEO Components', 'phoenixseo-page-builder' ),
+			esc_html__( 'Page Builder', 'phoenixseo-page-builder' ),
 			self::CAPABILITY,
 			self::MENU_SLUG,
 			array( __CLASS__, 'render' ),
@@ -358,7 +358,7 @@ class Sdcpb_Admin {
 		if ( '' === $dir ) {
 			return new WP_Error(
 				'sdcpb_no_write_dir',
-				__( 'No target folder: WP_CONTENT_DIR is not defined.', 'sdc-page-builder' )
+				__( 'No target folder: WP_CONTENT_DIR is not defined.', 'phoenixseo-page-builder' )
 			);
 		}
 
@@ -367,7 +367,7 @@ class Sdcpb_Admin {
 				'sdcpb_no_write_dir',
 				sprintf(
 					/* translators: %s: absolute directory path. */
-					__( 'The folder %s cannot be created. The web server needs write access to wp-content.', 'sdc-page-builder' ),
+					__( 'The folder %s cannot be created. The web server needs write access to wp-content.', 'phoenixseo-page-builder' ),
 					$dir
 				)
 			);
@@ -378,7 +378,7 @@ class Sdcpb_Admin {
 				'sdcpb_no_write_dir',
 				sprintf(
 					/* translators: %s: absolute directory path. */
-					__( 'The folder %s is not writable. Components can only be read here.', 'sdc-page-builder' ),
+					__( 'The folder %s is not writable. Components can only be read here.', 'phoenixseo-page-builder' ),
 					$dir
 				)
 			);
@@ -411,7 +411,7 @@ class Sdcpb_Admin {
 	 */
 	public static function render() {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
-			wp_die( esc_html__( 'You do not have permission to view this page.', 'sdc-page-builder' ) );
+			wp_die( esc_html__( 'You do not have permission to view this page.', 'phoenixseo-page-builder' ) );
 		}
 
 		$dir      = self::write_dir();
@@ -421,7 +421,7 @@ class Sdcpb_Admin {
 		$edit = isset( $_GET['sdcpb_edit'] ) ? sanitize_key( wp_unslash( $_GET['sdcpb_edit'] ) ) : '';
 
 		echo '<div class="wrap">';
-		echo '<h1>' . esc_html__( 'SDC Components', 'sdc-page-builder' ) . '</h1>';
+		echo '<h1>' . esc_html__( 'PhoenixSEO Components', 'phoenixseo-page-builder' ) . '</h1>';
 
 		self::render_notice();
 
@@ -438,8 +438,8 @@ class Sdcpb_Admin {
 				esc_html(
 					sprintf(
 						/* translators: %s: absolute directory path. */
-						__( 'The folder %s is not writable. Components are shown, but creating and deleting is locked.', 'sdc-page-builder' ),
-						'' === $dir ? __( '(unknown)', 'sdc-page-builder' ) : $dir
+						__( 'The folder %s is not writable. Components are shown, but creating and deleting is locked.', 'phoenixseo-page-builder' ),
+						'' === $dir ? __( '(unknown)', 'phoenixseo-page-builder' ) : $dir
 					)
 				)
 			);
@@ -450,8 +450,8 @@ class Sdcpb_Admin {
 			esc_html(
 				sprintf(
 					/* translators: %s: absolute directory path. */
-					__( 'A component is a folder with a definition.json. Components created in the admin live in %s and survive a theme switch. Components in the theme are shipped with it and are read-only here.', 'sdc-page-builder' ),
-					'' === $dir ? __( '(unknown)', 'sdc-page-builder' ) : $dir
+					__( 'A component is a folder with a definition.json. Components created in the admin live in %s and survive a theme switch. Components in the theme are shipped with it and are read-only here.', 'phoenixseo-page-builder' ),
+					'' === $dir ? __( '(unknown)', 'phoenixseo-page-builder' ) : $dir
 				)
 			)
 		);
@@ -491,11 +491,11 @@ class Sdcpb_Admin {
 		 */
 		$roles = array(
 			array(
-				'label' => __( 'Vision and Concept', 'sdc-page-builder' ),
+				'label' => __( 'Vision and Concept', 'phoenixseo-page-builder' ),
 				'names' => 'Frank Pfabigan and Athena',
 			),
 			array(
-				'label' => __( 'Programming', 'sdc-page-builder' ),
+				'label' => __( 'Programming', 'phoenixseo-page-builder' ),
 				'names' => "Athena's Crew, Neo, Judge",
 			),
 		);
@@ -518,13 +518,13 @@ class Sdcpb_Admin {
 			'</div>',
 			sprintf(
 				/* translators: %s: plugin author name, linked to their website. */
-				esc_html__( 'A plugin by %s', 'sdc-page-builder' ),
+				esc_html__( 'A plugin by %s', 'phoenixseo-page-builder' ),
 				$author // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped piece by piece above.
 			),
 			$list, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped per item above.
-			esc_html__( 'November 2026', 'sdc-page-builder' ),
+			esc_html__( 'November 2026', 'phoenixseo-page-builder' ),
 			esc_url( self::COFFEE_URL ),
-			esc_html__( 'Buy Me a Coffee', 'sdc-page-builder' )
+			esc_html__( 'Buy Me a Coffee', 'phoenixseo-page-builder' )
 		);
 
 		/**
@@ -541,10 +541,10 @@ class Sdcpb_Admin {
 	private static function render_table() {
 		$rows = self::entries();
 
-		echo '<h2>' . esc_html__( 'Existing Components', 'sdc-page-builder' ) . '</h2>';
+		echo '<h2>' . esc_html__( 'Existing Components', 'phoenixseo-page-builder' ) . '</h2>';
 
 		if ( empty( $rows ) ) {
-			echo '<p>' . esc_html__( 'No components found. The plugin ships hero and faq — if they are missing, ACF or SCF is not active.', 'sdc-page-builder' ) . '</p>';
+			echo '<p>' . esc_html__( 'No components found. The plugin ships hero and faq — if they are missing, ACF or SCF is not active.', 'phoenixseo-page-builder' ) . '</p>';
 			return;
 		}
 
@@ -552,12 +552,12 @@ class Sdcpb_Admin {
 		echo '<thead><tr>';
 		foreach (
 			array(
-				esc_html__( 'Component', 'sdc-page-builder' ),
-				esc_html__( 'Fields', 'sdc-page-builder' ),
-				esc_html__( 'Template', 'sdc-page-builder' ),
-				esc_html__( 'Storage', 'sdc-page-builder' ),
-				esc_html__( 'Usage', 'sdc-page-builder' ),
-				esc_html__( 'Actions', 'sdc-page-builder' ),
+				esc_html__( 'Component', 'phoenixseo-page-builder' ),
+				esc_html__( 'Fields', 'phoenixseo-page-builder' ),
+				esc_html__( 'Template', 'phoenixseo-page-builder' ),
+				esc_html__( 'Storage', 'phoenixseo-page-builder' ),
+				esc_html__( 'Usage', 'phoenixseo-page-builder' ),
+				esc_html__( 'Actions', 'phoenixseo-page-builder' ),
 			) as $heading
 		) {
 			printf( '<th scope="col">%s</th>', esc_html( $heading ) );
@@ -608,20 +608,20 @@ class Sdcpb_Admin {
 	 */
 	private static function source_label( $file ) {
 		if ( '' === $file ) {
-			return __( 'unknown', 'sdc-page-builder' );
+			return __( 'unknown', 'phoenixseo-page-builder' );
 		}
 
 		if ( self::in_write_dir( $file ) ) {
-			return __( 'wp-content', 'sdc-page-builder' );
+			return __( 'wp-content', 'phoenixseo-page-builder' );
 		}
 
 		$normalized = wp_normalize_path( $file );
 
 		if ( 0 === strpos( $normalized, trailingslashit( wp_normalize_path( Sdcpb_Schema::dir() ) ) ) ) {
-			return __( 'Plugin', 'sdc-page-builder' );
+			return __( 'Plugin', 'phoenixseo-page-builder' );
 		}
 
-		return __( 'Theme', 'sdc-page-builder' );
+		return __( 'Theme', 'phoenixseo-page-builder' );
 	}
 
 	/**
@@ -647,7 +647,7 @@ class Sdcpb_Admin {
 
 		echo '<td>';
 		if ( '' === $row['template'] ) {
-			echo '<span class="description">' . esc_html__( '—', 'sdc-page-builder' ) . '</span>';
+			echo '<span class="description">' . esc_html__( '—', 'phoenixseo-page-builder' ) . '</span>';
 		} else {
 			printf( '<code>%s</code>', esc_html( self::relative_path( $row['template'] ) ) );
 		}
@@ -661,7 +661,7 @@ class Sdcpb_Admin {
 		}
 		printf(
 			'<br /><span class="description">%s</span>',
-			esc_html( $row['writable'] ? __( 'editable here', 'sdc-page-builder' ) : __( 'read-only', 'sdc-page-builder' ) )
+			esc_html( $row['writable'] ? __( 'editable here', 'phoenixseo-page-builder' ) : __( 'read-only', 'phoenixseo-page-builder' ) )
 		);
 		echo '</td>';
 
@@ -701,7 +701,7 @@ class Sdcpb_Admin {
 			printf(
 				'<a class="button button-small" href="%s">%s</a> ',
 				esc_url( $edit_url ),
-				esc_html__( 'Edit', 'sdc-page-builder' )
+				esc_html__( 'Edit', 'phoenixseo-page-builder' )
 			);
 		}
 
@@ -720,11 +720,11 @@ class Sdcpb_Admin {
 		printf(
 			'<a class="button button-small" href="%s">%s</a> ',
 			esc_url( $export_url ),
-			esc_html__( 'Export', 'sdc-page-builder' )
+			esc_html__( 'Export', 'phoenixseo-page-builder' )
 		);
 
 		echo '<details style="display:inline-block;margin-top:6px;">';
-		echo '<summary class="button button-small">' . esc_html__( 'Duplicate', 'sdc-page-builder' ) . '</summary>';
+		echo '<summary class="button button-small">' . esc_html__( 'Duplicate', 'phoenixseo-page-builder' ) . '</summary>';
 
 		printf( '<form method="post" action="%s" style="margin-top:6px;">', esc_url( admin_url( 'admin-post.php' ) ) );
 		self::form_hidden( 'duplicate' );
@@ -732,30 +732,30 @@ class Sdcpb_Admin {
 		printf(
 			'<label for="sdcpb_type_%1$s">%2$s</label><br /><input type="text" id="sdcpb_type_%1$s" name="sdcpb_type" value="" placeholder="%3$s" required /> ',
 			esc_attr( $type ),
-			esc_html__( 'New Type', 'sdc-page-builder' ),
+			esc_html__( 'New Type', 'phoenixseo-page-builder' ),
 			esc_attr( $type . '-kopie' )
 		);
-		printf( '<button type="submit" class="button button-small">%s</button>', esc_html__( 'Create', 'sdc-page-builder' ) );
+		printf( '<button type="submit" class="button button-small">%s</button>', esc_html__( 'Create', 'phoenixseo-page-builder' ) );
 		echo '</form>';
 		echo '</details>';
 
 		if ( ! $row['writable'] ) {
 			printf(
 				'<p class="description">%s</p>',
-				esc_html__( 'Duplicate puts the copy in wp-content/sdc-components/ — there it is editable here.', 'sdc-page-builder' )
+				esc_html__( 'Duplicate puts the copy in wp-content/sdc-components/ — there it is editable here.', 'phoenixseo-page-builder' )
 			);
 			return;
 		}
 
 		$confirm = sprintf(
 			/* translators: %s: component label. */
-			__( 'Delete component "%s" with its definition.json and render.php?', 'sdc-page-builder' ),
+			__( 'Delete component "%s" with its definition.json and render.php?', 'phoenixseo-page-builder' ),
 			$label
 		);
 		if ( $row['pages'] > 0 ) {
 			$confirm = sprintf(
 				/* translators: 1: component label, 2: number of pages. */
-				__( 'Component "%1$s" is used on %2$d pages. Those places will render nothing afterwards. Really delete?', 'sdc-page-builder' ),
+				__( 'Component "%1$s" is used on %2$d pages. Those places will render nothing afterwards. Really delete?', 'phoenixseo-page-builder' ),
 				$label,
 				(int) $row['pages']
 			);
@@ -767,13 +767,13 @@ class Sdcpb_Admin {
 		if ( $row['pages'] > 0 ) {
 			printf(
 				'<label><input type="checkbox" name="sdcpb_force" value="1" /> %s</label><br />',
-				esc_html__( 'Delete Even If In Use', 'sdc-page-builder' )
+				esc_html__( 'Delete Even If In Use', 'phoenixseo-page-builder' )
 			);
 		}
 		printf(
 			'<button type="submit" class="button button-small button-link-delete" onclick="return confirm(%s);">%s</button>',
 			esc_attr( wp_json_encode( $confirm ) ),
-			esc_html__( 'Delete', 'sdc-page-builder' )
+			esc_html__( 'Delete', 'phoenixseo-page-builder' )
 		);
 		echo '</form>';
 	}
@@ -784,10 +784,10 @@ class Sdcpb_Admin {
 	 * @param bool $writable Whether writing is possible.
 	 */
 	private static function render_create_form( $writable ) {
-		echo '<h2>' . esc_html__( 'New Component', 'sdc-page-builder' ) . '</h2>';
+		echo '<h2>' . esc_html__( 'New Component', 'phoenixseo-page-builder' ) . '</h2>';
 
 		if ( ! $writable ) {
-			echo '<p>' . esc_html__( 'Creating is locked while the target folder is not writable.', 'sdc-page-builder' ) . '</p>';
+			echo '<p>' . esc_html__( 'Creating is locked while the target folder is not writable.', 'phoenixseo-page-builder' ) . '</p>';
 			return;
 		}
 
@@ -796,33 +796,33 @@ class Sdcpb_Admin {
 
 		echo '<table class="form-table" role="presentation">';
 
-		echo '<tr><th scope="row"><label for="sdcpb_type">' . esc_html__( 'Type', 'sdc-page-builder' ) . '</label></th><td>';
+		echo '<tr><th scope="row"><label for="sdcpb_type">' . esc_html__( 'Type', 'phoenixseo-page-builder' ) . '</label></th><td>';
 		echo '<input type="text" id="sdcpb_type" name="sdcpb_type" value="" class="regular-text" required pattern="[a-z0-9][a-z0-9-]*" />';
 		printf(
 			'<p class="description">%s</p>',
-			esc_html__( 'Lowercase letters, digits and hyphens. The type becomes the folder name, the block name sdcpb/<type>, and part of the group key: group_sdcpb_component_<type>.', 'sdc-page-builder' )
+			esc_html__( 'Lowercase letters, digits and hyphens. The type becomes the folder name, the block name sdcpb/<type>, and part of the group key: group_sdcpb_component_<type>.', 'phoenixseo-page-builder' )
 		);
 		echo '</td></tr>';
 
-		echo '<tr><th scope="row"><label for="sdcpb_label">' . esc_html__( 'Name', 'sdc-page-builder' ) . '</label></th><td>';
+		echo '<tr><th scope="row"><label for="sdcpb_label">' . esc_html__( 'Name', 'phoenixseo-page-builder' ) . '</label></th><td>';
 		echo '<input type="text" id="sdcpb_label" name="sdcpb_label" value="" class="regular-text" required />';
-		printf( '<p class="description">%s</p>', esc_html__( 'Shown in the component picker, e.g. "Quote" or "Pricing Table".', 'sdc-page-builder' ) );
+		printf( '<p class="description">%s</p>', esc_html__( 'Shown in the component picker, e.g. "Quote" or "Pricing Table".', 'phoenixseo-page-builder' ) );
 		echo '</td></tr>';
 
-		echo '<tr><th scope="row"><label for="sdcpb_description">' . esc_html__( 'Description', 'sdc-page-builder' ) . '</label></th><td>';
+		echo '<tr><th scope="row"><label for="sdcpb_description">' . esc_html__( 'Description', 'phoenixseo-page-builder' ) . '</label></th><td>';
 		echo '<textarea id="sdcpb_description" name="sdcpb_description" rows="2" class="large-text"></textarea>';
-		printf( '<p class="description">%s</p>', esc_html__( 'Optional. Shown as help text on the picker tile.', 'sdc-page-builder' ) );
+		printf( '<p class="description">%s</p>', esc_html__( 'Optional. Shown as help text on the picker tile.', 'phoenixseo-page-builder' ) );
 		echo '</td></tr>';
 
-		echo '<tr><th scope="row"><label for="sdcpb_icon">' . esc_html__( 'Icon', 'sdc-page-builder' ) . '</label></th><td>';
+		echo '<tr><th scope="row"><label for="sdcpb_icon">' . esc_html__( 'Icon', 'phoenixseo-page-builder' ) . '</label></th><td>';
 		echo '<input type="text" id="sdcpb_icon" name="sdcpb_icon" value="layout" class="regular-text" />';
 		printf(
 			'<p class="description">%s</p>',
-			esc_html__( 'Optional. A Dashicon name, e.g. layout, cover-image, format-quote, table.', 'sdc-page-builder' )
+			esc_html__( 'Optional. A Dashicon name, e.g. layout, cover-image, format-quote, table.', 'phoenixseo-page-builder' )
 		);
 		echo '</td></tr>';
 
-		echo '<tr><th scope="row"><label for="sdcpb_fields">' . esc_html__( 'Fields', 'sdc-page-builder' ) . '</label></th><td>';
+		echo '<tr><th scope="row"><label for="sdcpb_fields">' . esc_html__( 'Fields', 'phoenixseo-page-builder' ) . '</label></th><td>';
 		Sdcpb_Field_Editor::render( '' );
 		self::render_fields_help();
 		echo '</td></tr>';
@@ -836,12 +836,12 @@ class Sdcpb_Admin {
 		 * and a paragraph directly inside a `form-table` would make the
 		 * browser hoist it out of the table.
 		 */
-		echo '<tr><th scope="row">' . esc_html__( 'View', 'sdc-page-builder' ) . '</th><td>';
+		echo '<tr><th scope="row">' . esc_html__( 'View', 'phoenixseo-page-builder' ) . '</th><td>';
 		Sdcpb_View_Editor::render( '' );
 		echo '</td></tr>';
 
 		echo '</table>';
-		submit_button( __( 'Create Component', 'sdc-page-builder' ) );
+		submit_button( __( 'Create Component', 'phoenixseo-page-builder' ) );
 		echo '</form>';
 	}
 
@@ -872,7 +872,7 @@ class Sdcpb_Admin {
 				esc_html(
 					sprintf(
 						/* translators: %s: component type. */
-						__( 'The component %s does not exist.', 'sdc-page-builder' ),
+						__( 'The component %s does not exist.', 'phoenixseo-page-builder' ),
 						$type
 					)
 				)
@@ -885,7 +885,7 @@ class Sdcpb_Admin {
 		if ( '' === $file || ! is_readable( $file ) ) {
 			printf(
 				'<div class="notice notice-error"><p>%s</p></div>',
-				esc_html__( 'No readable definition.json was found for this component.', 'sdc-page-builder' )
+				esc_html__( 'No readable definition.json was found for this component.', 'phoenixseo-page-builder' )
 			);
 			return;
 		}
@@ -899,7 +899,7 @@ class Sdcpb_Admin {
 				esc_html(
 					sprintf(
 						/* translators: %s: path relative to the WordPress root. */
-						__( 'The file %s is not readable or does not contain valid JSON.', 'sdc-page-builder' ),
+						__( 'The file %s is not readable or does not contain valid JSON.', 'phoenixseo-page-builder' ),
 						self::relative_path( $file )
 					)
 				)
@@ -933,7 +933,7 @@ class Sdcpb_Admin {
 			esc_html(
 				sprintf(
 					/* translators: %s: component label. */
-					__( 'Edit Component: %s', 'sdc-page-builder' ),
+					__( 'Edit Component: %s', 'phoenixseo-page-builder' ),
 					$values['label']
 				)
 			)
@@ -941,15 +941,15 @@ class Sdcpb_Admin {
 
 		printf(
 			'<p class="description">%s</p>',
-			esc_html__( 'Saved into the same definition.json. The type stays unchanged: it sits in the group key and in every field key that the page content hangs on. A different type comes from "Duplicate".', 'sdc-page-builder' )
+			esc_html__( 'Saved into the same definition.json. The type stays unchanged: it sits in the group key and in every field key that the page content hangs on. A different type comes from "Duplicate".', 'phoenixseo-page-builder' )
 		);
 
 		if ( ! self::in_write_dir( $file ) ) {
 			printf(
 				'<div class="notice notice-error"><p>%s</p></div>',
-				esc_html__( 'This component is not in wp-content/sdc-components/. Theme and plugin components are read-only because the next deploy would overwrite the change. Duplicate it to edit it here.', 'sdc-page-builder' )
+				esc_html__( 'This component is not in wp-content/sdc-components/. Theme and plugin components are read-only because the next deploy would overwrite the change. Duplicate it to edit it here.', 'phoenixseo-page-builder' )
 			);
-			printf( '<p><a class="button" href="%s">%s</a></p>', esc_url( self::catalog_url() ), esc_html__( 'Back to Overview', 'sdc-page-builder' ) );
+			printf( '<p><a class="button" href="%s">%s</a></p>', esc_url( self::catalog_url() ), esc_html__( 'Back to Overview', 'phoenixseo-page-builder' ) );
 			self::credit();
 			return;
 		}
@@ -976,8 +976,8 @@ class Sdcpb_Admin {
 			array(
 				array(
 					'id'       => 'content',
-					'label'    => __( 'Content', 'sdc-page-builder' ),
-					'hint'     => __( 'Name, description and the fields offered to editors. This is the part that changes in everyday work.', 'sdc-page-builder' ),
+					'label'    => __( 'Content', 'phoenixseo-page-builder' ),
+					'hint'     => __( 'Name, description and the fields offered to editors. This is the part that changes in everyday work.', 'phoenixseo-page-builder' ),
 					'callback' => function () use ( $type, $values ) {
 						echo '<table class="form-table" role="presentation">';
 						self::render_identity_rows( $type, $values );
@@ -987,27 +987,27 @@ class Sdcpb_Admin {
 				),
 				array(
 					'id'       => 'view',
-					'label'    => __( 'View (PHP)', 'sdc-page-builder' ),
-					'hint'     => __( 'How the component is rendered. Optional: without render.php the fields appear in a generic output.', 'sdc-page-builder' ),
+					'label'    => __( 'View (PHP)', 'phoenixseo-page-builder' ),
+					'hint'     => __( 'How the component is rendered. Optional: without render.php the fields appear in a generic output.', 'phoenixseo-page-builder' ),
 					'callback' => function () use ( $type, $values, $view_fields ) {
 						Sdcpb_View_Editor::render( $type, is_array( $view_fields ) ? $view_fields : array(), $values['view'] );
 					},
 				),
 				array(
 					'id'       => 'styles',
-					'label'    => __( 'Styles (CSS)', 'sdc-page-builder' ),
-					'hint'     => __( 'The component\'s own styling. Optional: without component.css it inherits the theme\'s styles.', 'sdc-page-builder' ),
+					'label'    => __( 'Styles (CSS)', 'phoenixseo-page-builder' ),
+					'hint'     => __( 'The component\'s own styling. Optional: without component.css it inherits the theme\'s styles.', 'phoenixseo-page-builder' ),
 					'callback' => function () use ( $type, $values ) {
 						Sdcpb_Style_Editor::render( $type, $values['css'] );
 					},
 				),
 			),
 			self::active_tab(),
-			__( 'Component Sections', 'sdc-page-builder' )
+			__( 'Component Sections', 'phoenixseo-page-builder' )
 		);
 
-		submit_button( __( 'Save Component', 'sdc-page-builder' ) );
-		printf( '<p><a href="%s">%s</a></p>', esc_url( self::catalog_url() ), esc_html__( 'Cancel', 'sdc-page-builder' ) );
+		submit_button( __( 'Save Component', 'phoenixseo-page-builder' ) );
+		printf( '<p><a href="%s">%s</a></p>', esc_url( self::catalog_url() ), esc_html__( 'Cancel', 'phoenixseo-page-builder' ) );
 		echo '</form>';
 
 		self::credit();
@@ -1034,29 +1034,29 @@ class Sdcpb_Admin {
 	 */
 	private static function render_identity_rows( $type, array $values ) {
 		// The type is shown, never posted as an editable value.
-		echo '<tr><th scope="row">' . esc_html__( 'Type', 'sdc-page-builder' ) . '</th><td>';
+		echo '<tr><th scope="row">' . esc_html__( 'Type', 'phoenixseo-page-builder' ) . '</th><td>';
 		printf( '<code>%s</code>', esc_html( $type ) );
 		printf(
 			'<p class="description">%s</p>',
-			esc_html__( 'Not editable. A new type would create new field keys, and the page content would then hang on fields that no longer exist.', 'sdc-page-builder' )
+			esc_html__( 'Not editable. A new type would create new field keys, and the page content would then hang on fields that no longer exist.', 'phoenixseo-page-builder' )
 		);
 		echo '</td></tr>';
 
-		echo '<tr><th scope="row"><label for="sdcpb_label">' . esc_html__( 'Name', 'sdc-page-builder' ) . '</label></th><td>';
+		echo '<tr><th scope="row"><label for="sdcpb_label">' . esc_html__( 'Name', 'phoenixseo-page-builder' ) . '</label></th><td>';
 		printf( '<input type="text" id="sdcpb_label" name="sdcpb_label" value="%s" class="regular-text" required />', esc_attr( $values['label'] ) );
-		printf( '<p class="description">%s</p>', esc_html__( 'Shown in the component picker, e.g. "Quote" or "Pricing Table".', 'sdc-page-builder' ) );
+		printf( '<p class="description">%s</p>', esc_html__( 'Shown in the component picker, e.g. "Quote" or "Pricing Table".', 'phoenixseo-page-builder' ) );
 		echo '</td></tr>';
 
-		echo '<tr><th scope="row"><label for="sdcpb_description">' . esc_html__( 'Description', 'sdc-page-builder' ) . '</label></th><td>';
+		echo '<tr><th scope="row"><label for="sdcpb_description">' . esc_html__( 'Description', 'phoenixseo-page-builder' ) . '</label></th><td>';
 		printf( '<textarea id="sdcpb_description" name="sdcpb_description" rows="2" class="large-text">%s</textarea>', esc_textarea( $values['description'] ) );
-		printf( '<p class="description">%s</p>', esc_html__( 'Optional. Shown as help text on the picker tile.', 'sdc-page-builder' ) );
+		printf( '<p class="description">%s</p>', esc_html__( 'Optional. Shown as help text on the picker tile.', 'phoenixseo-page-builder' ) );
 		echo '</td></tr>';
 
-		echo '<tr><th scope="row"><label for="sdcpb_icon">' . esc_html__( 'Icon', 'sdc-page-builder' ) . '</label></th><td>';
+		echo '<tr><th scope="row"><label for="sdcpb_icon">' . esc_html__( 'Icon', 'phoenixseo-page-builder' ) . '</label></th><td>';
 		printf( '<input type="text" id="sdcpb_icon" name="sdcpb_icon" value="%s" class="regular-text" />', esc_attr( $values['icon'] ) );
 		printf(
 			'<p class="description">%s</p>',
-			esc_html__( 'Optional. A Dashicon name, e.g. layout, cover-image, format-quote, table.', 'sdc-page-builder' )
+			esc_html__( 'Optional. A Dashicon name, e.g. layout, cover-image, format-quote, table.', 'phoenixseo-page-builder' )
 		);
 		echo '</td></tr>';
 	}
@@ -1067,18 +1067,18 @@ class Sdcpb_Admin {
 	 * @param array $values Values the form shows.
 	 */
 	private static function render_fields_row( array $values ) {
-		echo '<tr><th scope="row"><label for="sdcpb_fields">' . esc_html__( 'Fields', 'sdc-page-builder' ) . '</label></th><td>';
+		echo '<tr><th scope="row"><label for="sdcpb_fields">' . esc_html__( 'Fields', 'phoenixseo-page-builder' ) . '</label></th><td>';
 		Sdcpb_Field_Editor::render( $values['fields'] );
 		// Outside the editor on purpose: the confirmation must stay visible even
 		// when the JSON panel is collapsed, or the save fails without a reason
 		// the user can see.
 		printf(
 			'<p><label><input type="checkbox" name="sdcpb_confirm_fields" value="1" /> %s</label></p>',
-			esc_html__( 'Confirm Field Removal', 'sdc-page-builder' )
+			esc_html__( 'Confirm Field Removal', 'phoenixseo-page-builder' )
 		);
 		printf(
 			'<p class="description">%s</p>',
-			esc_html__( 'Only needed when a field name disappears from the list. The content stays stored in the pages but becomes invisible afterwards.', 'sdc-page-builder' )
+			esc_html__( 'Only needed when a field name disappears from the list. The content stays stored in the pages but becomes invisible afterwards.', 'phoenixseo-page-builder' )
 		);
 		self::render_fields_help();
 		echo '</td></tr>';
@@ -1178,9 +1178,9 @@ class Sdcpb_Admin {
 	 */
 	private static function render_fields_help() {
 		echo '<details style="margin-top:8px;">';
-		echo '<summary>' . esc_html__( 'Example and Available Field Types', 'sdc-page-builder' ) . '</summary>';
+		echo '<summary>' . esc_html__( 'Example and Available Field Types', 'phoenixseo-page-builder' ) . '</summary>';
 
-		echo '<p>' . esc_html__( 'One entry per field. Whatever ACF knows on a field may go in too (rows, choices, return_format, sub_fields …).', 'sdc-page-builder' ) . '</p>';
+		echo '<p>' . esc_html__( 'One entry per field. Whatever ACF knows on a field may go in too (rows, choices, return_format, sub_fields …).', 'phoenixseo-page-builder' ) . '</p>';
 		echo '<pre class="code">' . esc_html(
 			"[\n" .
 			"  {\"name\": \"heading\", \"label\": \"Heading\", \"type\": \"text\", \"required\": 1},\n" .
@@ -1194,7 +1194,7 @@ class Sdcpb_Admin {
 
 		$types = self::field_types();
 		if ( ! empty( $types ) ) {
-			echo '<p><strong>' . esc_html__( 'Host Field Types', 'sdc-page-builder' ) . ':</strong> ';
+			echo '<p><strong>' . esc_html__( 'Host Field Types', 'phoenixseo-page-builder' ) . ':</strong> ';
 			echo '<code>' . esc_html( implode( ', ', $types ) ) . '</code></p>';
 		}
 
@@ -1207,22 +1207,22 @@ class Sdcpb_Admin {
 	 * @param bool $writable Whether writing is possible.
 	 */
 	private static function render_import_form( $writable ) {
-		echo '<h2>' . esc_html__( 'Import Component', 'sdc-page-builder' ) . '</h2>';
+		echo '<h2>' . esc_html__( 'Import Component', 'phoenixseo-page-builder' ) . '</h2>';
 
 		if ( ! $writable ) {
-			echo '<p>' . esc_html__( 'Importing is locked while the target folder is not writable.', 'sdc-page-builder' ) . '</p>';
+			echo '<p>' . esc_html__( 'Importing is locked while the target folder is not writable.', 'phoenixseo-page-builder' ) . '</p>';
 			return;
 		}
 
 		printf(
 			'<p class="description">%s</p>',
-			esc_html__( 'A definition.json from another project — the group key inside it determines the type. Existing types are not overwritten.', 'sdc-page-builder' )
+			esc_html__( 'A definition.json from another project — the group key inside it determines the type. Existing types are not overwritten.', 'phoenixseo-page-builder' )
 		);
 
 		printf( '<form method="post" action="%s" enctype="multipart/form-data">', esc_url( admin_url( 'admin-post.php' ) ) );
 		self::form_hidden( 'import' );
 		echo '<input type="file" name="sdcpb_component_file" accept=".json,application/json" required /> ';
-		submit_button( __( 'Import', 'sdc-page-builder' ), 'secondary', 'submit', false );
+		submit_button( __( 'Import', 'phoenixseo-page-builder' ), 'secondary', 'submit', false );
 		echo '</form>';
 	}
 
@@ -1249,12 +1249,12 @@ class Sdcpb_Admin {
 		}
 
 		$messages = array(
-			'created'    => array( 'success', __( 'Component created.', 'sdc-page-builder' ) ),
-			'updated'    => array( 'success', __( 'Component saved.', 'sdc-page-builder' ) ),
-			'duplicated' => array( 'success', __( 'Component duplicated.', 'sdc-page-builder' ) ),
-			'deleted'    => array( 'success', __( 'Component deleted.', 'sdc-page-builder' ) ),
-			'imported'   => array( 'success', __( 'Component imported.', 'sdc-page-builder' ) ),
-			'error'      => array( 'error', __( 'The action was not carried out.', 'sdc-page-builder' ) ),
+			'created'    => array( 'success', __( 'Component created.', 'phoenixseo-page-builder' ) ),
+			'updated'    => array( 'success', __( 'Component saved.', 'phoenixseo-page-builder' ) ),
+			'duplicated' => array( 'success', __( 'Component duplicated.', 'phoenixseo-page-builder' ) ),
+			'deleted'    => array( 'success', __( 'Component deleted.', 'phoenixseo-page-builder' ) ),
+			'imported'   => array( 'success', __( 'Component imported.', 'phoenixseo-page-builder' ) ),
+			'error'      => array( 'error', __( 'The action was not carried out.', 'phoenixseo-page-builder' ) ),
 		);
 
 		if ( ! isset( $messages[ $code ] ) ) {
@@ -1289,7 +1289,7 @@ class Sdcpb_Admin {
 	 */
 	public static function handle() {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
-			wp_die( esc_html__( 'You do not have permission to perform this action.', 'sdc-page-builder' ) );
+			wp_die( esc_html__( 'You do not have permission to perform this action.', 'phoenixseo-page-builder' ) );
 		}
 
 		// The same field the forms write. check_admin_referer() looks for
@@ -1306,7 +1306,7 @@ class Sdcpb_Admin {
 			$task = isset( $_GET['sdcpb_task'] ) ? sanitize_key( wp_unslash( $_GET['sdcpb_task'] ) ) : '';
 		}
 
-		$result = new WP_Error( 'sdcpb_unknown_task', __( 'Unknown action.', 'sdc-page-builder' ) );
+		$result = new WP_Error( 'sdcpb_unknown_task', __( 'Unknown action.', 'phoenixseo-page-builder' ) );
 
 		if ( 'export' === $task ) {
 			self::export();
@@ -1442,7 +1442,7 @@ class Sdcpb_Admin {
 				'sdcpb_type_exists',
 				sprintf(
 					/* translators: %s: component type. */
-					__( 'A component with the type %s already exists.', 'sdc-page-builder' ),
+					__( 'A component with the type %s already exists.', 'phoenixseo-page-builder' ),
 					$type
 				)
 			);
@@ -1451,7 +1451,7 @@ class Sdcpb_Admin {
 		$label = self::posted( 'sdcpb_label' );
 
 		if ( '' === $label ) {
-			return new WP_Error( 'sdcpb_no_label', __( 'The component needs a name.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_no_label', __( 'The component needs a name.', 'phoenixseo-page-builder' ) );
 		}
 
 		$fields = self::parse_fields( self::posted_raw( 'sdcpb_fields' ), $type );
@@ -1516,7 +1516,7 @@ class Sdcpb_Admin {
 				'sdcpb_unknown_source',
 				sprintf(
 					/* translators: %s: component type. */
-					__( 'The component %s does not exist.', 'sdc-page-builder' ),
+					__( 'The component %s does not exist.', 'phoenixseo-page-builder' ),
 					$source
 				)
 			);
@@ -1525,7 +1525,7 @@ class Sdcpb_Admin {
 		$file = Sdcpb_Schema::file_for_key( (string) $component['key'] );
 
 		if ( '' === $file ) {
-			return new WP_Error( 'sdcpb_no_file', __( 'No definition.json was found for the source component.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_no_file', __( 'No definition.json was found for the source component.', 'phoenixseo-page-builder' ) );
 		}
 
 		$raw = file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file inside the component directories.
@@ -1535,7 +1535,7 @@ class Sdcpb_Admin {
 				'sdcpb_unreadable',
 				sprintf(
 					/* translators: %s: absolute file path. */
-					__( 'The file %s is not readable.', 'sdc-page-builder' ),
+					__( 'The file %s is not readable.', 'phoenixseo-page-builder' ),
 					$file
 				)
 			);
@@ -1548,7 +1548,7 @@ class Sdcpb_Admin {
 				'sdcpb_broken_source',
 				sprintf(
 					/* translators: %s: absolute file path. */
-					__( 'The file %s does not contain valid JSON.', 'sdc-page-builder' ),
+					__( 'The file %s does not contain valid JSON.', 'phoenixseo-page-builder' ),
 					$file
 				)
 			);
@@ -1565,7 +1565,7 @@ class Sdcpb_Admin {
 				'sdcpb_type_exists',
 				sprintf(
 					/* translators: %s: component type. */
-					__( 'A component with the type %s already exists.', 'sdc-page-builder' ),
+					__( 'A component with the type %s already exists.', 'phoenixseo-page-builder' ),
 					$type
 				)
 			);
@@ -1606,7 +1606,7 @@ class Sdcpb_Admin {
 				'sdcpb_unknown_type',
 				sprintf(
 					/* translators: %s: component type. */
-					__( 'The component %s does not exist.', 'sdc-page-builder' ),
+					__( 'The component %s does not exist.', 'phoenixseo-page-builder' ),
 					$type
 				)
 			);
@@ -1617,7 +1617,7 @@ class Sdcpb_Admin {
 		if ( '' === $file || ! self::in_write_dir( $file ) ) {
 			return new WP_Error(
 				'sdcpb_outside_write_dir',
-				__( 'This component is not in wp-content/sdc-components/. Theme and plugin components are read-only because the next deploy would overwrite the change. Duplicate it to edit it here.', 'sdc-page-builder' )
+				__( 'This component is not in wp-content/sdc-components/. Theme and plugin components are read-only because the next deploy would overwrite the change. Duplicate it to edit it here.', 'phoenixseo-page-builder' )
 			);
 		}
 
@@ -1629,7 +1629,7 @@ class Sdcpb_Admin {
 				'sdcpb_read_failed',
 				sprintf(
 					/* translators: %s: absolute file path. */
-					__( 'The file %s is not readable or does not contain valid JSON. Without it the component cannot be saved.', 'sdc-page-builder' ),
+					__( 'The file %s is not readable or does not contain valid JSON. Without it the component cannot be saved.', 'phoenixseo-page-builder' ),
 					$file
 				)
 			);
@@ -1640,7 +1640,7 @@ class Sdcpb_Admin {
 		$label = self::posted( 'sdcpb_label' );
 
 		if ( '' === $label ) {
-			return new WP_Error( 'sdcpb_no_label', __( 'The component needs a name.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_no_label', __( 'The component needs a name.', 'phoenixseo-page-builder' ) );
 		}
 
 		// The stored field list is passed in so an unchanged name keeps its
@@ -1667,7 +1667,7 @@ class Sdcpb_Admin {
 				'sdcpb_fields_removed',
 				sprintf(
 					/* translators: %s: comma separated list of field labels and names. */
-					__( 'These fields are missing from the new field list: %s. Their content stays stored in the pages but becomes invisible afterwards. Tick "Confirm Field Removal" if that is intended.', 'sdc-page-builder' ),
+					__( 'These fields are missing from the new field list: %s. Their content stays stored in the pages but becomes invisible afterwards. Tick "Confirm Field Removal" if that is intended.', 'phoenixseo-page-builder' ),
 					implode( ', ', $removed )
 				)
 			);
@@ -1792,7 +1792,7 @@ class Sdcpb_Admin {
 				'sdcpb_unknown_component',
 				sprintf(
 					/* translators: %s: component type. */
-					__( 'The component %s does not exist.', 'sdc-page-builder' ),
+					__( 'The component %s does not exist.', 'phoenixseo-page-builder' ),
 					$type
 				)
 			);
@@ -1803,7 +1803,7 @@ class Sdcpb_Admin {
 		if ( ! self::in_write_dir( $file ) ) {
 			return new WP_Error(
 				'sdcpb_not_owned',
-				__( 'This component is not in wp-content/sdc-components/ — it belongs to the theme or the plugin and is deleted there, not here.', 'sdc-page-builder' )
+				__( 'This component is not in wp-content/sdc-components/ — it belongs to the theme or the plugin and is deleted there, not here.', 'phoenixseo-page-builder' )
 			);
 		}
 
@@ -1818,7 +1818,7 @@ class Sdcpb_Admin {
 				'sdcpb_in_use',
 				sprintf(
 					/* translators: 1: number of pages, 2: component type. */
-					__( 'The component %2$s is used on %1$d pages. Tick "Delete Even If In Use" if that is intended.', 'sdc-page-builder' ),
+					__( 'The component %2$s is used on %1$d pages. Tick "Delete Even If In Use" if that is intended.', 'phoenixseo-page-builder' ),
 					$pages,
 					$type
 				)
@@ -1841,7 +1841,7 @@ class Sdcpb_Admin {
 					'sdcpb_unlink_failed',
 					sprintf(
 						/* translators: %s: absolute file path. */
-						__( 'The file %s could not be deleted.', 'sdc-page-builder' ),
+						__( 'The file %s could not be deleted.', 'phoenixseo-page-builder' ),
 						$target
 					)
 				);
@@ -1872,13 +1872,13 @@ class Sdcpb_Admin {
 		$file      = null === $component ? '' : Sdcpb_Schema::file_for_key( (string) $component['key'] );
 
 		if ( '' === $file || ! is_readable( $file ) ) {
-			self::redirect( 'error', __( 'No readable definition.json was found for this component.', 'sdc-page-builder' ) );
+			self::redirect( 'error', __( 'No readable definition.json was found for this component.', 'phoenixseo-page-builder' ) );
 		}
 
 		$raw = file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file inside the component directories.
 
 		if ( false === $raw ) {
-			self::redirect( 'error', __( 'The definition file is not readable.', 'sdc-page-builder' ) );
+			self::redirect( 'error', __( 'The definition file is not readable.', 'phoenixseo-page-builder' ) );
 		}
 
 		nocache_headers();
@@ -1902,7 +1902,7 @@ class Sdcpb_Admin {
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified by check_admin_referer() in handle().
 		if ( ! isset( $_FILES['sdcpb_component_file'] ) ) {
-			return new WP_Error( 'sdcpb_no_file', __( 'No file was selected.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_no_file', __( 'No file was selected.', 'phoenixseo-page-builder' ) );
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Verified by check_admin_referer() in handle(); the three values used are type-checked below before they reach any function.
@@ -1916,23 +1916,23 @@ class Sdcpb_Admin {
 			|| ! is_string( $upload['tmp_name'] )
 			|| ! is_scalar( $upload['error'] )
 		) {
-			return new WP_Error( 'sdcpb_upload_failed', __( 'The uploaded file did not arrive.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_upload_failed', __( 'The uploaded file did not arrive.', 'phoenixseo-page-builder' ) );
 		}
 
 		if ( UPLOAD_ERR_OK !== (int) $upload['error'] ) {
-			return new WP_Error( 'sdcpb_upload_failed', __( 'The upload failed.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_upload_failed', __( 'The upload failed.', 'phoenixseo-page-builder' ) );
 		}
 
 		$tmp_name = $upload['tmp_name'];
 
 		if ( '' === $tmp_name || ! is_uploaded_file( $tmp_name ) ) {
-			return new WP_Error( 'sdcpb_upload_failed', __( 'The uploaded file did not arrive.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_upload_failed', __( 'The uploaded file did not arrive.', 'phoenixseo-page-builder' ) );
 		}
 
 		$size = isset( $upload['size'] ) && is_scalar( $upload['size'] ) ? (int) $upload['size'] : 0;
 
 		if ( $size > self::MAX_IMPORT_BYTES ) {
-			return new WP_Error( 'sdcpb_upload_too_large', __( 'The file is too large for a component.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_upload_too_large', __( 'The file is too large for a component.', 'phoenixseo-page-builder' ) );
 		}
 
 		$raw      = file_get_contents( $tmp_name ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading the upload's temporary file.
@@ -1949,7 +1949,7 @@ class Sdcpb_Admin {
 				'sdcpb_type_exists',
 				sprintf(
 					/* translators: %s: component type. */
-					__( 'A component with the type %s already exists. Import overwrites nothing.', 'sdc-page-builder' ),
+					__( 'A component with the type %s already exists. Import overwrites nothing.', 'phoenixseo-page-builder' ),
 					$type
 				)
 			);
@@ -1972,7 +1972,7 @@ class Sdcpb_Admin {
 				'sdcpb_import_json',
 				sprintf(
 					/* translators: %s: JSON parser message. */
-					__( 'The file is not valid JSON: %s', 'sdc-page-builder' ),
+					__( 'The file is not valid JSON: %s', 'phoenixseo-page-builder' ),
 					json_last_error_msg()
 				)
 			);
@@ -1985,7 +1985,7 @@ class Sdcpb_Admin {
 				'sdcpb_import_key',
 				sprintf(
 					/* translators: %s: key prefix. */
-					__( 'The group key is missing or does not start with %s.', 'sdc-page-builder' ),
+					__( 'The group key is missing or does not start with %s.', 'phoenixseo-page-builder' ),
 					Sdcpb_Schema::KEY_PREFIX
 				)
 			);
@@ -2000,7 +2000,7 @@ class Sdcpb_Admin {
 		$title = isset( $definition['title'] ) ? trim( (string) $definition['title'] ) : '';
 
 		if ( '' === $title ) {
-			return new WP_Error( 'sdcpb_import_title', __( 'The definition has no title.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_import_title', __( 'The definition has no title.', 'phoenixseo-page-builder' ) );
 		}
 
 		$fields = isset( $definition['fields'] ) && is_array( $definition['fields'] ) ? $definition['fields'] : array();
@@ -2032,7 +2032,7 @@ class Sdcpb_Admin {
 		$type = (string) $type;
 
 		if ( '' === $type ) {
-			return new WP_Error( 'sdcpb_no_type', __( 'The component type is missing.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_no_type', __( 'The component type is missing.', 'phoenixseo-page-builder' ) );
 		}
 
 		if ( ! preg_match( '/^[a-z0-9][a-z0-9-]*$/', $type ) ) {
@@ -2040,7 +2040,7 @@ class Sdcpb_Admin {
 				'sdcpb_bad_type',
 				sprintf(
 					/* translators: %s: submitted type. */
-					__( 'The type "%s" is not allowed: only lowercase letters, digits and hyphens, starting with a letter or digit. Underscores do not work because every type also becomes a block name ("sdcpb/<type>").', 'sdc-page-builder' ),
+					__( 'The type "%s" is not allowed: only lowercase letters, digits and hyphens, starting with a letter or digit. Underscores do not work because every type also becomes a block name ("sdcpb/<type>").', 'phoenixseo-page-builder' ),
 					$type
 				)
 			);
@@ -2048,7 +2048,7 @@ class Sdcpb_Admin {
 
 		// The type becomes a directory name and part of a field key.
 		if ( strlen( $type ) > 40 ) {
-			return new WP_Error( 'sdcpb_bad_type', __( 'The type is too long (40 characters maximum).', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_bad_type', __( 'The type is too long (40 characters maximum).', 'phoenixseo-page-builder' ) );
 		}
 
 		return $type;
@@ -2159,7 +2159,7 @@ class Sdcpb_Admin {
 				'sdcpb_fields_json',
 				sprintf(
 					/* translators: %s: JSON parser message. */
-					__( 'The fields are not valid JSON: %s', 'sdc-page-builder' ),
+					__( 'The fields are not valid JSON: %s', 'phoenixseo-page-builder' ),
 					json_last_error_msg()
 				)
 			);
@@ -2168,7 +2168,7 @@ class Sdcpb_Admin {
 		if ( ! is_array( $decoded ) || array_keys( $decoded ) !== range( 0, count( $decoded ) - 1 ) ) {
 			return new WP_Error(
 				'sdcpb_fields_shape',
-				__( 'The fields must be a list: [ {…}, {…} ].', 'sdc-page-builder' )
+				__( 'The fields must be a list: [ {…}, {…} ].', 'phoenixseo-page-builder' )
 			);
 		}
 
@@ -2203,7 +2203,7 @@ class Sdcpb_Admin {
 					'sdcpb_fields_entry',
 					sprintf(
 						/* translators: 1: nesting level, 2: entry number. */
-						__( 'Field %2$d on level %1$d is not an object.', 'sdc-page-builder' ),
+						__( 'Field %2$d on level %1$d is not an object.', 'phoenixseo-page-builder' ),
 						$level,
 						$position
 					)
@@ -2217,7 +2217,7 @@ class Sdcpb_Admin {
 					'sdcpb_fields_name',
 					sprintf(
 						/* translators: 1: entry number, 2: nesting level. */
-						__( 'Field %1$d on level %2$d has no valid name (a–z, 0–9, _).', 'sdc-page-builder' ),
+						__( 'Field %1$d on level %2$d has no valid name (a–z, 0–9, _).', 'phoenixseo-page-builder' ),
 						$position,
 						$level
 					)
@@ -2229,7 +2229,7 @@ class Sdcpb_Admin {
 					'sdcpb_fields_duplicate',
 					sprintf(
 						/* translators: %s: field name. */
-						__( 'The field name %s appears twice. Two fields on one level need different names.', 'sdc-page-builder' ),
+						__( 'The field name %s appears twice. Two fields on one level need different names.', 'phoenixseo-page-builder' ),
 						$name
 					)
 				);
@@ -2243,7 +2243,7 @@ class Sdcpb_Admin {
 					'sdcpb_fields_type',
 					sprintf(
 						/* translators: %s: field name. */
-						__( 'Field %s has no type.', 'sdc-page-builder' ),
+						__( 'Field %s has no type.', 'phoenixseo-page-builder' ),
 						$name
 					)
 				);
@@ -2254,7 +2254,7 @@ class Sdcpb_Admin {
 					'sdcpb_fields_type',
 					sprintf(
 						/* translators: 1: field type, 2: field name. */
-						__( 'The host does not know the field type "%1$s" (field %2$s).', 'sdc-page-builder' ),
+						__( 'The host does not know the field type "%1$s" (field %2$s).', 'phoenixseo-page-builder' ),
 						$field_type,
 						$name
 					)
@@ -2390,7 +2390,7 @@ class Sdcpb_Admin {
 				'sdcpb_folder_exists',
 				sprintf(
 					/* translators: %s: absolute directory path. */
-					__( 'The folder %s already exists.', 'sdc-page-builder' ),
+					__( 'The folder %s already exists.', 'phoenixseo-page-builder' ),
 					$folder
 				)
 			);
@@ -2401,7 +2401,7 @@ class Sdcpb_Admin {
 				'sdcpb_mkdir_failed',
 				sprintf(
 					/* translators: %s: absolute directory path. */
-					__( 'The folder %s could not be created.', 'sdc-page-builder' ),
+					__( 'The folder %s could not be created.', 'phoenixseo-page-builder' ),
 					$folder
 				)
 			);
@@ -2412,7 +2412,7 @@ class Sdcpb_Admin {
 		if ( false === $json ) {
 			self::discard_folder( $folder, $existed );
 
-			return new WP_Error( 'sdcpb_encode_failed', __( 'The definition could not be written as JSON.', 'sdc-page-builder' ) );
+			return new WP_Error( 'sdcpb_encode_failed', __( 'The definition could not be written as JSON.', 'phoenixseo-page-builder' ) );
 		}
 
 		/*
@@ -2433,7 +2433,7 @@ class Sdcpb_Admin {
 				'sdcpb_write_failed',
 				sprintf(
 					/* translators: %s: absolute file path. */
-					__( 'The file %s could not be written.', 'sdc-page-builder' ),
+					__( 'The file %s could not be written.', 'phoenixseo-page-builder' ),
 					$file
 				)
 			);
@@ -2651,12 +2651,12 @@ class Sdcpb_Admin {
 		$instances = isset( $row['instances'] ) ? (int) $row['instances'] : 0;
 
 		if ( $pages < 1 || $instances < 1 ) {
-			return esc_html__( 'not placed', 'sdc-page-builder' );
+			return esc_html__( 'not placed', 'phoenixseo-page-builder' );
 		}
 
 		return sprintf(
 			/* translators: 1: number of pages, 2: number of placements on those pages. */
-			_n( '%1$d page, %2$d instance', '%1$d pages, %2$d instances', $instances, 'sdc-page-builder' ),
+			_n( '%1$d page, %2$d instance', '%1$d pages, %2$d instances', $instances, 'phoenixseo-page-builder' ),
 			$pages,
 			$instances
 		);

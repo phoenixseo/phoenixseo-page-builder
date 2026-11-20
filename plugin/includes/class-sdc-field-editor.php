@@ -73,156 +73,156 @@ class Sdcpb_Field_Editor {
 	public static function definitions() {
 		return array(
 		'text'         => array(
-			'label'   => __('Text Line', 'sdc-page-builder' ),
-			'group'   => __('Text', 'sdc-page-builder' ),
+			'label'   => __('Text Line', 'phoenixseo-page-builder' ),
+			'group'   => __('Text', 'phoenixseo-page-builder' ),
 			'options' => array(
-				array( 'key' => 'placeholder', 'label' => __('Placeholder', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'maxlength', 'label' => __('Maximum Characters', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
-				array( 'key' => 'prepend', 'label' => __('Before', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'append', 'label' => __('After', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'placeholder', 'label' => __('Placeholder', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'maxlength', 'label' => __('Maximum Characters', 'phoenixseo-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
+				array( 'key' => 'prepend', 'label' => __('Before', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'append', 'label' => __('After', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'textarea'     => array(
-			'label'   => __('Multiline Text', 'sdc-page-builder' ),
-			'group'   => __('Text', 'sdc-page-builder' ),
+			'label'   => __('Multiline Text', 'phoenixseo-page-builder' ),
+			'group'   => __('Text', 'phoenixseo-page-builder' ),
 			'options' => array(
-				array( 'key' => 'rows', 'label' => __('Rows in the Input Field', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 1, 'max' => 40 ),
-				array( 'key' => 'placeholder', 'label' => __('Placeholder', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXTAREA ),
-				array( 'key' => 'maxlength', 'label' => __('Maximum Characters', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
+				array( 'key' => 'rows', 'label' => __('Rows in the Input Field', 'phoenixseo-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 1, 'max' => 40 ),
+				array( 'key' => 'placeholder', 'label' => __('Placeholder', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXTAREA ),
+				array( 'key' => 'maxlength', 'label' => __('Maximum Characters', 'phoenixseo-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
 			),
 		),
 		'wysiwyg'      => array(
-			'label'   => __('Formatted Text', 'sdc-page-builder' ),
-			'group'   => __('Text', 'sdc-page-builder' ),
+			'label'   => __('Formatted Text', 'phoenixseo-page-builder' ),
+			'group'   => __('Text', 'phoenixseo-page-builder' ),
 			'options' => array(),
 		),
 		'number'       => array(
-			'label'   => __('Number', 'sdc-page-builder' ),
-			'group'   => __('Text', 'sdc-page-builder' ),
+			'label'   => __('Number', 'phoenixseo-page-builder' ),
+			'group'   => __('Text', 'phoenixseo-page-builder' ),
 			'options' => array(
-				array( 'key' => 'min', 'label' => __('Smallest Value', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER ),
-				array( 'key' => 'max', 'label' => __('Largest Value', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER ),
-				array( 'key' => 'step', 'label' => __('Step', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
-				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'placeholder', 'label' => __('Placeholder', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'prepend', 'label' => __('Before', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'append', 'label' => __('After', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'min', 'label' => __('Smallest Value', 'phoenixseo-page-builder' ), 'kind' => self::KIND_NUMBER ),
+				array( 'key' => 'max', 'label' => __('Largest Value', 'phoenixseo-page-builder' ), 'kind' => self::KIND_NUMBER ),
+				array( 'key' => 'step', 'label' => __('Step', 'phoenixseo-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'placeholder', 'label' => __('Placeholder', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'prepend', 'label' => __('Before', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'append', 'label' => __('After', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'range'        => array(
-			'label'   => __('Slider', 'sdc-page-builder' ),
-			'group'   => __('Text', 'sdc-page-builder' ),
+			'label'   => __('Slider', 'phoenixseo-page-builder' ),
+			'group'   => __('Text', 'phoenixseo-page-builder' ),
 			'options' => array(
-				array( 'key' => 'min', 'label' => __('Smallest Value', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER ),
-				array( 'key' => 'max', 'label' => __('Largest Value', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER ),
-				array( 'key' => 'step', 'label' => __('Step', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
-				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'prepend', 'label' => __('Before', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'append', 'label' => __('After', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'min', 'label' => __('Smallest Value', 'phoenixseo-page-builder' ), 'kind' => self::KIND_NUMBER ),
+				array( 'key' => 'max', 'label' => __('Largest Value', 'phoenixseo-page-builder' ), 'kind' => self::KIND_NUMBER ),
+				array( 'key' => 'step', 'label' => __('Step', 'phoenixseo-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'prepend', 'label' => __('Before', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'append', 'label' => __('After', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'email'        => array(
-			'label'   => __('Email Address', 'sdc-page-builder' ),
-			'group'   => __('Text', 'sdc-page-builder' ),
+			'label'   => __('Email Address', 'phoenixseo-page-builder' ),
+			'group'   => __('Text', 'phoenixseo-page-builder' ),
 			'options' => array(
-				array( 'key' => 'placeholder', 'label' => __('Placeholder', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'placeholder', 'label' => __('Placeholder', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'url'          => array(
-			'label'   => __('Link URL', 'sdc-page-builder' ),
-			'group'   => __('Text', 'sdc-page-builder' ),
+			'label'   => __('Link URL', 'phoenixseo-page-builder' ),
+			'group'   => __('Text', 'phoenixseo-page-builder' ),
 			'options' => array(
-				array( 'key' => 'placeholder', 'label' => __('Placeholder', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'placeholder', 'label' => __('Placeholder', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'select'       => array(
-			'label'   => __('Select', 'sdc-page-builder' ),
-			'group'   => __('Choice', 'sdc-page-builder' ),
+			'label'   => __('Select', 'phoenixseo-page-builder' ),
+			'group'   => __('Choice', 'phoenixseo-page-builder' ),
 			'options' => array(
-				array( 'key' => 'choices', 'label' => __('Choices', 'sdc-page-builder' ), 'kind' => self::KIND_PAIRS ),
-				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
-				array( 'key' => 'multiple', 'label' => __('Allow Multiple Selections', 'sdc-page-builder' ), 'kind' => self::KIND_BOOL ),
+				array( 'key' => 'choices', 'label' => __('Choices', 'phoenixseo-page-builder' ), 'kind' => self::KIND_PAIRS ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'multiple', 'label' => __('Allow Multiple Selections', 'phoenixseo-page-builder' ), 'kind' => self::KIND_BOOL ),
 				array(
 					'key'     => 'return_format',
-					'label'   => __('Return Value', 'sdc-page-builder' ),
+					'label'   => __('Return Value', 'phoenixseo-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'value' => 'Wert',
-						'label' => __('Label', 'sdc-page-builder' ),
+						'label' => __('Label', 'phoenixseo-page-builder' ),
 						'array' => 'Wert und Beschriftung',
 					),
 				),
 			),
 		),
 		'checkbox'     => array(
-			'label'   => __('Checkboxes', 'sdc-page-builder' ),
-			'group'   => __('Choice', 'sdc-page-builder' ),
+			'label'   => __('Checkboxes', 'phoenixseo-page-builder' ),
+			'group'   => __('Choice', 'phoenixseo-page-builder' ),
 			'options' => array(
-				array( 'key' => 'choices', 'label' => __('Choices', 'sdc-page-builder' ), 'kind' => self::KIND_PAIRS ),
+				array( 'key' => 'choices', 'label' => __('Choices', 'phoenixseo-page-builder' ), 'kind' => self::KIND_PAIRS ),
 				array(
 					'key'     => 'layout',
-					'label'   => __('Layout', 'sdc-page-builder' ),
+					'label'   => __('Layout', 'phoenixseo-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'vertical'   => 'Untereinander',
 						'horizontal' => 'Nebeneinander',
 					),
 				),
-				array( 'key' => 'default_value', 'label' => __('Default Value (values, comma-separated)', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'default_value', 'label' => __('Default Value (values, comma-separated)', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'radio'        => array(
-			'label'   => __('Radio Buttons', 'sdc-page-builder' ),
-			'group'   => __('Choice', 'sdc-page-builder' ),
+			'label'   => __('Radio Buttons', 'phoenixseo-page-builder' ),
+			'group'   => __('Choice', 'phoenixseo-page-builder' ),
 			'options' => array(
-				array( 'key' => 'choices', 'label' => __('Choices', 'sdc-page-builder' ), 'kind' => self::KIND_PAIRS ),
+				array( 'key' => 'choices', 'label' => __('Choices', 'phoenixseo-page-builder' ), 'kind' => self::KIND_PAIRS ),
 				array(
 					'key'     => 'layout',
-					'label'   => __('Layout', 'sdc-page-builder' ),
+					'label'   => __('Layout', 'phoenixseo-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'vertical'   => 'Untereinander',
 						'horizontal' => 'Nebeneinander',
 					),
 				),
-				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'button_group' => array(
-			'label'   => __('Button Group', 'sdc-page-builder' ),
-			'group'   => __('Choice', 'sdc-page-builder' ),
+			'label'   => __('Button Group', 'phoenixseo-page-builder' ),
+			'group'   => __('Choice', 'phoenixseo-page-builder' ),
 			'options' => array(
-				array( 'key' => 'choices', 'label' => __('Choices', 'sdc-page-builder' ), 'kind' => self::KIND_PAIRS ),
-				array( 'key' => 'default_value', 'label' => __('Default Value', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'choices', 'label' => __('Choices', 'phoenixseo-page-builder' ), 'kind' => self::KIND_PAIRS ),
+				array( 'key' => 'default_value', 'label' => __('Default Value', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
 			),
 		),
 		'true_false'   => array(
-			'label'   => __('Yes/No', 'sdc-page-builder' ),
-			'group'   => __('Choice', 'sdc-page-builder' ),
+			'label'   => __('Yes/No', 'phoenixseo-page-builder' ),
+			'group'   => __('Choice', 'phoenixseo-page-builder' ),
 			'options' => array(
 				array(
 					'key'     => 'default_value',
-					'label'   => __('Default Value', 'sdc-page-builder' ),
+					'label'   => __('Default Value', 'phoenixseo-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'0' => 'Nein',
 						'1' => 'Ja',
 					),
 				),
-				array( 'key' => 'ui', 'label' => __('Show as Toggle', 'sdc-page-builder' ), 'kind' => self::KIND_BOOL ),
+				array( 'key' => 'ui', 'label' => __('Show as Toggle', 'phoenixseo-page-builder' ), 'kind' => self::KIND_BOOL ),
 			),
 		),
 		'image'        => array(
-			'label'   => __('Image', 'sdc-page-builder' ),
-			'group'   => __('Media', 'sdc-page-builder' ),
+			'label'   => __('Image', 'phoenixseo-page-builder' ),
+			'group'   => __('Media', 'phoenixseo-page-builder' ),
 			'options' => array(
 				array(
 					'key'     => 'return_format',
-					'label'   => __('Return Value', 'sdc-page-builder' ),
+					'label'   => __('Return Value', 'phoenixseo-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'array' => 'Datenfeld',
@@ -233,12 +233,12 @@ class Sdcpb_Field_Editor {
 			),
 		),
 		'file'         => array(
-			'label'   => __('File', 'sdc-page-builder' ),
-			'group'   => __('Media', 'sdc-page-builder' ),
+			'label'   => __('File', 'phoenixseo-page-builder' ),
+			'group'   => __('Media', 'phoenixseo-page-builder' ),
 			'options' => array(
 				array(
 					'key'     => 'return_format',
-					'label'   => __('Return Value', 'sdc-page-builder' ),
+					'label'   => __('Return Value', 'phoenixseo-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'array' => 'Datenfeld',
@@ -249,12 +249,12 @@ class Sdcpb_Field_Editor {
 			),
 		),
 		'link'         => array(
-			'label'   => __('Link', 'sdc-page-builder' ),
-			'group'   => __('Media', 'sdc-page-builder' ),
+			'label'   => __('Link', 'phoenixseo-page-builder' ),
+			'group'   => __('Media', 'phoenixseo-page-builder' ),
 			'options' => array(
 				array(
 					'key'     => 'return_format',
-					'label'   => __('Return Value', 'sdc-page-builder' ),
+					'label'   => __('Return Value', 'phoenixseo-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'url'   => 'Adresse',
@@ -264,36 +264,36 @@ class Sdcpb_Field_Editor {
 			),
 		),
 		'repeater'     => array(
-			'label'      => __('Repeater', 'sdc-page-builder' ),
-			'group'      => __('Structure', 'sdc-page-builder' ),
+			'label'      => __('Repeater', 'phoenixseo-page-builder' ),
+			'group'      => __('Structure', 'phoenixseo-page-builder' ),
 			'container'  => true,
 			'options'    => array(
-				array( 'key' => 'button_label', 'label' => __('Label of the Add Button', 'sdc-page-builder' ), 'kind' => self::KIND_TEXT ),
+				array( 'key' => 'button_label', 'label' => __('Label of the Add Button', 'phoenixseo-page-builder' ), 'kind' => self::KIND_TEXT ),
 				array(
 					'key'     => 'layout',
-					'label'   => __('Editor Display', 'sdc-page-builder' ),
+					'label'   => __('Editor Display', 'phoenixseo-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
 						'table' => 'Tabelle',
-						'block' => __( 'Blocks', 'sdc-page-builder' ),
+						'block' => __( 'Blocks', 'phoenixseo-page-builder' ),
 						'row'   => 'Zeilen',
 					),
 				),
-				array( 'key' => 'min', 'label' => __('Minimum Rows', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
-				array( 'key' => 'max', 'label' => __('Maximum Rows', 'sdc-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
+				array( 'key' => 'min', 'label' => __('Minimum Rows', 'phoenixseo-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
+				array( 'key' => 'max', 'label' => __('Maximum Rows', 'phoenixseo-page-builder' ), 'kind' => self::KIND_NUMBER, 'min' => 0 ),
 			),
 		),
 		'group'        => array(
-			'label'     => __('Group', 'sdc-page-builder' ),
-			'group'     => __('Structure', 'sdc-page-builder' ),
+			'label'     => __('Group', 'phoenixseo-page-builder' ),
+			'group'     => __('Structure', 'phoenixseo-page-builder' ),
 			'container' => true,
 			'options'   => array(
 				array(
 					'key'     => 'layout',
-					'label'   => __('Editor Display', 'sdc-page-builder' ),
+					'label'   => __('Editor Display', 'phoenixseo-page-builder' ),
 					'kind'    => self::KIND_SELECT,
 					'choices' => array(
-						'block' => __( 'Blocks', 'sdc-page-builder' ),
+						'block' => __( 'Blocks', 'phoenixseo-page-builder' ),
 						'table' => 'Tabelle',
 						'row'   => 'Zeilen',
 					),
@@ -368,37 +368,37 @@ class Sdcpb_Field_Editor {
 				// A list, not a map: the picker shows the types in this order.
 				'types'  => self::types(),
 				'labels' => array(
-					'field'          => __( 'Field', 'sdc-page-builder' ),
-					'subField'       => __( 'Subfield', 'sdc-page-builder' ),
-					'addField'       => __( 'Add Field', 'sdc-page-builder' ),
-					'addSubField'    => __( 'Add Subfield', 'sdc-page-builder' ),
-					'name'           => __( 'Field Name', 'sdc-page-builder' ),
-					'label'          => __( 'Label', 'sdc-page-builder' ),
-					'type'           => __( 'Field Type', 'sdc-page-builder' ),
-					'instructions'   => __( 'Hint in the Editor', 'sdc-page-builder' ),
-					'required'       => __( 'Required', 'sdc-page-builder' ),
-					'options'        => __( 'Settings', 'sdc-page-builder' ),
-					'subFields'      => __( 'Subfields', 'sdc-page-builder' ),
-					'remove'         => __( 'Remove', 'sdc-page-builder' ),
-					'up'             => __( 'Move Up', 'sdc-page-builder' ),
-					'down'           => __( 'Move Down', 'sdc-page-builder' ),
-					'collapse'       => __( 'Collapse', 'sdc-page-builder' ),
-					'expand'         => __( 'Expand', 'sdc-page-builder' ),
-					'empty'          => __( 'No fields yet. Choose a field type below and add it.', 'sdc-page-builder' ),
-					'removeField'    => __( 'Remove this field and its settings?', 'sdc-page-builder' ),
-					'removeChildren' => __( 'The new type is not a collection. The subfields of this field will be removed. Continue?', 'sdc-page-builder' ),
+					'field'          => __( 'Field', 'phoenixseo-page-builder' ),
+					'subField'       => __( 'Subfield', 'phoenixseo-page-builder' ),
+					'addField'       => __( 'Add Field', 'phoenixseo-page-builder' ),
+					'addSubField'    => __( 'Add Subfield', 'phoenixseo-page-builder' ),
+					'name'           => __( 'Field Name', 'phoenixseo-page-builder' ),
+					'label'          => __( 'Label', 'phoenixseo-page-builder' ),
+					'type'           => __( 'Field Type', 'phoenixseo-page-builder' ),
+					'instructions'   => __( 'Hint in the Editor', 'phoenixseo-page-builder' ),
+					'required'       => __( 'Required', 'phoenixseo-page-builder' ),
+					'options'        => __( 'Settings', 'phoenixseo-page-builder' ),
+					'subFields'      => __( 'Subfields', 'phoenixseo-page-builder' ),
+					'remove'         => __( 'Remove', 'phoenixseo-page-builder' ),
+					'up'             => __( 'Move Up', 'phoenixseo-page-builder' ),
+					'down'           => __( 'Move Down', 'phoenixseo-page-builder' ),
+					'collapse'       => __( 'Collapse', 'phoenixseo-page-builder' ),
+					'expand'         => __( 'Expand', 'phoenixseo-page-builder' ),
+					'empty'          => __( 'No fields yet. Choose a field type below and add it.', 'phoenixseo-page-builder' ),
+					'removeField'    => __( 'Remove this field and its settings?', 'phoenixseo-page-builder' ),
+					'removeChildren' => __( 'The new type is not a collection. The subfields of this field will be removed. Continue?', 'phoenixseo-page-builder' ),
 					/* translators: %s: field name that is missing */
-					'noName'         => __( 'Every field needs a name. Missing for: %s', 'sdc-page-builder' ),
+					'noName'         => __( 'Every field needs a name. Missing for: %s', 'phoenixseo-page-builder' ),
 					/* translators: %s: field name that occurs twice */
-					'duplicateName'  => __( 'This field name appears twice: %s', 'sdc-page-builder' ),
-					'pairValue'      => __( 'Value', 'sdc-page-builder' ),
-					'pairLabel'      => __( 'Label', 'sdc-page-builder' ),
-					'pairAdd'        => __( 'Add Choice', 'sdc-page-builder' ),
-					'nameHint'       => __( 'a–z, 0–9 and _ . Built from the label as long as you do not change it yourself.', 'sdc-page-builder' ),
-					'jsonUpdated'    => __( 'The JSON was rewritten from the fields.', 'sdc-page-builder' ),
+					'duplicateName'  => __( 'This field name appears twice: %s', 'phoenixseo-page-builder' ),
+					'pairValue'      => __( 'Value', 'phoenixseo-page-builder' ),
+					'pairLabel'      => __( 'Label', 'phoenixseo-page-builder' ),
+					'pairAdd'        => __( 'Add Choice', 'phoenixseo-page-builder' ),
+					'nameHint'       => __( 'a–z, 0–9 and _ . Built from the label as long as you do not change it yourself.', 'phoenixseo-page-builder' ),
+					'jsonUpdated'    => __( 'The JSON was rewritten from the fields.', 'phoenixseo-page-builder' ),
 					/* translators: %s: parser message */
-					'jsonBroken'     => __( 'The JSON in the text box is faulty and was not overwritten: %s', 'sdc-page-builder' ),
-					'unknownType'    => __( 'This field type has no settings of its own here. Everything in the JSON is preserved on save — it can only be changed there.', 'sdc-page-builder' ),
+					'jsonBroken'     => __( 'The JSON in the text box is faulty and was not overwritten: %s', 'phoenixseo-page-builder' ),
+					'unknownType'    => __( 'This field type has no settings of its own here. Everything in the JSON is preserved on save — it can only be changed there.', 'phoenixseo-page-builder' ),
 				),
 			)
 		);
@@ -476,26 +476,26 @@ class Sdcpb_Field_Editor {
 
 		printf(
 			'<p class="description">%s</p>',
-			esc_html__( 'Choose a field type, add it, fill in the settings. The JSON for the definition.json is built from that.', 'sdc-page-builder' )
+			esc_html__( 'Choose a field type, add it, fill in the settings. The JSON for the definition.json is built from that.', 'phoenixseo-page-builder' )
 		);
 
 		echo '<div class="sdc-fe__list" data-sdc-fe-list></div>';
-		echo '<p class="sdc-fe__empty" data-sdc-fe-empty>' . esc_html__( 'No fields yet. Choose a field type below and add it.', 'sdc-page-builder' ) . '</p>';
+		echo '<p class="sdc-fe__empty" data-sdc-fe-empty>' . esc_html__( 'No fields yet. Choose a field type below and add it.', 'phoenixseo-page-builder' ) . '</p>';
 
 		echo '<div class="sdc-fe__add">';
-		self::picker( __( 'Add Field', 'sdc-page-builder' ) );
+		self::picker( __( 'Add Field', 'phoenixseo-page-builder' ) );
 		echo '</div>';
 
 		echo '<p class="sdc-fe__error" data-sdc-fe-error role="alert" hidden></p>';
 
 		echo '<details class="sdc-fe__json">';
-		echo '<summary>' . esc_html__( 'Edit JSON Directly', 'sdc-page-builder' ) . '</summary>';
-		echo '<p class="description">' . esc_html__( 'Filled from the fields above and submitted with the form. If you change it by hand, click "Apply JSON" afterwards.', 'sdc-page-builder' ) . '</p>';
+		echo '<summary>' . esc_html__( 'Edit JSON Directly', 'phoenixseo-page-builder' ) . '</summary>';
+		echo '<p class="description">' . esc_html__( 'Filled from the fields above and submitted with the form. If you change it by hand, click "Apply JSON" afterwards.', 'phoenixseo-page-builder' ) . '</p>';
 		printf(
 			'<textarea id="sdcpb_fields" name="sdcpb_fields" rows="16" class="large-text code" spellcheck="false">%s</textarea>',
 			esc_textarea( (string) $json )
 		);
-		echo '<p><button type="button" class="button" data-sdc-fe-apply>' . esc_html__( 'Apply JSON', 'sdc-page-builder' ) . '</button></p>';
+		echo '<p><button type="button" class="button" data-sdc-fe-apply>' . esc_html__( 'Apply JSON', 'phoenixseo-page-builder' ) . '</button></p>';
 		echo '</details>';
 
 		echo '</div>';
@@ -518,7 +518,7 @@ class Sdcpb_Field_Editor {
 
 		printf(
 			'<select class="sdc-fe__select" data-sdc-fe-add-type aria-label="%s">',
-			esc_attr__( 'Field type for the new field', 'sdc-page-builder' )
+			esc_attr__( 'Field type for the new field', 'phoenixseo-page-builder' )
 		);
 
 		foreach ( $groups as $group => $types ) {

@@ -154,7 +154,7 @@ jobs:
         id: core
         run: |
           set -euo pipefail
-          MIN="$(sed -n 's/^ \* Requires at least: *//p' plugin/sdc-page-builder.php | head -1)"
+          MIN="$(sed -n 's/^ \* Requires at least: *//p' plugin/phoenixseo-page-builder.php | head -1)"
           if [ -z "$MIN" ]; then
             echo "No 'Requires at least' in the plugin header." >&2
             exit 1

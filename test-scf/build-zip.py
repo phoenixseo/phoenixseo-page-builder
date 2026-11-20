@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Build the wp.org distribution zip for sdc-page-builder.
+"""Build the wp.org distribution zip for phoenixseo-page-builder.
 
-Reproduces what `zip -r sdc-page-builder.zip plugin/ -x ...` would produce, but
+Reproduces what `zip -r phoenixseo-page-builder.zip plugin/ -x ...` would produce, but
 reads the exclusion rules from `.distignore` so the package and the ignore file
 cannot drift apart. Exit code is 0 only when the package is verifiably clean.
 
@@ -21,7 +21,7 @@ PLUGIN = os.path.join(ROOT, "plugin")
 # installs whatever folder the archive contains, so a package rooted at
 # `plugin/` would install as a plugin called "plugin". Kept in sync with the
 # main plugin file rather than typed twice.
-SLUG = "sdc-page-builder"
+SLUG = "phoenixseo-page-builder"
 
 
 def load_rules():
@@ -138,7 +138,7 @@ def count_captions(readme_path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--out", default=os.path.join(ROOT, "sdc-page-builder.zip"))
+    parser.add_argument("--out", default=os.path.join(ROOT, "phoenixseo-page-builder.zip"))
     args = parser.parse_args()
 
     anchored, bare = load_rules()
@@ -154,7 +154,7 @@ def main():
 
     with zipfile.ZipFile(args.out, "w", zipfile.ZIP_DEFLATED) as archive:
         for rel in entries:
-            # `plugin/x.php` -> `sdc-page-builder/x.php`
+            # `plugin/x.php` -> `phoenixseo-page-builder/x.php`
             arcname = SLUG + "/" + rel[len("plugin/"):]
             archive.write(os.path.join(ROOT, rel), arcname)
 
@@ -183,7 +183,7 @@ def main():
         if hits:
             problems.append(f"{label}: {hits[:3]}")
     # The required files, looked up by their path inside the package.
-    for required in ("LICENSE", "readme.txt", "sdc-page-builder.php"):
+    for required in ("LICENSE", "readme.txt", "phoenixseo-page-builder.php"):
         rel = f"plugin/{required}"
         present = rel in entries
         print(f"check {rel}: {'yes' if present else 'MISSING'}")
@@ -228,8 +228,8 @@ def main():
         print(f"check top-level: {tops}")
         if tops != [SLUG]:
             problems.append(f"top-level directory is {tops}, expected ['{SLUG}']")
-        if f"{SLUG}/sdc-page-builder.php" not in names:
-            problems.append(f"{SLUG}/sdc-page-builder.php missing from the archive")
+        if f"{SLUG}/phoenixseo-page-builder.php" not in names:
+            problems.append(f"{SLUG}/phoenixseo-page-builder.php missing from the archive")
         stray = [n for n in names if n.split("/")[0] != SLUG]
         if stray:
             problems.append(f"{len(stray)} entries outside {SLUG}/: {stray[:3]}")

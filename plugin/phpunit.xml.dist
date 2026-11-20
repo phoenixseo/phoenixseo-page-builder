@@ -14,7 +14,7 @@
 	testdox="true"
 >
 	<testsuites>
-		<testsuite name="sdc-page-builder">
+		<testsuite name="phoenixseo-page-builder">
 			<directory suffix="Test.php">tests/phpunit</directory>
 		</testsuite>
 	</testsuites>
@@ -22,7 +22,7 @@
 	<coverage>
 		<include>
 			<directory suffix=".php">includes</directory>
-			<file>sdc-page-builder.php</file>
+			<file>phoenixseo-page-builder.php</file>
 		</include>
 	</coverage>
 

@@ -19,17 +19,18 @@ set -euo pipefail
 PLUGIN_DIR="${1:-plugin}"
 CLI="${SDC_TEST_CLI:-wp-env-test-scf-e54e6b03-cli-1}"
 
+docker exec "$CLI" rm -rf /tmp/sdc-pot-src
 docker cp "$PLUGIN_DIR/." "$CLI:/tmp/sdc-pot-src/"
 docker exec "$CLI" bash -c '
 	set -e
 	cd /tmp/sdc-pot-src
-	php -d memory_limit=1G /usr/local/bin/wp i18n make-pot . languages/sdc-page-builder.pot \
-		--domain=sdc-page-builder \
-		--slug=sdc-page-builder \
+	php -d memory_limit=1G /usr/local/bin/wp i18n make-pot . languages/phoenixseo-page-builder.pot \
+		--domain=phoenixseo-page-builder \
+		--slug=phoenixseo-page-builder \
 		--exclude=vendor,node_modules,wordpress,tests \
 		--allow-root
 '
-docker cp "$CLI:/tmp/sdc-pot-src/languages/sdc-page-builder.pot" "$PLUGIN_DIR/languages/sdc-page-builder.pot"
+docker cp "$CLI:/tmp/sdc-pot-src/languages/phoenixseo-page-builder.pot" "$PLUGIN_DIR/languages/phoenixseo-page-builder.pot"
 
-echo "POT geschrieben nach $PLUGIN_DIR/languages/sdc-page-builder.pot"
-grep -c '^msgid ' "$PLUGIN_DIR/languages/sdc-page-builder.pot" | sed 's/^/msgids: /'
+echo "POT geschrieben nach $PLUGIN_DIR/languages/phoenixseo-page-builder.pot"
+grep -c '^msgid ' "$PLUGIN_DIR/languages/phoenixseo-page-builder.pot" | sed 's/^/msgids: /'

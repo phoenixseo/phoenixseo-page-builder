@@ -1,4 +1,4 @@
-# SDC Page Builder
+# PhoenixSEO Page Builder
 
 A component-based page builder for WordPress that uses **Advanced Custom Fields** and **Secure Custom Fields** as its field providers — and stores pages as a single JSON document.
 
@@ -93,9 +93,9 @@ SDC is Drupal's name for the discipline, not Frost's. The idea behind it is his.
 - **A design system without an extra tool.** A page that shows every component once *is* the pattern library. That needs no Storybook and no second build.
 - **Reuse outside the builder.** `Sdcpb_Frontend::component_fields_html( $type, $data )` returns the same field markup inside an ordinary theme template. The field definition therefore holds in both places.
 
-### And in the SDC Page Builder
+### And in the PhoenixSEO Page Builder
 
-| Drupal SDC | SDC Page Builder |
+| Drupal SDC | PhoenixSEO Page Builder |
 |---|---|
 | `components/<name>/` | `sdc-components/<name>/` |
 | `<name>.component.yml` — props and slots | `definition.json` — ACF field group, fields are the props |
@@ -180,7 +180,7 @@ Changing the fields afterwards changes the type for **all** pages that use it. N
 
 ```
 plugin/
-├── sdc-page-builder.php              Bootstrap, GPL header, admin notice when no host is active
+├── phoenixseo-page-builder.php              Bootstrap, GPL header, admin notice when no host is active
 ├── includes/
 │   ├── class-sdc-field-adapter.php   the only place with acf_* calls
 │   ├── class-sdc-store.php           _sdcpb_data: one key, one write, revisions
@@ -321,8 +321,8 @@ Without a host the plugin does not activate and shows a notice instead of a fata
 
 ```bash
 git clone https://github.com/phoenixseo/sdc-page-builder.git
-ln -s "$PWD/sdc-page-builder/plugin" wp-content/plugins/sdc-page-builder
-wp plugin activate sdc-page-builder
+ln -s "$PWD/sdc-page-builder/plugin" wp-content/plugins/phoenixseo-page-builder
+wp plugin activate phoenixseo-page-builder
 ```
 
 ## What is still missing

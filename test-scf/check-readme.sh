@@ -10,7 +10,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 README="$ROOT/plugin/readme.txt"
-MAIN="$ROOT/plugin/sdc-page-builder.php"
+MAIN="$ROOT/plugin/phoenixseo-page-builder.php"
 fails=0
 
 fail() { printf 'FAIL %s\n' "$1"; fails=$((fails + 1)); }

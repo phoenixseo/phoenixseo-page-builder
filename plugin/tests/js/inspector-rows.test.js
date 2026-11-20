@@ -1,5 +1,5 @@
 /**
- * The row operations behind the SDC inspector.
+ * The row operations behind the PhoenixSEO inspector.
  *
  * These run in plain node — no browser, no WordPress, no build step — because
  * that is the whole point of `assets/inspector-rows.js`. Each test pins a

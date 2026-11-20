@@ -23,7 +23,7 @@ class BlockTest extends Sdcpb_TestCase {
 	/**
 	 * Every component type gets its own block, named and titled after it.
 	 *
-	 * The generic block of the first build put "SDC-Komponente" on every
+	 * The generic block of the first build put "PhoenixSEO-Komponente" on every
 	 * instance, which made three FAQ blocks on a page indistinguishable.
 	 *
 	 * Registration runs once per request on `init`, so the list checked here is
@@ -138,7 +138,7 @@ class BlockTest extends Sdcpb_TestCase {
 		);
 
 		$this->assertSame( Sdcpb_Block::CATEGORY, $categories[0]['slug'] );
-		$this->assertSame( 'SDC Components', $categories[0]['title'] );
+		$this->assertSame( 'PhoenixSEO Components', $categories[0]['title'] );
 
 		// The theme's categories survive, in their order.
 		$this->assertSame( 'text', $categories[1]['slug'] );

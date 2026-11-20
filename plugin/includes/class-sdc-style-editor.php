@@ -74,7 +74,7 @@ class Sdcpb_Style_Editor {
 				esc_html(
 					sprintf(
 						/* translators: %s: absolute path of the stylesheet. */
-						__( 'This component\'s styles come from %s. That file belongs to the theme and would be overwritten by the next deploy, so it cannot be edited here.', 'sdc-page-builder' ),
+						__( 'This component\'s styles come from %s. That file belongs to the theme and would be overwritten by the next deploy, so it cannot be edited here.', 'phoenixseo-page-builder' ),
 						self::relative( $effective )
 					)
 				)
@@ -82,7 +82,7 @@ class Sdcpb_Style_Editor {
 
 			printf(
 				'<textarea rows="18" class="large-text code" readonly spellcheck="false" aria-label="%s">%s</textarea>',
-				esc_attr__( 'Styles, read-only', 'sdc-page-builder' ),
+				esc_attr__( 'Styles, read-only', 'phoenixseo-page-builder' ),
 				esc_textarea( Sdcpb_View::read_style( $effective ) )
 			);
 
@@ -96,7 +96,7 @@ class Sdcpb_Style_Editor {
 		printf(
 			'<p><label for="%1$s"><strong>%2$s</strong></label></p>',
 			esc_attr( self::FIELD ),
-			esc_html__( 'CSS', 'sdc-page-builder' )
+			esc_html__( 'CSS', 'phoenixseo-page-builder' )
 		);
 
 		printf(
@@ -108,7 +108,7 @@ class Sdcpb_Style_Editor {
 		echo '<p class="description" id="sdc-css-help">';
 		printf(
 			/* translators: 1: opening code tag, 2: closing code tag, 3: component type. */
-			esc_html__( 'Everything that belongs in the file, without the %1$s %2$s tag. It is printed inline in the page head, and only for the components that appear on that page. The wrapper is called %3$s: rules below it apply only inside this component.', 'sdc-page-builder' ),
+			esc_html__( 'Everything that belongs in the file, without the %1$s %2$s tag. It is printed inline in the page head, and only for the components that appear on that page. The wrapper is called %3$s: rules below it apply only inside this component.', 'phoenixseo-page-builder' ),
 			'<code>&lt;style&gt;</code>',
 			'<code>&lt;/style&gt;</code>',
 			'<code>.sdc-component--' . esc_html( (string) $type ) . '</code>'
@@ -120,7 +120,7 @@ class Sdcpb_Style_Editor {
 			esc_html(
 				sprintf(
 					/* translators: %s: path relative to the WordPress root. */
-					__( 'File: %s. Leaving it empty means the component brings no styles of its own.', 'sdc-page-builder' ),
+					__( 'File: %s. Leaving it empty means the component brings no styles of its own.', 'phoenixseo-page-builder' ),
 					self::relative( $own )
 				)
 			)
@@ -139,17 +139,17 @@ class Sdcpb_Style_Editor {
 		printf(
 			'<p><button type="submit" name="%1$s" value="1" class="button">%2$s</button></p>',
 			esc_attr( self::SCAFFOLD ),
-			esc_html__( 'Insert Starter Skeleton', 'sdc-page-builder' )
+			esc_html__( 'Insert Starter Skeleton', 'phoenixseo-page-builder' )
 		);
 
 		printf(
 			'<p class="description">%s</p>',
 			'' !== trim( $css )
 				? esc_html__( 'Saves the component and replaces the text above with an empty skeleton carrying the right selector. Whatever is there now is lost.',
-					'sdc-page-builder'
+					'phoenixseo-page-builder'
 				)
 				: esc_html__( 'Saves the component and fills the text above with a skeleton that starts with this component\'s selector.',
-					'sdc-page-builder'
+					'phoenixseo-page-builder'
 				)
 		);
 	}
@@ -223,7 +223,7 @@ class Sdcpb_Style_Editor {
 		if ( ! Sdcpb_View::can_edit_style( $type ) ) {
 			return new WP_Error(
 				'sdcpb_style_forbidden',
-				__( 'You are not allowed to change these styles.', 'sdc-page-builder' )
+				__( 'You are not allowed to change these styles.', 'phoenixseo-page-builder' )
 			);
 		}
 

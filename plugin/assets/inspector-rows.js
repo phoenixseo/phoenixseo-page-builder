@@ -1,5 +1,5 @@
 /**
- * Row operations for the SDC inspector.
+ * Row operations for the PhoenixSEO inspector.
  *
  * The inspector edits repeaters and flexible content fields: rows of
  * sub-fields, where a flexible row also carries `acf_fc_layout`. The server

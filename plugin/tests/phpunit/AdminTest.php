@@ -1413,7 +1413,7 @@ class AdminTest extends Sdcpb_TestCase {
 		$this->assertStringContainsString( esc_html( Sdcpb_Admin::AUTHOR_NAME ), $html );
 		$this->assertStringContainsString( esc_html( Sdcpb_Admin::AUTHOR_HOST ), $html );
 		$this->assertStringContainsString( 'href="' . Sdcpb_Admin::COFFEE_URL . '"', $html );
-		$this->assertStringContainsString( esc_html__( 'Buy Me a Coffee', 'sdc-page-builder' ), $html );
+		$this->assertStringContainsString( esc_html__( 'Buy Me a Coffee', 'phoenixseo-page-builder' ), $html );
 	}
 
 	/**
@@ -1441,11 +1441,11 @@ class AdminTest extends Sdcpb_TestCase {
 	public function test_credit_records_who_did_what() {
 		$html = $this->credit_html();
 
-		$this->assertStringContainsString( esc_html__( 'Vision and Concept', 'sdc-page-builder' ), $html );
+		$this->assertStringContainsString( esc_html__( 'Vision and Concept', 'phoenixseo-page-builder' ), $html );
 		$this->assertStringContainsString( esc_html( 'Frank Pfabigan and Athena' ), $html );
-		$this->assertStringContainsString( esc_html__( 'Programming', 'sdc-page-builder' ), $html );
+		$this->assertStringContainsString( esc_html__( 'Programming', 'phoenixseo-page-builder' ), $html );
 		$this->assertStringContainsString( esc_html( "Athena's Crew, Neo, Judge" ), $html );
-		$this->assertStringContainsString( esc_html__( 'November 2026', 'sdc-page-builder' ), $html );
+		$this->assertStringContainsString( esc_html__( 'November 2026', 'phoenixseo-page-builder' ), $html );
 	}
 
 	/**

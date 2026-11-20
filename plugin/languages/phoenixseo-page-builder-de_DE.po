@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: SDC Page Builder\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sdc-page-builder\n"
+"Project-Id-Version: PhoenixSEO Page Builder\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/phoenixseo-page-builder\n"
 "Last-Translator: PHOENIXSEO <plugins@phoenixseo.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -9,10 +9,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Domain: sdc-page-builder\n"
+"X-Domain: phoenixseo-page-builder\n"
 
 
-msgid "SDC Page Builder"
+msgid "PhoenixSEO Page Builder"
 msgstr ""
 
 msgid "https://github.com/phoenixseo/sdc-page-builder"
@@ -27,19 +27,19 @@ msgstr ""
 msgid "https://phoenixseo.de"
 msgstr ""
 
-msgid "SDC Page Builder:"
-msgstr "SDC Page Builder:"
+msgid "PhoenixSEO Page Builder:"
+msgstr ""
 
 msgid "%1$d page contains a component without a view. It renders nothing until the component is back — check the preview with %2$s."
 msgid_plural "%1$d pages contain a component without a view. They render nothing until the component is back — check the preview with %2$s."
 msgstr[0] "%1$d Seite enthält eine Komponente ohne Ansicht. Sie rendert nichts, bis die Komponente wieder da ist — prüfe die Vorschau mit %2$s."
 msgstr[1] "%1$d Seiten enthalten eine Komponente ohne Ansicht. Sie rendern nichts, bis die Komponente wieder da ist — prüfe die Vorschau mit %2$s."
 
-msgid "SDC Components"
-msgstr "SDC-Komponenten"
+msgid "PhoenixSEO Components"
+msgstr "PhoenixSEO-Komponenten"
 
-msgid "SDC"
-msgstr "SDC"
+msgid "Page Builder"
+msgstr ""
 
 msgid "No target folder: WP_CONTENT_DIR is not defined."
 msgstr "Kein Zielordner: WP_CONTENT_DIR ist nicht definiert."
@@ -397,8 +397,8 @@ msgid_plural "%1$d pages, %2$d instances"
 msgstr[0] "%1$d Seite, %2$d Instanz"
 msgstr[1] "%1$d Seiten, %2$d Instanzen"
 
-msgid "SDC Component (legacy)"
-msgstr "SDC-Komponente (alt)"
+msgid "PhoenixSEO Component (legacy)"
+msgstr "PhoenixSEO-Komponente (alt)"
 
 msgid "A component from an earlier version. New pages use the block of the respective component."
 msgstr "Komponente aus einer früheren Fassung. Neue Seiten nutzen den Block der jeweiligen Komponente."
@@ -628,14 +628,14 @@ msgstr "JSON übernehmen"
 msgid "Field type for the new field"
 msgstr "Feldtyp für das neue Feld"
 
-msgid "SDC Page Builder: component type \"%1$s\" has no view (page %2$d)"
-msgstr "SDC Page Builder: Komponententyp \"%1$s\" hat keine Ansicht (Seite %2$d)"
+msgid "PhoenixSEO Page Builder: component type \"%1$s\" has no view (page %2$d)"
+msgstr "PhoenixSEO Page Builder: Komponententyp \"%1$s\" hat keine Ansicht (Seite %2$d)"
 
 msgid "Component type \"%s\" has no view"
 msgstr "Komponententyp \"%s\" hat keine Ansicht"
 
-msgid "SDC Page Builder: view of \"%1$s\" failed (%2$s): %3$s (page %4$d)"
-msgstr "SDC Page Builder: Ansicht von \"%1$s\" bricht ab (%2$s): %3$s (Seite %4$d)"
+msgid "PhoenixSEO Page Builder: view of \"%1$s\" failed (%2$s): %3$s (page %4$d)"
+msgstr "PhoenixSEO Page Builder: Ansicht von \"%1$s\" bricht ab (%2$s): %3$s (Seite %4$d)"
 
 msgid "View of \"%1$s\" failed (%2$s)"
 msgstr "Ansicht von \"%1$s\" bricht ab (%2$s)"
@@ -646,8 +646,8 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-msgid "SDC: components carried over from the metabox into blocks."
-msgstr "SDC: Komponenten aus der Metabox in Blöcke übernommen."
+msgid "Components carried over from the metabox into blocks."
+msgstr "Komponenten aus der Metabox in Blöcke übernommen."
 
 msgid "Add Row"
 msgstr "Zeile hinzufügen"
@@ -799,6 +799,9 @@ msgstr "Baut eine Klassenliste aus nicht-leeren Teilen, escapt für ein class-At
 msgid "Generated from the fields of \"%s\". Replaces what is in the field now."
 msgstr "Aus den Feldern von „%s“ erzeugt. Ersetzt, was jetzt im Feld steht."
 
+msgid "PhoenixSEO Page Builder requires Advanced Custom Fields or Secure Custom Fields. Please activate one of the two."
+msgstr "PhoenixSEO Page Builder benötigt Advanced Custom Fields oder Secure Custom Fields. Bitte aktiviere eines der beiden."
+
 msgid "%1$dh %2$dm"
 msgstr "%1$d Std. %2$d Min."
 
@@ -865,9 +868,6 @@ msgstr[1] "%d Tracks"
 msgid "Page %s"
 msgstr "Seite %s"
 
-msgid "SDC Page Builder requires Advanced Custom Fields or Secure Custom Fields. Please activate one of the two."
-msgstr "SDC Page Builder benötigt Advanced Custom Fields oder Secure Custom Fields. Bitte eines der beiden Plugins aktivieren."
-
 msgid "— please choose —"
 msgstr "— bitte wählen —"
 
@@ -910,8 +910,8 @@ msgstr "noch keine Inhalte."
 msgid "This component no longer exists on this page."
 msgstr "Diese Komponente gibt es auf dieser Seite nicht (mehr)."
 
-msgid "Component from the SDC builder."
-msgstr "Komponente aus dem SDC-Baukasten."
+msgid "Component from the PhoenixSEO builder."
+msgstr "Komponente aus dem PhoenixSEO-Builder."
 
 msgid "Component from an earlier version."
 msgstr "Komponente aus einer früheren Fassung."

@@ -1,5 +1,5 @@
 /**
- * SDC components as blocks — one block type per component.
+ * PhoenixSEO components as blocks — one block type per component.
  *
  * The server registers `sdcpb/faq`, `sdcpb/hero`, … and hands this file the field
  * schema. The inspector is built from it, and the canvas shows the component's
@@ -8,7 +8,7 @@
  *
  * Three decisions are deliberate:
  *
- * 1. One block per type. A single generic block put "SDC Component" on every
+ * 1. One block per type. A single generic block put "PhoenixSEO Component" on every
  *    instance, and three FAQ blocks on a page became indistinguishable in the
  *    list view. The type is in the block name now, and `__experimentalLabel`
  *    adds the first value, so "FAQ: Common questions" tells them apart.
@@ -254,7 +254,7 @@
 						SelectControl,
 						Object.assign( {}, common, {
 							value: typeof value === 'string' ? value : '',
-							options: [ { value: '', label: __( '— please choose —', 'sdc-page-builder' ) } ].concat(
+							options: [ { value: '', label: __( '— please choose —', 'phoenixseo-page-builder' ) } ].concat(
 								( field.choices || [] ).map( function ( choice ) {
 									return { value: choice.value, label: choice.label };
 								} )
@@ -450,12 +450,12 @@
 			}
 
 			var title = multiple
-				? __( 'Select Files', 'sdc-page-builder' )
-				: ( isImage ? __( 'Select Image', 'sdc-page-builder' ) : __( 'Select File', 'sdc-page-builder' ) );
+				? __( 'Select Files', 'phoenixseo-page-builder' )
+				: ( isImage ? __( 'Select Image', 'phoenixseo-page-builder' ) : __( 'Select File', 'phoenixseo-page-builder' ) );
 
 			var frame = wp.media( {
 				title: title,
-				button: { text: __( 'Apply', 'sdc-page-builder' ) },
+				button: { text: __( 'Apply', 'phoenixseo-page-builder' ) },
 				library: isImage ? { type: 'image' } : {},
 				multiple: multiple ? 'add' : false,
 			} );
@@ -512,7 +512,7 @@
 				el(
 					'span',
 					{ className: 'sdc-block__media-name' },
-					info.name || ( __( 'Attachment', 'sdc-page-builder' ) + ' ' + id )
+					info.name || ( __( 'Attachment', 'phoenixseo-page-builder' ) + ' ' + id )
 				)
 			);
 		} );
@@ -537,14 +537,14 @@
 						disabled: ! window.wp || ! wp.media,
 					},
 					ids.length || url
-						? __( 'Replace', 'sdc-page-builder' )
-						: __( 'Select', 'sdc-page-builder' )
+						? __( 'Replace', 'phoenixseo-page-builder' )
+						: __( 'Select', 'phoenixseo-page-builder' )
 				),
 				ids.length || url
 					? el(
 						Button,
 						{ variant: 'link', isDestructive: true, onClick: remove },
-						__( 'Remove', 'sdc-page-builder' )
+						__( 'Remove', 'phoenixseo-page-builder' )
 					)
 					: null
 			)
@@ -577,14 +577,14 @@
 				? el( 'p', { className: 'sdc-block__help' }, field.instructions )
 				: null,
 			el( TextControl, {
-				label: __( 'Link Text', 'sdc-page-builder' ),
+				label: __( 'Link Text', 'phoenixseo-page-builder' ),
 				value: current.title || '',
 				onChange: function ( next ) {
 					set( 'title', next );
 				},
 			} ),
 			el( TextControl, {
-				label: __( 'Target (URL)', 'sdc-page-builder' ),
+				label: __( 'Target (URL)', 'phoenixseo-page-builder' ),
 				type: 'url',
 				value: current.url || '',
 				onChange: function ( next ) {
@@ -655,7 +655,7 @@
 						onClick: function () {
 							remove( index );
 						},
-					}, __( 'Remove', 'sdc-page-builder' ) )
+					}, __( 'Remove', 'phoenixseo-page-builder' ) )
 				),
 				subFields.map( function ( sub ) {
 					return control(
@@ -679,7 +679,7 @@
 			el(
 				Button,
 				{ variant: 'secondary', onClick: add },
-				field.button_label || __( 'Add Row', 'sdc-page-builder' )
+				field.button_label || __( 'Add Row', 'phoenixseo-page-builder' )
 			)
 		);
 	}
@@ -775,11 +775,11 @@
 					'div',
 					{ key: 'row-' + index, className: 'sdc-block__row' },
 					el( 'div', { className: 'sdc-block__row-head' }, el( 'span', null, field.label + ' ' + ( index + 1 ) ) ),
-					el( 'p', { className: 'sdc-block__help' }, __( 'This row has no layout. Nothing is displayed.', 'sdc-page-builder' ) ),
+					el( 'p', { className: 'sdc-block__help' }, __( 'This row has no layout. Nothing is displayed.', 'phoenixseo-page-builder' ) ),
 					el( SelectControl, {
-						label: __( 'Layout', 'sdc-page-builder' ),
+						label: __( 'Layout', 'phoenixseo-page-builder' ),
 						value: '',
-						options: [ { value: '', label: __( '— please choose —', 'sdc-page-builder' ) } ].concat( options ),
+						options: [ { value: '', label: __( '— please choose —', 'phoenixseo-page-builder' ) } ].concat( options ),
 						onChange: function ( next ) {
 							if ( ! next ) {
 								return;
@@ -821,10 +821,10 @@
 						onClick: function () {
 							remove( index );
 						},
-					}, __( 'Remove', 'sdc-page-builder' ) )
+					}, __( 'Remove', 'phoenixseo-page-builder' ) )
 				),
 				el( SelectControl, {
-					label: __( 'Layout', 'sdc-page-builder' ),
+					label: __( 'Layout', 'phoenixseo-page-builder' ),
 					value: layout.name,
 					options: options,
 					onChange: function ( next ) {
@@ -849,12 +849,12 @@
 			{ key: key, className: 'sdc-block__flexible', 'data-sdc-field': field.name },
 			el( 'p', { className: 'sdc-block__link-label' }, field.label ),
 			field.instructions ? el( 'p', { className: 'sdc-block__help' }, field.instructions ) : null,
-			layouts.length ? items : el( 'p', { className: 'sdc-block__help' }, __( 'This field has no layouts.', 'sdc-page-builder' ) ),
+			layouts.length ? items : el( 'p', { className: 'sdc-block__help' }, __( 'This field has no layouts.', 'phoenixseo-page-builder' ) ),
 			layouts.length
 				? el(
 					Button,
 					{ variant: 'secondary', onClick: add },
-					field.button_label || __( 'Add Row', 'sdc-page-builder' )
+					field.button_label || __( 'Add Row', 'phoenixseo-page-builder' )
 				)
 				: null
 		);
@@ -997,7 +997,7 @@
 		}, [ isMounted ] );
 
 		if ( ! ServerSideRender ) {
-			return el( 'p', null, __( 'ServerSideRender is missing — preview not available.', 'sdc-page-builder' ) );
+			return el( 'p', null, __( 'ServerSideRender is missing — preview not available.', 'phoenixseo-page-builder' ) );
 		}
 
 		if ( ! isMounted && ! selected ) {
@@ -1018,8 +1018,8 @@
 					return el(
 						'div',
 						{ className: 'sdc-block__empty' },
-						el( 'p', null, definition.label + ': ' + __( 'no content yet.', 'sdc-page-builder' ) ),
-						el( 'p', { className: 'sdc-block__help' }, __( 'Enter the values in the sidebar on the right.', 'sdc-page-builder' ) )
+						el( 'p', null, definition.label + ': ' + __( 'no content yet.', 'phoenixseo-page-builder' ) ),
+						el( 'p', { className: 'sdc-block__help' }, __( 'Enter the values in the sidebar on the right.', 'phoenixseo-page-builder' ) )
 					);
 				},
 			} )
@@ -1097,7 +1097,7 @@
 						el(
 							'div',
 							{ className: 'sdc-block__empty' },
-							el( 'p', null, __( 'This component no longer exists on this page.', 'sdc-page-builder' ) ),
+							el( 'p', null, __( 'This component no longer exists on this page.', 'phoenixseo-page-builder' ) ),
 							el( 'p', { className: 'sdc-block__help' }, props.attributes.type || '' )
 						)
 					);
@@ -1151,7 +1151,7 @@
 		registerBlock( {
 			name: prefix + type,
 			title: definition.label,
-			description: definition.description || __( 'Component from the SDC builder.', 'sdc-page-builder' ),
+			description: definition.description || __( 'Component from the PhoenixSEO builder.', 'phoenixseo-page-builder' ),
 			icon: definition.icon,
 			keywords: [ 'sdc', type ],
 			supports: noSupports,
@@ -1172,8 +1172,8 @@
 	function registerLegacy() {
 		registerBlock( {
 			name: 'sdcpb/component',
-			title: __( 'SDC Component (legacy)', 'sdc-page-builder' ),
-			description: __( 'Component from an earlier version.', 'sdc-page-builder' ),
+			title: __( 'PhoenixSEO Component (legacy)', 'phoenixseo-page-builder' ),
+			description: __( 'Component from an earlier version.', 'phoenixseo-page-builder' ),
 			icon: 'layout',
 			keywords: [ 'sdc', 'legacy' ],
 			attributes: {

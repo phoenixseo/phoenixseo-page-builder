@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: SDC SCF Fixture
- * Description: Test-Fixture: drei SDC-Komponenten als SCF-Feldgruppen, um Speicherkosten und max_input_vars zu messen.
+ * Description: Test-Fixture: drei PhoenixSEO-Komponenten als SCF-Feldgruppen, um Speicherkosten und max_input_vars zu messen.
  * Version: 0.1.0
  */
 

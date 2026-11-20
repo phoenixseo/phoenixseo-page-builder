@@ -12,7 +12,7 @@ Das spezifische und allgemeine Wissen für dieses Projekt liegt im **Obsidian-Va
 
 ## Projekt-Kontext
 
-Unterprojekt von PHOENIXSEO — **SDC Page Builder**: komponentenbasierter Page-Builder für WordPress, der ACF- oder SCF-Felder als Bausteine nutzt und Seiten als ein JSON-Dokument speichert.
+Unterprojekt von PHOENIXSEO — **PhoenixSEO Page Builder**: komponentenbasierter Page-Builder für WordPress, der ACF- oder SCF-Felder als Bausteine nutzt und Seiten als ein JSON-Dokument speichert.
 
 - **Repo:** `phoenixseo/sdc-page-builder` (privat bis zur ersten funktionierenden Version)
 - **Stand:** M1 (Datenschicht) grün — 20/20 Prüfungen, `plugin/tests/m1-verify.php`

@@ -12,7 +12,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 EXTS = {".php", ".js", ".json", ".md", ".txt", ".yml", ".sh", ".py", ".dist"}
 SKIP_DIRS = {".git", "node_modules", "vendor", "wordpress", "_research", "shots", "_archiv", "img"}
-SKIP_FILES = {"sdc-page-builder.zip", "K7-RELEASE-BERICHT.md", "rename-prefixes.py"}
+SKIP_FILES = {"phoenixseo-page-builder.zip", "K7-RELEASE-BERICHT.md", "rename-prefixes.py"}
 
 # Order matters: the wider patterns run first, the narrow `sdc_` one last so
 # that it cannot eat the tail of `sdcpb_`.

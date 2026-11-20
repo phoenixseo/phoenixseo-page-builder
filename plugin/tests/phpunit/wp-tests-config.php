@@ -1,6 +1,6 @@
 <?php
 /**
- * Test database configuration for the SDC Page Builder test suite.
+ * Test database configuration for the PhoenixSEO Page Builder test suite.
  *
  * The WordPress test library drops and recreates the tables in this database on
  * every run, so it must never point at a site you care about. Credentials come
@@ -45,7 +45,7 @@ $table_prefix = 'wptests_'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
 
 define( 'WP_TESTS_DOMAIN', 'example.org' );
 define( 'WP_TESTS_EMAIL', 'admin@example.org' );
-define( 'WP_TESTS_TITLE', 'SDC Page Builder Tests' );
+define( 'WP_TESTS_TITLE', 'PhoenixSEO Page Builder Tests' );
 
 define( 'WP_PHP_BINARY', 'php' );
 define( 'WPLANG', '' );

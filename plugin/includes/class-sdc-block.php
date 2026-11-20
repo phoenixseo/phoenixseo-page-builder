@@ -13,7 +13,7 @@
  *
  * One block per component type, not one block for all of them. A single
  * `sdcpb/component` was cheaper to register, but every instance carried the same
- * name: three FAQ blocks on a page were three times "SDC-Komponente" in the
+ * name: three FAQ blocks on a page were three times "PhoenixSEO-Komponente" in the
  * list view and the breadcrumb, and the author had to open them to find the
  * right one. The type in the block name puts the component's own label where
  * the author looks.
@@ -122,7 +122,7 @@ class Sdcpb_Block {
 			$categories,
 			array(
 				'slug'  => self::CATEGORY,
-				'title' => __( 'SDC Components', 'sdc-page-builder' ),
+				'title' => __( 'PhoenixSEO Components', 'phoenixseo-page-builder' ),
 				'icon'  => 'layout',
 			)
 		);
@@ -248,8 +248,8 @@ class Sdcpb_Block {
 			self::LEGACY,
 			array(
 				'api_version'     => 3,
-				'title'           => __( 'SDC Component (legacy)', 'sdc-page-builder' ),
-				'description'     => __( 'A component from an earlier version. New pages use the block of the respective component.', 'sdc-page-builder' ),
+				'title'           => __( 'PhoenixSEO Component (legacy)', 'phoenixseo-page-builder' ),
+				'description'     => __( 'A component from an earlier version. New pages use the block of the respective component.', 'phoenixseo-page-builder' ),
 				'category'        => self::CATEGORY,
 				'icon'            => 'layout',
 				'keywords'        => array( 'sdc', 'legacy' ),
@@ -388,11 +388,11 @@ class Sdcpb_Block {
 				esc_html(
 					sprintf(
 						/* translators: %s: component label. */
-						__( '%s: no content yet.', 'sdc-page-builder' ),
+						__( '%s: no content yet.', 'phoenixseo-page-builder' ),
 						(string) Sdcpb_Schema::get( $type )['label']
 					)
 				),
-				esc_html__( 'Enter the values in the sidebar on the right.', 'sdc-page-builder' )
+				esc_html__( 'Enter the values in the sidebar on the right.', 'phoenixseo-page-builder' )
 			);
 		}
 

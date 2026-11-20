@@ -18,7 +18,7 @@ test-scf/.wp-env.json
 .vscode/
 
 # Release-Artefakt (mit test-scf/build-zip.py erzeugt, nicht versioniert)
-sdc-page-builder.zip
+phoenixseo-page-builder.zip
 _upload/
 
 # Recherche-Belege bleiben im Repo, aber nichts Generiertes

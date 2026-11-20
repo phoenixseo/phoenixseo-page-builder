@@ -513,7 +513,7 @@ class Sdcpb_Migration {
 			wp_update_post(
 				array(
 					'ID'           => $revision->ID,
-					'post_excerpt' => __( 'SDC: components carried over from the metabox into blocks.', 'sdc-page-builder' ),
+					'post_excerpt' => __( 'Components carried over from the metabox into blocks.', 'phoenixseo-page-builder' ),
 				)
 			);
 		}

@@ -438,7 +438,7 @@ class Sdcpb_Frontend {
 			error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- A missing view is a content loss and has to be traceable outside the page.
 				sprintf(
 					/* translators: 1: component type, 2: post ID. */
-					__( 'SDC Page Builder: component type "%1$s" has no view (page %2$d)', 'sdc-page-builder' ),
+					__( 'PhoenixSEO Page Builder: component type "%1$s" has no view (page %2$d)', 'phoenixseo-page-builder' ),
 					$type,
 					$post_id
 				)
@@ -454,7 +454,7 @@ class Sdcpb_Frontend {
 			esc_html(
 				sprintf(
 					/* translators: %s: component type. */
-					__( 'Component type "%s" has no view', 'sdc-page-builder' ),
+					__( 'Component type "%s" has no view', 'phoenixseo-page-builder' ),
 					$type
 				)
 			)
@@ -486,7 +486,7 @@ class Sdcpb_Frontend {
 			error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- A template that throws is a content loss and has to be traceable outside the page.
 				sprintf(
 					/* translators: 1: component type, 2: file and line, 3: error message, 4: post ID. */
-					__( 'SDC Page Builder: view of "%1$s" failed (%2$s): %3$s (page %4$d)', 'sdc-page-builder' ),
+					__( 'PhoenixSEO Page Builder: view of "%1$s" failed (%2$s): %3$s (page %4$d)', 'phoenixseo-page-builder' ),
 					$type,
 					$where,
 					$error->getMessage(),
@@ -504,7 +504,7 @@ class Sdcpb_Frontend {
 			esc_html(
 				sprintf(
 					/* translators: 1: component type, 2: file and line. */
-					__( 'View of "%1$s" failed (%2$s)', 'sdc-page-builder' ),
+					__( 'View of "%1$s" failed (%2$s)', 'phoenixseo-page-builder' ),
 					$type,
 					$where
 				)
@@ -675,7 +675,7 @@ class Sdcpb_Frontend {
 	 */
 	private static function render_list( array $field, $value, $depth ) {
 		if ( $depth > self::MAX_DEPTH ) {
-			error_log( sprintf( 'SDC Page Builder: nesting depth %d exceeds the maximum %d (field "%s").', (int) $depth, self::MAX_DEPTH, (string) $field['name'] ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( sprintf( 'PhoenixSEO Page Builder: nesting depth %d exceeds the maximum %d (field "%s").', (int) $depth, self::MAX_DEPTH, (string) $field['name'] ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			return '';
 		}
 
@@ -754,7 +754,7 @@ class Sdcpb_Frontend {
 	 */
 	private static function render_group( array $field, $value, $depth ) {
 		if ( $depth > self::MAX_DEPTH ) {
-			error_log( sprintf( 'SDC Page Builder: nesting depth %d exceeds the maximum %d (field "%s").', (int) $depth, self::MAX_DEPTH, (string) $field['name'] ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( sprintf( 'PhoenixSEO Page Builder: nesting depth %d exceeds the maximum %d (field "%s").', (int) $depth, self::MAX_DEPTH, (string) $field['name'] ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			return '';
 		}
 
@@ -822,7 +822,7 @@ class Sdcpb_Frontend {
 
 			case 'true_false':
 				$on = ! empty( $value );
-				return '<p>' . esc_html( $on ? __( 'Yes', 'sdc-page-builder' ) : __( 'No', 'sdc-page-builder' ) ) . '</p>';
+				return '<p>' . esc_html( $on ? __( 'Yes', 'phoenixseo-page-builder' ) : __( 'No', 'phoenixseo-page-builder' ) ) . '</p>';
 
 			case 'link':
 				return self::format_link( $value );

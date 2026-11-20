@@ -13,7 +13,7 @@ set -euo pipefail
 
 WP=wp-env-test-scf-e54e6b03-wordpress-1
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-DEST=/var/www/html/wp-content/plugins/sdc-page-builder
+DEST=/var/www/html/wp-content/plugins/phoenixseo-page-builder
 STAGE=/tmp/sdc-sync
 
 if ! docker exec "$WP" test -d /var/www/html/wp-content/plugins; then
