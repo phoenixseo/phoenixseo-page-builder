@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com" viewBox="0 0 54 54" width="50" height="50">
+  <defs>
+    <linearGradient id="color-2">
+      <stop style="stop-color: rgb(255, 255, 255)"></stop>
+    </linearGradient>
+    <linearGradient id="color-1">
+      <stop style="stop-color: rgb(66, 134, 245);"></stop>
+    </linearGradient>
+  </defs>
+  <ellipse style="fill: url(#color-2);" cx="18.787" cy="27.632" rx="27" ry="27" transform="matrix(1, 0, 0, 1, 8.212653, -0.632)"></ellipse>
+  <path d="M 43.787 27.633 C 43.787 41.439 32.594 52.632 18.786 52.632 C 4.98 52.632 -6.213 41.439 -6.213 27.633 C -6.213 13.825 4.98 2.632 18.786 2.632 C 32.594 2.632 43.787 13.825 43.787 27.633" id="phoenixseo-outer" alignment-baseline="initial" fill-rule="evenodd" style="fill: url(#color-1); vector-effect: non-scaling-stroke; stroke-width: 5px;" transform="matrix(1, 0, 0, 1, 8.212653, -0.632)"></path>
+  <path fill-rule="evenodd" d="M 40.103 18.683 C 40.103 25.586 34.506 31.183 27.603 31.183 C 20.7 31.183 15.103 25.586 15.103 18.683 C 15.103 11.78 20.7 6.183 27.603 6.183 C 34.506 6.183 40.103 11.78 40.103 18.683" id="phoenixseo-inner" style="fill: url(#color-2); stroke-width: 5px; vector-effect: non-scaling-stroke; paint-order: fill;" transform="matrix(1, 0, 0, 1, 8.212653, -0.632)"></path>
+</svg>

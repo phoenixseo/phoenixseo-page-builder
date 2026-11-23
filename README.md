@@ -2,7 +2,9 @@
 
 A component-based page builder for WordPress that uses **Advanced Custom Fields** and **Secure Custom Fields** as its field providers — and stores pages as a single JSON document.
 
-**Status: 0.2.1.** Editor, storage, frontend output, revisions and import/export are in place and measured: 367 tests / 2118 assertions on WordPress 7.1.4 **and** on the declared minimum 6.4.14, against ACF **and** SCF, PHPCS clean, Plugin Check clean on the built package, readme.txt formally valid, three screenshots in the package. What remains is approval in the WordPress.org review.
+**Status: 0.3.1, in the WordPress.org directory.** Install it from [wordpress.org/plugins/phoenixseo-page-builder](https://wordpress.org/plugins/phoenixseo-page-builder/) — the SVN repository is the release channel, this one is where the code and its history live. The plugin site with the component catalog is [components.phoenixseo.de](https://components.phoenixseo.de/).
+
+Editor, storage, frontend output, revisions and import/export are in place and measured: the PHP suite is green on WordPress 7.1.4 **and** on the declared minimum 6.4.14, against ACF **and** SCF — 378 tests, 2165 assertions, exit 0 in every run. PHPCS clean, Plugin Check clean on the built package, readme.txt formally valid, three screenshots in the package.
 
 ## Three of the ten example components
 
@@ -319,15 +321,27 @@ Without a host the plugin does not activate and shows a notice instead of a fata
 
 ## Installation
 
+From the directory — the normal path:
+
 ```bash
-git clone https://github.com/phoenixseo/sdc-page-builder.git
-ln -s "$PWD/sdc-page-builder/plugin" wp-content/plugins/phoenixseo-page-builder
+wp plugin install phoenixseo-page-builder --activate
+```
+
+From source, if you want to work on the code:
+
+```bash
+git clone https://github.com/phoenixseo/phoenixseo-page-builder.git
+ln -s "$PWD/phoenixseo-page-builder/plugin" wp-content/plugins/phoenixseo-page-builder
 wp plugin activate phoenixseo-page-builder
 ```
 
-## What is still missing
+Either way the plugin needs a field provider — ACF free, ACF Pro or SCF.
 
-The plugin is functionally complete: editor with preview, storage, revision history, import/export, frontend output and theme templates. What is open is approval in the WordPress.org review (second review before the first upload).
+## What comes next
+
+The plugin is complete in what it promises: editor with preview, storage, revision history,
+import/export, frontend output and theme templates. Releases go through the WordPress.org SVN
+repository, one tag per version; this repository stays the source the releases are built from.
 
 ## License
 
