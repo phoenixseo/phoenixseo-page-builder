@@ -286,7 +286,9 @@ class Sdcpb_Admin {
 			esc_html(
 				sprintf(
 					/* translators: 1: number of pages, 2: WP-CLI command. */
-					_n( '%1$d page contains a component without a view. It renders nothing until the component is back — check the preview with %2$s.', '%1$d pages contain a component without a view. They render nothing until the component is back — check the preview with %2$s.',
+					_n(
+						'%1$d page contains a component without a view. It renders nothing until the component is back — check the preview with %2$s.',
+						'%1$d pages contain a component without a view. They render nothing until the component is back — check the preview with %2$s.',
 						$count,
 						'phoenixseo-page-builder'
 					),

@@ -4,7 +4,7 @@ Tags: page builder, components, acf, custom fields, blocks
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.3.1
+Stable tag: 0.3.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://ko-fi.com/phoenixseo
@@ -116,6 +116,18 @@ All three are the shipped examples, rendered by the plugin's own frontend
 output — no mockup, no theme involved. The content is sample data.
 
 == Changelog ==
+
+= 0.3.2 =
+* Added: the component list can be filtered. `All`, `Templates` and `Own` sit above the table, each
+  with a count; one group is hidden when nothing in the site belongs to it. Components that ship with
+  the plugin or a theme and components you duplicated sit in one long list otherwise.
+* Added: the code of a shipped component is readable. `View Code` opens the same three tabs the
+  editor has — `Definition (JSON)`, `View (PHP)`, `Styles (CSS)` — as read-only fields, with the file
+  path and a note why nothing can be saved there. The files stay protected: an update would overwrite
+  a change. What changed is that reading the PHP and CSS no longer needs FTP, which matters because
+  that markup is exactly what you paste into your own copy.
+* Fixed: the row action for a shipped component said `Edit` and then refused. It now says
+  `View Code`, and the refusal notice is gone.
 
 = 0.3.1 =
 * Changed: the plugin is called *PhoenixSEO Page Builder*. The directory review

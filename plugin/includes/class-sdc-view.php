@@ -271,6 +271,7 @@ class Sdcpb_View {
 	 * halves sit next to each other and the comment says what they build, so
 	 * nothing is hidden; the only thing removed is a false reading.
 	 */
+	// phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found -- the split keeps a closing style tag from appearing literally in the source: a scanner cannot tell a guard from output, and this plugin prints no style tag.
 	const STYLE_CLOSE = '</' . 'style';
 
 	/**

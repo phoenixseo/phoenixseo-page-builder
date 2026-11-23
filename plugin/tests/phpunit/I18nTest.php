@@ -108,7 +108,9 @@ class I18nTest extends Sdcpb_TestCase {
 
 		try {
 			$translated = __( 'Save Component', 'phoenixseo-page-builder' );
+			/* translators: %d: number of seasons; the string only exists to prove that plural forms load from the shipped catalog. */
 			$plural_one = sprintf( _n( '%d season', '%d seasons', 1, 'phoenixseo-page-builder' ), 1 );
+			/* translators: %d: number of seasons; same string as above with the plural form. */
 			$plural_two = sprintf( _n( '%d season', '%d seasons', 3, 'phoenixseo-page-builder' ), 3 );
 		} finally {
 			// A leaked catalog would translate strings for every later test.

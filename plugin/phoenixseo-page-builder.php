@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name:       PhoenixSEO Page Builder
- * Plugin URI:        https://github.com/phoenixseo/sdc-page-builder
+ * Plugin URI:        https://github.com/phoenixseo/phoenixseo-page-builder
  * Description:       Component-based page builder: ACF or SCF fields as building blocks, one block per component type, rendered server-side in the editor.
- * Version:           0.3.1
+ * Version:           0.3.2
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            PHOENIXSEO – Frank Pfabigan
@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SDCPB_VERSION', '0.3.1' );
+define( 'SDCPB_VERSION', '0.3.2' );
 define( 'SDCPB_FILE', __FILE__ );
 define( 'SDCPB_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SDCPB_URL', plugin_dir_url( __FILE__ ) );

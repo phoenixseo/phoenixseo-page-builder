@@ -145,10 +145,12 @@ class Sdcpb_Style_Editor {
 		printf(
 			'<p class="description">%s</p>',
 			'' !== trim( $css )
-				? esc_html__( 'Saves the component and replaces the text above with an empty skeleton carrying the right selector. Whatever is there now is lost.',
+				? esc_html__(
+					'Saves the component and replaces the text above with an empty skeleton carrying the right selector. Whatever is there now is lost.',
 					'phoenixseo-page-builder'
 				)
-				: esc_html__( 'Saves the component and fills the text above with a skeleton that starts with this component\'s selector.',
+				: esc_html__(
+					'Saves the component and fills the text above with a skeleton that starts with this component\'s selector.',
 					'phoenixseo-page-builder'
 				)
 		);
