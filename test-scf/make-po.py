@@ -76,6 +76,36 @@ DE = {
     "PhoenixSEO Page Builder requires Advanced Custom Fields or Secure Custom Fields. Please activate one of the two.":
         "PhoenixSEO Page Builder benötigt Advanced Custom Fields oder Secure Custom Fields. Bitte aktiviere eines der beiden.",
     "Component from the PhoenixSEO builder.": "Komponente aus dem PhoenixSEO-Builder.",
+
+    # --- catalogue filter and read-only code view ---
+    "All": "Alle",
+    "Templates": "Vorlagen",
+    "Own": "Eigene",
+    "View file": "Ansichtsdatei",
+    "View Code": "Code ansehen",
+    "No components in this group.": "Keine Komponenten in dieser Gruppe.",
+    "Component: %s": "Komponente: %s",
+    'This component belongs to the plugin or theme, so it is read-only: the next update would overwrite a change. The code below is the file as it is — "Duplicate" in the overview makes an editable copy in wp-content/sdc-components/.':
+        "Diese Komponente gehört zum Plugin oder Theme und ist deshalb schreibgeschützt: das nächste Update würde eine Änderung überschreiben. Der Code unten ist die Datei, wie sie ist — „Duplizieren“ in der Übersicht legt eine bearbeitbare Kopie in wp-content/sdc-components/ an.",
+    "Definition (JSON)": "Definition (JSON)",
+    "The file as it sits on disk: type, name, description and the field list.":
+        "Die Datei, wie sie auf der Platte liegt: Typ, Name, Beschreibung und die Feldliste.",
+    "The file could not be read.": "Die Datei konnte nicht gelesen werden.",
+    "Definition": "Definition",
+    "No render.php: the fields are printed by the generic output.":
+        "Kein render.php: die Felder druckt die allgemeine Ausgabe.",
+    "Everything below the header of %s — ready to paste into a copy.":
+        "Alles unterhalb des Kopfkommentars von %s — bereit zum Einfügen in eine Kopie.",
+    "This component has no render.php. Its fields are printed by the generic output, which needs no code.":
+        "Diese Komponente hat kein render.php. Ihre Felder druckt die allgemeine Ausgabe, die keinen Code braucht.",
+    "No component.css: the theme styles this component.":
+        "Keine component.css: das Theme gestaltet diese Komponente.",
+    "The stylesheet %s, as it is enqueued on the page.":
+        "Das Stylesheet %s, so wie es die Seite einbindet.",
+    "This component has no component.css. Without one it inherits the theme's styles.":
+        "Diese Komponente hat keine component.css. Ohne sie erbt sie die Stile des Themes.",
+    "Styles": "Styles",
+    "Component Code": "Komponentencode",
 }
 
 # Plural pairs: (english singular, english plural) -> (german singular, german plural)

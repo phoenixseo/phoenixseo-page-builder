@@ -1348,6 +1348,125 @@ class AdminTest extends Sdcpb_TestCase {
 		$this->assertSame( array(), $this->invoke( 'success_args', 'update' ) );
 	}
 
+	/**
+	 * A shipped component opens read-only and shows its three files.
+	 *
+	 * The reason the screen exists: a user copies the PHP and CSS of an
+	 * example into their own variant, and until now that meant FTP. A page
+	 * that refuses with "read-only" answers the wrong question.
+	 */
+	public function test_a_shipped_component_opens_read_only_with_its_code() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
+		$_GET = array( 'sdcpb_edit' => 'movie' );
+
+		ob_start();
+		Sdcpb_Admin::render();
+		$html = (string) ob_get_clean();
+
+		$_GET = array();
+
+		$movie = Sdcpb_Schema::get( 'movie' );
+
+		$this->assertNotNull( $movie, 'the shipped example is the subject of this test' );
+
+		$this->assertStringContainsString( 'sdc-credit', $html, 'the screen is the plugin\'s own screen, credit included' );
+		$this->assertStringContainsString(
+			esc_html(
+				sprintf(
+					/* translators: %s: component label. */
+					__( 'Component: %s', 'phoenixseo-page-builder' ),
+					(string) $movie['label']
+				)
+			),
+			$html
+		);
+		$this->assertStringContainsString( esc_textarea( '"key"' ), $html, 'the definition.json is shown' );
+		$this->assertStringContainsString( esc_textarea( '.sdc-movie' ), $html, 'the component.css is shown' );
+		$this->assertStringContainsString( 'readonly', $html );
+	}
+
+	/**
+	 * Read-only means no form and no save button.
+	 *
+	 * A visible "Save" on a component that cannot be written is an error
+	 * message waiting to happen.
+	 */
+	public function test_the_read_only_screen_offers_no_save() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
+		$_GET = array( 'sdcpb_edit' => 'movie' );
+
+		ob_start();
+		Sdcpb_Admin::render();
+		$html = (string) ob_get_clean();
+
+		$_GET = array();
+
+		$this->assertStringNotContainsString( '<form method="post"', $html );
+		$this->assertStringNotContainsString( esc_html__( 'Save Component', 'phoenixseo-page-builder' ), $html );
+		$this->assertStringNotContainsString( 'name="sdcpb_label"', $html );
+	}
+
+	/**
+	 * The filter separates shipped components from the site's own.
+	 *
+	 * Both scopes are checked in one test because they are one decision:
+	 * a filter that shows the right rows in one group and the wrong ones in
+	 * the other is worse than no filter.
+	 */
+	public function test_the_scope_filter_separates_templates_from_own_components() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
+		$shipped = Sdcpb_Schema::get( 'movie' );
+
+		$this->assertNotNull( $shipped, 'the shipped examples are the other half of this test' );
+
+		$own_type = $this->fresh_type( 'scope' );
+
+		$this->create_component( $own_type );
+
+		$_GET = array( 'sdcpb_scope' => 'own' );
+
+		ob_start();
+		Sdcpb_Admin::render();
+		$own_only = (string) ob_get_clean();
+
+		$_GET = array( 'sdcpb_scope' => 'templates' );
+
+		ob_start();
+		Sdcpb_Admin::render();
+		$templates_only = (string) ob_get_clean();
+
+		$_GET = array();
+
+		$this->assertStringContainsString( esc_html( (string) $shipped['label'] ), $templates_only );
+		$this->assertStringNotContainsString( esc_html( (string) $shipped['label'] ), $own_only );
+		$this->assertStringContainsString( '>' . esc_html( 'Callout' ) . '<', $own_only );
+		// The subtype marker of the created row is its type, not its label.
+		$this->assertStringContainsString( esc_html( $own_type ), $own_only );
+	}
+
+	/**
+	 * Both groups are counted and linked — one of them current.
+	 */
+	public function test_the_filter_lists_all_three_scopes_with_counts() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
+		$this->create_component( $this->fresh_type( 'scopecount' ) );
+
+		$_GET = array();
+
+		ob_start();
+		Sdcpb_Admin::render();
+		$html = (string) ob_get_clean();
+
+		$this->assertStringContainsString( 'class="subsubsub"', $html );
+		$this->assertStringContainsString( 'sdcpb_scope=templates', $html );
+		$this->assertStringContainsString( 'sdcpb_scope=own', $html );
+		$this->assertStringContainsString( 'class="current" aria-current="page"', $html );
+	}
+
 	// Helpers.
 
 	/**

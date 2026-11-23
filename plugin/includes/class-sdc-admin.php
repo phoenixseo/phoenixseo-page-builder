@@ -548,13 +548,43 @@ class Sdcpb_Admin {
 			return;
 		}
 
+		$scope   = self::scope();
+		$visible = array();
+
+		foreach ( $rows as $row ) {
+			/*
+			 * "Templates" is everything that ships with the plugin or the
+			 * theme, "own" is what lives in the writable directory — the
+			 * same line the Edit action already draws. Derived from
+			 * writability rather than from the storage label, so a component
+			 * another plugin registers through `sdcpb_component_dirs` lands
+			 * on the shipped side as well: it is not ours to change.
+			 */
+			if ( 'own' === $scope && ! $row['writable'] ) {
+				continue;
+			}
+
+			if ( 'templates' === $scope && $row['writable'] ) {
+				continue;
+			}
+
+			$visible[] = $row;
+		}
+
+		self::render_scope( $scope, $rows );
+
+		if ( empty( $visible ) ) {
+			echo '<p>' . esc_html__( 'No components in this group.', 'phoenixseo-page-builder' ) . '</p>';
+			return;
+		}
+
 		echo '<table class="wp-list-table widefat fixed striped">';
 		echo '<thead><tr>';
 		foreach (
 			array(
 				esc_html__( 'Component', 'phoenixseo-page-builder' ),
 				esc_html__( 'Fields', 'phoenixseo-page-builder' ),
-				esc_html__( 'Template', 'phoenixseo-page-builder' ),
+				esc_html__( 'View file', 'phoenixseo-page-builder' ),
 				esc_html__( 'Storage', 'phoenixseo-page-builder' ),
 				esc_html__( 'Usage', 'phoenixseo-page-builder' ),
 				esc_html__( 'Actions', 'phoenixseo-page-builder' ),
@@ -564,11 +594,78 @@ class Sdcpb_Admin {
 		}
 		echo '</tr></thead><tbody>';
 
-		foreach ( $rows as $row ) {
+		foreach ( $visible as $row ) {
 			self::render_row( $row );
 		}
 
 		echo '</tbody></table>';
+	}
+
+	/**
+	 * Which half of the catalogue the list shows.
+	 *
+	 * @return string `templates`, `own`, or an empty string for everything.
+	 */
+	private static function scope() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Chooses which rows to show; no data changes.
+		$scope = isset( $_GET['sdcpb_scope'] ) ? sanitize_key( wp_unslash( $_GET['sdcpb_scope'] ) ) : '';
+
+		return in_array( $scope, array( 'templates', 'own' ), true ) ? $scope : '';
+	}
+
+	/**
+	 * The filter above the list: everything, shipped, own.
+	 *
+	 * Counted from the rows themselves, so a filter never promises a group
+	 * that turns out empty. Hidden while there is only one group: a filter
+	 * with one choice is a control that does nothing.
+	 *
+	 * @param string  $scope Active scope.
+	 * @param array[] $rows  All rows.
+	 */
+	private static function render_scope( $scope, array $rows ) {
+		$shipped = 0;
+
+		foreach ( $rows as $row ) {
+			if ( ! $row['writable'] ) {
+				++$shipped;
+			}
+		}
+
+		$own = count( $rows ) - $shipped;
+
+		if ( 0 === $shipped || 0 === $own ) {
+			return;
+		}
+
+		$links = array(
+			''          => array( __( 'All', 'phoenixseo-page-builder' ), count( $rows ) ),
+			'templates' => array( __( 'Templates', 'phoenixseo-page-builder' ), $shipped ),
+			'own'       => array( __( 'Own', 'phoenixseo-page-builder' ), $own ),
+		);
+
+		echo '<ul class="subsubsub">';
+
+		$parts = array();
+
+		foreach ( $links as $value => $link ) {
+			$url = '' === $value
+				? self::catalog_url()
+				: add_query_arg( 'sdcpb_scope', $value, self::catalog_url() );
+
+			$current = $value === $scope;
+
+			$parts[] = sprintf(
+				'<li><a href="%1$s"%2$s>%3$s <span class="count">(%4$d)</span></a></li>',
+				esc_url( $url ),
+				$current ? ' class="current" aria-current="page"' : '',
+				esc_html( $link[0] ),
+				(int) $link[1]
+			);
+		}
+
+		echo implode( ' | ', $parts ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Each part escaped above.
+		echo '</ul><br class="clear" />';
 	}
 
 	/**
@@ -689,21 +786,26 @@ class Sdcpb_Admin {
 
 		// Only a component in the write directory can be edited in place;
 		// a theme or plugin component is duplicable, not editable.
-		if ( $row['writable'] ) {
-			$edit_url = add_query_arg(
-				array(
-					'page'     => self::MENU_SLUG,
-					'sdcpb_edit' => $type,
-				),
-				admin_url( 'admin.php' )
-			);
+		$form_url = add_query_arg(
+			array(
+				'page'       => self::MENU_SLUG,
+				'sdcpb_edit' => $type,
+			),
+			admin_url( 'admin.php' )
+		);
 
-			printf(
-				'<a class="button button-small" href="%s">%s</a> ',
-				esc_url( $edit_url ),
-				esc_html__( 'Edit', 'phoenixseo-page-builder' )
-			);
-		}
+		/*
+		 * The same screen either way; what differs is what it offers. A
+		 * shipped component still opens — read-only, with its three files
+		 * as code — because "I cannot change this" is not a reason to hide
+		 * what it does. Without this link the code of every template was
+		 * reachable only over FTP.
+		 */
+		printf(
+			'<a class="button button-small" href="%s">%s</a> ',
+			esc_url( $form_url ),
+			esc_html( $row['writable'] ? __( 'Edit', 'phoenixseo-page-builder' ) : __( 'View Code', 'phoenixseo-page-builder' ) )
+		);
 
 		$export_url = add_query_arg(
 			array(
@@ -918,6 +1020,17 @@ class Sdcpb_Admin {
 			'css'         => Sdcpb_View::read_style( Sdcpb_View::style( $type ) ),
 		);
 
+		/*
+		 * A shipped component opens read-only before the heading and the
+		 * draft handling: there is no form, so no draft to restore and no
+		 * "Edit" to announce.
+		 */
+		if ( ! self::in_write_dir( $file ) ) {
+			self::render_code( $type, $file );
+			self::credit();
+			return;
+		}
+
 		$draft = self::take_draft( $type );
 
 		if ( null !== $draft ) {
@@ -943,16 +1056,6 @@ class Sdcpb_Admin {
 			'<p class="description">%s</p>',
 			esc_html__( 'Saved into the same definition.json. The type stays unchanged: it sits in the group key and in every field key that the page content hangs on. A different type comes from "Duplicate".', 'phoenixseo-page-builder' )
 		);
-
-		if ( ! self::in_write_dir( $file ) ) {
-			printf(
-				'<div class="notice notice-error"><p>%s</p></div>',
-				esc_html__( 'This component is not in wp-content/sdc-components/. Theme and plugin components are read-only because the next deploy would overwrite the change. Duplicate it to edit it here.', 'phoenixseo-page-builder' )
-			);
-			printf( '<p><a class="button" href="%s">%s</a></p>', esc_url( self::catalog_url() ), esc_html__( 'Back to Overview', 'phoenixseo-page-builder' ) );
-			self::credit();
-			return;
-		}
 
 		printf( '<form method="post" action="%s">', esc_url( admin_url( 'admin-post.php' ) ) );
 		self::form_hidden( 'update' );
@@ -1011,6 +1114,131 @@ class Sdcpb_Admin {
 		echo '</form>';
 
 		self::credit();
+	}
+
+	/**
+	 * A shipped component's three files, as code.
+	 *
+	 * Same screen, same tabs as the editor — but nothing to type into. A
+	 * component from the plugin or the theme is read-only on purpose (the
+	 * next update or deploy would overwrite a change), and being read-only
+	 * is not a reason to hide what it does: the PHP and CSS are the part a
+	 * user copies into their own variant, and until now that meant FTP.
+	 *
+	 * @param string $type Component type.
+	 * @param string $file Absolute path of its definition.json.
+	 */
+	private static function render_code( $type, $file ) {
+		$component = Sdcpb_Schema::get( $type );
+		$label     = null === $component ? $type : (string) $component['label'];
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file inside the component directories.
+		$raw = file_get_contents( $file );
+
+		printf(
+			'<h2>%s</h2>',
+			esc_html(
+				sprintf(
+					/* translators: %s: component label. */
+					__( 'Component: %s', 'phoenixseo-page-builder' ),
+					$label
+				)
+			)
+		);
+
+		printf(
+			'<p class="description">%s</p>',
+			esc_html__( 'This component belongs to the plugin or theme, so it is read-only: the next update would overwrite a change. The code below is the file as it is — "Duplicate" in the overview makes an editable copy in wp-content/sdc-components/.', 'phoenixseo-page-builder' )
+		);
+
+		printf( '<p><code>%s</code></p>', esc_html( self::relative_path( $file ) ) );
+
+		$view_file = Sdcpb_Schema::template( $type );
+		$style     = Sdcpb_View::style( $type );
+
+		Sdcpb_Tabs::render(
+			array(
+				array(
+					'id'       => 'definition-read',
+					'label'    => __( 'Definition (JSON)', 'phoenixseo-page-builder' ),
+					'hint'     => __( 'The file as it sits on disk: type, name, description and the field list.', 'phoenixseo-page-builder' ),
+					'callback' => static function () use ( $raw ) {
+						self::code_panel( false === $raw ? '' : (string) $raw, __( 'The file could not be read.', 'phoenixseo-page-builder' ), __( 'Definition', 'phoenixseo-page-builder' ), 20 );
+					},
+				),
+				array(
+					'id'       => 'view-read',
+					'label'    => __( 'View (PHP)', 'phoenixseo-page-builder' ),
+					'hint'     => '' === $view_file
+						? __( 'No render.php: the fields are printed by the generic output.', 'phoenixseo-page-builder' )
+						: sprintf(
+							/* translators: %s: path relative to the WordPress root. */
+							__( 'Everything below the header of %s — ready to paste into a copy.', 'phoenixseo-page-builder' ),
+							self::relative_path( $view_file )
+						),
+					'callback' => static function () use ( $view_file ) {
+						self::code_panel(
+							Sdcpb_View::read( $view_file ),
+							__( 'This component has no render.php. Its fields are printed by the generic output, which needs no code.', 'phoenixseo-page-builder' ),
+							__( 'View', 'phoenixseo-page-builder' ),
+							28
+						);
+					},
+				),
+				array(
+					'id'       => 'styles-read',
+					'label'    => __( 'Styles (CSS)', 'phoenixseo-page-builder' ),
+					'hint'     => '' === $style
+						? __( 'No component.css: the theme styles this component.', 'phoenixseo-page-builder' )
+						: sprintf(
+							/* translators: %s: path relative to the WordPress root. */
+							__( 'The stylesheet %s, as it is enqueued on the page.', 'phoenixseo-page-builder' ),
+							self::relative_path( $style )
+						),
+					'callback' => static function () use ( $style ) {
+						self::code_panel(
+							Sdcpb_View::read_style( $style ),
+							__( 'This component has no component.css. Without one it inherits the theme\'s styles.', 'phoenixseo-page-builder' ),
+							__( 'Styles', 'phoenixseo-page-builder' ),
+							24
+						);
+					},
+				),
+			),
+			'',
+			__( 'Component Code', 'phoenixseo-page-builder' )
+		);
+
+		printf( '<p><a class="button" href="%s">%s</a></p>', esc_url( self::catalog_url() ), esc_html__( 'Back to Overview', 'phoenixseo-page-builder' ) );
+	}
+
+	/**
+	 * A read-only box of code.
+	 *
+	 * A textarea rather than a `<pre>`: it scrolls sideways instead of
+	 * wrapping, and it is what the editor uses — the code looks the same in
+	 * both places. `readonly` keeps it out of the tab order's editable
+	 * fields and still allows select-all and copy.
+	 *
+	 * @param string $code    File contents.
+	 * @param string $missing What to say when there is no file.
+	 * @param string $label   Accessible name of the box.
+	 * @param int    $rows    Visible rows.
+	 */
+	private static function code_panel( $code, $missing, $label, $rows ) {
+		$code = (string) $code;
+
+		if ( '' === trim( $code ) ) {
+			printf( '<p><em>%s</em></p>', esc_html( $missing ) );
+			return;
+		}
+
+		printf(
+			'<textarea class="large-text code" rows="%1$d" readonly spellcheck="false" aria-label="%2$s">%3$s</textarea>',
+			(int) $rows,
+			esc_attr( $label ),
+			esc_textarea( $code )
+		);
 	}
 
 	/**

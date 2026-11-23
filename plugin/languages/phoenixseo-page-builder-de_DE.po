@@ -83,14 +83,17 @@ msgstr "Vorhandene Komponenten"
 msgid "No components found. The plugin ships hero and faq — if they are missing, ACF or SCF is not active."
 msgstr "Keine Komponenten gefunden. Das Plugin liefert hero und faq mit — fehlen die, ist ACF oder SCF nicht aktiv."
 
+msgid "No components in this group."
+msgstr "Keine Komponenten in dieser Gruppe."
+
 msgid "Component"
 msgstr "Komponente"
 
 msgid "Fields"
 msgstr "Felder"
 
-msgid "Template"
-msgstr "Vorlage"
+msgid "View file"
+msgstr "Ansichtsdatei"
 
 msgid "Storage"
 msgstr "Ablage"
@@ -100,6 +103,15 @@ msgstr "Verwendung"
 
 msgid "Actions"
 msgstr "Aktionen"
+
+msgid "All"
+msgstr "Alle"
+
+msgid "Templates"
+msgstr "Vorlagen"
+
+msgid "Own"
+msgstr "Eigene"
 
 msgid "unknown"
 msgstr "unbekannt"
@@ -124,6 +136,9 @@ msgstr "schreibgeschützt"
 
 msgid "Edit"
 msgstr "Bearbeiten"
+
+msgid "View Code"
+msgstr "Code ansehen"
 
 msgid "Export"
 msgstr "Export"
@@ -203,12 +218,6 @@ msgstr "Komponente bearbeiten: %s"
 msgid "Saved into the same definition.json. The type stays unchanged: it sits in the group key and in every field key that the page content hangs on. A different type comes from \"Duplicate\"."
 msgstr "Gespeichert wird in dieselbe definition.json. Der Typ bleibt unverändert: er steckt im Gruppen-Key und in jedem Feld-Key, an dem die Inhalte der Seiten hängen. Ein anderer Typ entsteht über „Duplizieren\"."
 
-msgid "This component is not in wp-content/sdc-components/. Theme and plugin components are read-only because the next deploy would overwrite the change. Duplicate it to edit it here."
-msgstr "Diese Komponente liegt nicht in wp-content/sdc-components/. Theme- und Plugin-Komponenten sind schreibgeschützt, weil der nächste Deploy die Änderung überschreiben würde. Dupliziere sie, um sie hier zu bearbeiten."
-
-msgid "Back to Overview"
-msgstr "Zurück zur Übersicht"
-
 msgid "Content"
 msgstr "Inhalt"
 
@@ -235,6 +244,51 @@ msgstr "Komponente speichern"
 
 msgid "Cancel"
 msgstr "Abbrechen"
+
+msgid "Component: %s"
+msgstr "Komponente: %s"
+
+msgid "This component belongs to the plugin or theme, so it is read-only: the next update would overwrite a change. The code below is the file as it is — \"Duplicate\" in the overview makes an editable copy in wp-content/sdc-components/."
+msgstr "Diese Komponente gehört zum Plugin oder Theme und ist deshalb schreibgeschützt: das nächste Update würde eine Änderung überschreiben. Der Code unten ist die Datei, wie sie ist — „Duplizieren“ in der Übersicht legt eine bearbeitbare Kopie in wp-content/sdc-components/ an."
+
+msgid "Definition (JSON)"
+msgstr "Definition (JSON)"
+
+msgid "The file as it sits on disk: type, name, description and the field list."
+msgstr "Die Datei, wie sie auf der Platte liegt: Typ, Name, Beschreibung und die Feldliste."
+
+msgid "The file could not be read."
+msgstr "Die Datei konnte nicht gelesen werden."
+
+msgid "Definition"
+msgstr "Definition"
+
+msgid "No render.php: the fields are printed by the generic output."
+msgstr "Kein render.php: die Felder druckt die allgemeine Ausgabe."
+
+msgid "Everything below the header of %s — ready to paste into a copy."
+msgstr "Alles unterhalb des Kopfkommentars von %s — bereit zum Einfügen in eine Kopie."
+
+msgid "This component has no render.php. Its fields are printed by the generic output, which needs no code."
+msgstr "Diese Komponente hat kein render.php. Ihre Felder druckt die allgemeine Ausgabe, die keinen Code braucht."
+
+msgid "No component.css: the theme styles this component."
+msgstr "Keine component.css: das Theme gestaltet diese Komponente."
+
+msgid "The stylesheet %s, as it is enqueued on the page."
+msgstr "Das Stylesheet %s, so wie es die Seite einbindet."
+
+msgid "This component has no component.css. Without one it inherits the theme's styles."
+msgstr "Diese Komponente hat keine component.css. Ohne sie erbt sie die Stile des Themes."
+
+msgid "Styles"
+msgstr "Styles"
+
+msgid "Component Code"
+msgstr "Komponentencode"
+
+msgid "Back to Overview"
+msgstr "Zurück zur Übersicht"
 
 msgid "Not editable. A new type would create new field keys, and the page content would then hang on fields that no longer exist."
 msgstr "Nicht änderbar. Ein neuer Typ würde neue Feld-Keys erzeugen, und die Inhalte der Seiten hingen danach an Feldern, die es nicht mehr gibt."
@@ -304,6 +358,9 @@ msgstr "Die Datei %s ist nicht lesbar."
 
 msgid "The file %s does not contain valid JSON."
 msgstr "Die Datei %s enthält kein gültiges JSON."
+
+msgid "This component is not in wp-content/sdc-components/. Theme and plugin components are read-only because the next deploy would overwrite the change. Duplicate it to edit it here."
+msgstr "Diese Komponente liegt nicht in wp-content/sdc-components/. Theme- und Plugin-Komponenten sind schreibgeschützt, weil der nächste Deploy die Änderung überschreiben würde. Dupliziere sie, um sie hier zu bearbeiten."
 
 msgid "The file %s is not readable or does not contain valid JSON. Without it the component cannot be saved."
 msgstr "Die Datei %s ist nicht lesbar oder enthält kein gültiges JSON. Ohne sie lässt sich die Komponente nicht speichern."
