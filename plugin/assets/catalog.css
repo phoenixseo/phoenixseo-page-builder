@@ -1,0 +1,94 @@
+/**
+ * PhoenixSEO Page Builder — the component catalogue table.
+ *
+ * Scope: column widths and the three "is this part of the component there"
+ * marks in the overview. Dashicons inherit the cell's text colour, so the
+ * state would be invisible without these rules; everything else on the screen
+ * keeps wp-admin's own styling.
+ *
+ * The table is `table-layout: fixed`, so the header cells decide the widths.
+ * They are percentages with `box-sizing: border-box`: the eight columns then
+ * add up to the content area instead of overflowing it, and "Component" cannot
+ * be squeezed to nothing when a laptop leaves less room. Without a width the
+ * plain columns would share the rest evenly — "Fields" as wide as "Component".
+ * The two code columns are headed "PHP" and "CSS" rather than "View (PHP)" and
+ * "Styles (CSS)" so a narrow window has less to wrap; the screen-reader text in
+ * the cells still names the full part. Their heads are centred like the marks
+ * beneath them, otherwise the check looks left-hanging under a left-aligned
+ * word. "Definition" keeps the widest of the three: a cell's 10px side padding
+ * comes off the percentage, and the word breaks in the middle when it does not
+ * fit.
+ *
+ * Green is #007017 rather than the admin's #00a32a: a 20px glyph has to clear
+ * 3:1 against white, and the lighter green sits below it. Grey for the absent
+ * mark keeps it visible but quiet — the check is the thing to notice.
+ */
+
+.wp-list-table th.sdcpb-col {
+	box-sizing: border-box;
+	overflow-wrap: break-word;
+}
+
+/*
+ * A cell's 10px side padding is taken off the percentage, and that is what
+ * broke "Fields" in the middle of the word on a 1000px window. The narrow
+ * columns give back 4px per side; they hold one word or one glyph.
+ */
+.wp-list-table th.sdcpb-col-fields,
+.wp-list-table th.sdcpb-col-definition,
+.wp-list-table th.sdcpb-col-view,
+.wp-list-table th.sdcpb-col-style,
+.wp-list-table td.sdcpb-file {
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+.wp-list-table th.sdcpb-col-component {
+	width: 18%;
+}
+
+.wp-list-table th.sdcpb-col-fields {
+	width: 8%;
+}
+
+.wp-list-table th.sdcpb-col-definition {
+	width: 12%;
+	text-align: center;
+}
+
+.wp-list-table th.sdcpb-col-view,
+.wp-list-table th.sdcpb-col-style {
+	width: 7%;
+	text-align: center;
+}
+
+.wp-list-table th.sdcpb-col-storage {
+	width: 18%;
+}
+
+.wp-list-table th.sdcpb-col-usage {
+	width: 10%;
+}
+
+.wp-list-table th.sdcpb-col-actions {
+	width: 20%;
+}
+
+.sdcpb-file {
+	text-align: center;
+}
+
+.sdcpb-file .dashicons {
+	width: 20px;
+	height: 20px;
+	font-size: 20px;
+	line-height: 20px;
+}
+
+.sdcpb-file--yes {
+	color: #007017;
+}
+
+.sdcpb-file--no {
+	color: #8c8f94;
+}

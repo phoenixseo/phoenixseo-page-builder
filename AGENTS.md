@@ -15,7 +15,7 @@ Das spezifische und allgemeine Wissen für dieses Projekt liegt im **Obsidian-Va
 Unterprojekt von PHOENIXSEO — **PhoenixSEO Page Builder**: komponentenbasierter Page-Builder für WordPress, der ACF- oder SCF-Felder als Bausteine nutzt und Seiten als ein JSON-Dokument speichert.
 
 - **Repo:** `phoenixseo/phoenixseo-page-builder` (öffentlich, im wp.org-Verzeichnis seit 0.3.1)
-- **Stand:** 0.3.2 — Katalogfilter und Lese-Ansicht für Vorlagen-Code; 382 PHP-Tests / 2193 Assertions grün auf ACF, SCF und WP 6.4.14
+- **Stand:** 0.3.3 — drei Statusspalten in der Übersicht (Definition / PHP / CSS); 383 PHP-Tests / 2209 Assertions grün auf ACF, SCF und WP 6.4.14
 - **Altlasten:** `../../_archiv/projekte/pods-repeater/` — eingestellter Pods-Repeater-Weg, am 2026-11-14 gepackt (`pods-repeater_2026-11-02_frozen.tar.gz`, Repo-Ende `bfd4bf2`), Ordner gelöscht
 
 ## Hinweise

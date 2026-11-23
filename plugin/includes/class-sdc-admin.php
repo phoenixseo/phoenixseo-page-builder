@@ -582,18 +582,33 @@ class Sdcpb_Admin {
 
 		echo '<table class="wp-list-table widefat fixed striped">';
 		echo '<thead><tr>';
-		foreach (
-			array(
-				esc_html__( 'Component', 'phoenixseo-page-builder' ),
-				esc_html__( 'Fields', 'phoenixseo-page-builder' ),
-				esc_html__( 'View file', 'phoenixseo-page-builder' ),
-				esc_html__( 'Storage', 'phoenixseo-page-builder' ),
-				esc_html__( 'Usage', 'phoenixseo-page-builder' ),
-				esc_html__( 'Actions', 'phoenixseo-page-builder' ),
-			) as $heading
-		) {
-			printf( '<th scope="col">%s</th>', esc_html( $heading ) );
+
+		/*
+		 * Widths come from CSS on these header cells: the table is
+		 * `table-layout: fixed`, so the first row decides the columns,
+		 * and without widths the seven plain cells would share what is
+		 * left evenly — "Fields" as wide as "Component". Percentages
+		 * keep the eight columns inside the content area on a laptop.
+		 */
+		$columns = array(
+			array( esc_html__( 'Component', 'phoenixseo-page-builder' ), 'component' ),
+			array( esc_html__( 'Fields', 'phoenixseo-page-builder' ), 'fields' ),
+			array( esc_html__( 'Definition', 'phoenixseo-page-builder' ), 'definition' ),
+			array( esc_html__( 'PHP', 'phoenixseo-page-builder' ), 'view' ),
+			array( esc_html__( 'CSS', 'phoenixseo-page-builder' ), 'style' ),
+			array( esc_html__( 'Storage', 'phoenixseo-page-builder' ), 'storage' ),
+			array( esc_html__( 'Usage', 'phoenixseo-page-builder' ), 'usage' ),
+			array( esc_html__( 'Actions', 'phoenixseo-page-builder' ), 'actions' ),
+		);
+
+		foreach ( $columns as $column ) {
+			printf(
+				'<th scope="col" class="sdcpb-col sdcpb-col-%s">%s</th>',
+				esc_attr( $column[1] ),
+				$column[0] // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped where the list is built.
+			);
 		}
+
 		echo '</tr></thead><tbody>';
 
 		foreach ( $visible as $row ) {
@@ -689,6 +704,7 @@ class Sdcpb_Admin {
 				'fields'      => count( (array) $component['fields'] ),
 				'file'        => $file,
 				'template'    => Sdcpb_Schema::template( $type ),
+				'style'       => Sdcpb_View::style( $type ),
 				'source'      => self::source_label( $file ),
 				'writable'    => self::in_write_dir( $file ),
 				'pages'       => isset( $counts[ $type ]['pages'] ) ? (int) $counts[ $type ]['pages'] : 0,
@@ -744,19 +760,30 @@ class Sdcpb_Admin {
 
 		printf( '<td>%d</td>', (int) $row['fields'] );
 
-		echo '<td>';
-		if ( '' === $row['template'] ) {
-			echo '<span class="description">' . esc_html__( '—', 'phoenixseo-page-builder' ) . '</span>';
-		} else {
-			printf( '<code>%s</code>', esc_html( self::relative_path( $row['template'] ) ) );
-		}
-		echo '</td>';
+		/*
+		 * Three columns, one per part of a component, instead of a single
+		 * "View file" cell that showed only the render template. A row
+		 * exists because a definition was found, so the first mark is
+		 * nearly always set — it is there to make the model visible, and
+		 * to stay honest on the rare row whose definition stopped being
+		 * readable.
+		 */
+		self::render_file_mark( '' !== $row['file'], __( 'Definition', 'phoenixseo-page-builder' ) );
+		self::render_file_mark( '' !== $row['template'], __( 'View (PHP)', 'phoenixseo-page-builder' ) );
+		self::render_file_mark( '' !== $row['style'], __( 'Styles (CSS)', 'phoenixseo-page-builder' ) );
 
 		// Storage: source, path, writability.
 		echo '<td>';
 		printf( '<strong>%s</strong>', esc_html( $row['source'] ) );
 		if ( '' !== $row['file'] ) {
-			printf( '<br /><code>%s</code>', esc_html( self::relative_path( $row['file'] ) ) );
+			/*
+			 * A break after every slash is a break the browser otherwise
+			 * refuses to take, so the long path broke inside
+			 * "definition.json" instead of between its directories.
+			 */
+			$path = str_replace( '/', '/<wbr />', esc_html( self::relative_path( $row['file'] ) ) );
+
+			printf( '<br /><code>%s</code>', $path ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above, then split.
 		}
 		printf(
 			'<br /><span class="description">%s</span>',
@@ -775,6 +802,32 @@ class Sdcpb_Admin {
 		echo '</td>';
 
 		echo '</tr>';
+	}
+
+	/**
+	 * One "is this part of the component there" cell.
+	 *
+	 * A green check when the file exists, a grey dash when it does not. The
+	 * icon is decoration; the state is in text for screen readers, so the
+	 * cell is readable without seeing the colour — and the two shapes
+	 * already differ, which is what keeps the mark usable for everyone else.
+	 *
+	 * @param bool   $available Whether the file is there.
+	 * @param string $label     Which part, for the screen-reader text.
+	 */
+	private static function render_file_mark( $available, $label ) {
+		printf(
+			'<td class="sdcpb-file"><span class="dashicons %1$s" aria-hidden="true"></span><span class="screen-reader-text">%2$s</span></td>',
+			$available ? 'dashicons-yes-alt sdcpb-file--yes' : 'dashicons-minus sdcpb-file--no',
+			esc_html(
+				sprintf(
+					/* translators: 1: which part of the component, 2: "present" or "missing". */
+					__( '%1$s: %2$s', 'phoenixseo-page-builder' ),
+					$label,
+					$available ? __( 'present', 'phoenixseo-page-builder' ) : __( 'missing', 'phoenixseo-page-builder' )
+				)
+			)
+		);
 	}
 
 	/**

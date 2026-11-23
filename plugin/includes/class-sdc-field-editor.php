@@ -347,6 +347,13 @@ class Sdcpb_Field_Editor {
 			self::asset_version( 'assets/field-editor.css' )
 		);
 
+		wp_enqueue_style(
+			'sdc-pb-catalog',
+			SDCPB_URL . 'assets/catalog.css',
+			array(),
+			self::asset_version( 'assets/catalog.css' )
+		);
+
 		wp_enqueue_script(
 			'sdc-pb-field-editor',
 			SDCPB_URL . 'assets/field-editor.js',

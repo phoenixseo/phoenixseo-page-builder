@@ -15,7 +15,7 @@ msgstr ""
 msgid "PhoenixSEO Page Builder"
 msgstr ""
 
-msgid "https://github.com/phoenixseo/sdc-page-builder"
+msgid "https://github.com/phoenixseo/phoenixseo-page-builder"
 msgstr ""
 
 msgid "Component-based page builder: ACF or SCF fields as building blocks, one block per component type, rendered server-side in the editor."
@@ -92,8 +92,14 @@ msgstr "Komponente"
 msgid "Fields"
 msgstr "Felder"
 
-msgid "View file"
-msgstr "Ansichtsdatei"
+msgid "Definition"
+msgstr "Definition"
+
+msgid "PHP"
+msgstr "PHP"
+
+msgid "CSS"
+msgstr "CSS"
 
 msgid "Storage"
 msgstr "Ablage"
@@ -125,14 +131,26 @@ msgstr "Plugin"
 msgid "Theme"
 msgstr "Theme"
 
-msgid "—"
-msgstr "—"
+msgid "View (PHP)"
+msgstr "Ansicht (PHP)"
+
+msgid "Styles (CSS)"
+msgstr "Styles (CSS)"
 
 msgid "editable here"
 msgstr "hier verwaltbar"
 
 msgid "read-only"
 msgstr "schreibgeschützt"
+
+msgid "%1$s: %2$s"
+msgstr "%1$s: %2$s"
+
+msgid "present"
+msgstr "vorhanden"
+
+msgid "missing"
+msgstr "fehlt"
 
 msgid "Edit"
 msgstr "Bearbeiten"
@@ -224,14 +242,8 @@ msgstr "Inhalt"
 msgid "Name, description and the fields offered to editors. This is the part that changes in everyday work."
 msgstr "Name, Beschreibung und die Felder, die der Redaktion angeboten werden. Das ist der Teil, der sich im Alltag ändert."
 
-msgid "View (PHP)"
-msgstr "Ansicht (PHP)"
-
 msgid "How the component is rendered. Optional: without render.php the fields appear in a generic output."
 msgstr "Wie die Komponente ausgegeben wird. Optional: ohne render.php erscheinen die Felder in einer generischen Ausgabe."
-
-msgid "Styles (CSS)"
-msgstr "Styles (CSS)"
 
 msgid "The component's own styling. Optional: without component.css it inherits the theme's styles."
 msgstr "Eigene Gestaltung der Komponente. Optional: ohne component.css erbt sie die Styles des Themes."
@@ -259,9 +271,6 @@ msgstr "Die Datei, wie sie auf der Platte liegt: Typ, Name, Beschreibung und die
 
 msgid "The file could not be read."
 msgstr "Die Datei konnte nicht gelesen werden."
-
-msgid "Definition"
-msgstr "Definition"
 
 msgid "No render.php: the fields are printed by the generic output."
 msgstr "Kein render.php: die Felder druckt die allgemeine Ausgabe."
@@ -735,9 +744,6 @@ msgstr "Die Styles dieser Komponente kommen aus %s. Diese Datei gehört zum Them
 
 msgid "Styles, read-only"
 msgstr "Styles, schreibgeschützt"
-
-msgid "CSS"
-msgstr "CSS"
 
 msgid "Everything that belongs in the file, without the %1$s %2$s tag. It is printed inline in the page head, and only for the components that appear on that page. The wrapper is called %3$s: rules below it apply only inside this component."
 msgstr "Alles, was in die Datei gehört, ohne %1$sstyle%2$s-Tag. Wird inline im Kopf der Seite ausgegeben, und nur für die Komponenten, die auf ihr stehen. Der Wrapper heißt %3$s: Regeln darunter greifen nur in dieser Komponente."

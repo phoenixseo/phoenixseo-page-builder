@@ -4,7 +4,7 @@ Tags: page builder, components, acf, custom fields, blocks
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.3.2
+Stable tag: 0.3.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Donate link: https://ko-fi.com/phoenixseo
@@ -116,6 +116,17 @@ All three are the shipped examples, rendered by the plugin's own frontend
 output — no mockup, no theme involved. The content is sample data.
 
 == Changelog ==
+
+= 0.3.3 =
+* Changed: the component list says which parts of a component exist. The single `View file` column
+  showed only the render template, so a component with styles was indistinguishable from one without,
+  and the definition — the file that makes a row exist — had no column at all. `Definition`, `PHP` and
+  `CSS` are three columns now, each with a green check or a grey dash and the state in words for a
+  screen reader. No extra file reads: the three values are already in the row.
+* Fixed: long file paths break between directories instead of inside `definition.json`. The browser
+  will not break at a slash on its own, so a narrow window cut the filename in half.
+* Fixed: column heads no longer break mid-word on a laptop window. The header cells carry percentage
+  widths; a cell's side padding comes off that percentage, which made `Fields` wrap as `Fiel|ds`.
 
 = 0.3.2 =
 * Added: the component list can be filtered. `All`, `Templates` and `Own` sit above the table, each

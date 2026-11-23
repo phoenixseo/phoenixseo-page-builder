@@ -2,9 +2,9 @@
 
 A component-based page builder for WordPress that uses **Advanced Custom Fields** and **Secure Custom Fields** as its field providers — and stores pages as a single JSON document.
 
-**Status: 0.3.2, in the WordPress.org directory.** Install it from [wordpress.org/plugins/phoenixseo-page-builder](https://wordpress.org/plugins/phoenixseo-page-builder/) — the SVN repository is the release channel, this one is where the code and its history live. The plugin site with the component catalog is [components.phoenixseo.de](https://components.phoenixseo.de/).
+**Status: 0.3.3, in the WordPress.org directory.** Install it from [wordpress.org/plugins/phoenixseo-page-builder](https://wordpress.org/plugins/phoenixseo-page-builder/) — the SVN repository is the release channel, this one is where the code and its history live. The plugin site with the component catalog is [components.phoenixseo.de](https://components.phoenixseo.de/).
 
-Editor, storage, frontend output, revisions and import/export are in place and measured: the PHP suite is green on WordPress 7.1.4 **and** on the declared minimum 6.4.14, against ACF **and** SCF — 382 tests, 2193 assertions, exit 0 in every run. PHPCS clean, Plugin Check clean on the built package, readme.txt formally valid, three screenshots in the package.
+Editor, storage, frontend output, revisions and import/export are in place and measured: the PHP suite is green on WordPress 7.1.4 **and** on the declared minimum 6.4.14, against ACF **and** SCF — 383 tests, 2209 assertions, exit 0 in every run. PHPCS clean, Plugin Check clean on the built package, readme.txt formally valid, three screenshots in the package.
 
 ## Three of the ten example components
 

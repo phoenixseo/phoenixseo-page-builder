@@ -81,7 +81,6 @@ DE = {
     "All": "Alle",
     "Templates": "Vorlagen",
     "Own": "Eigene",
-    "View file": "Ansichtsdatei",
     "View Code": "Code ansehen",
     "No components in this group.": "Keine Komponenten in dieser Gruppe.",
     "Component: %s": "Komponente: %s",
@@ -106,6 +105,15 @@ DE = {
         "Diese Komponente hat keine component.css. Ohne sie erbt sie die Stile des Themes.",
     "Styles": "Styles",
     "Component Code": "Komponentencode",
+
+    # --- file marks in the catalogue table ---
+    # `View (PHP)` and `Styles (CSS)` reuse the tab labels above.
+    "%1$s: %2$s": "%1$s: %2$s",
+    "present": "vorhanden",
+    "missing": "fehlt",
+    # Column heads; PHP and CSS are not translated, they are the acronym.
+    "PHP": "PHP",
+    "CSS": "CSS",
 }
 
 # Plural pairs: (english singular, english plural) -> (german singular, german plural)
@@ -126,7 +134,7 @@ KEEP_AS_IS = {
     "PhoenixSEO Page Builder",
     "PhoenixSEO Page Builder:",
     "Page Builder",
-    "https://github.com/phoenixseo/sdc-page-builder",
+    "https://github.com/phoenixseo/phoenixseo-page-builder",
     "PHOENIXSEO – Frank Pfabigan",
     "https://phoenixseo.de",
 }

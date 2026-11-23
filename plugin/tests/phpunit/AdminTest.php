@@ -1467,6 +1467,79 @@ class AdminTest extends Sdcpb_TestCase {
 		$this->assertStringContainsString( 'class="current" aria-current="page"', $html );
 	}
 
+	/**
+	 * Each part of a component gets its own mark in the table.
+	 *
+	 * One "View file" cell answered only for the render template: whether a
+	 * component carried styles was invisible, and the definition — the file
+	 * that makes the row exist at all — had no column. A component with only
+	 * a definition is legitimate; it renders through the generic view.
+	 */
+	public function test_the_table_marks_definition_view_and_styles_separately() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+
+		$type = $this->fresh_type( 'marks' );
+
+		$this->create_component( $type );
+
+		$_GET = array( 'sdcpb_scope' => 'own' );
+
+		ob_start();
+		Sdcpb_Admin::render();
+		$bare = (string) ob_get_clean();
+
+		$_GET = array();
+
+		$this->assertStringContainsString( '>Definition<', $bare );
+		$this->assertStringContainsString( '>PHP<', $bare );
+		$this->assertStringContainsString( '>CSS<', $bare );
+		$this->assertStringNotContainsString( '>View file<', $bare );
+
+		// Only the definition was written, so exactly one mark is set.
+		$this->assertSame( 1, substr_count( $bare, 'sdcpb-file--yes' ) );
+		$this->assertSame( 2, substr_count( $bare, 'sdcpb-file--no' ) );
+
+		// The state is in text as well as in the glyph, for screen readers.
+		$this->assertStringContainsString(
+			esc_html(
+				sprintf(
+					/* translators: 1: which part of the component, 2: "present" or "missing". */
+					__( '%1$s: %2$s', 'phoenixseo-page-builder' ),
+					__( 'View (PHP)', 'phoenixseo-page-builder' ),
+					__( 'missing', 'phoenixseo-page-builder' )
+				)
+			),
+			$bare
+		);
+
+		// The same component, now with a view and a stylesheet.
+		$this->assertNotFalse( file_put_contents( $this->dir . '/' . $type . '/render.php', '<?php' ) );
+		$this->assertNotFalse( file_put_contents( $this->dir . '/' . $type . '/component.css', '.x{}' ) );
+		$this->reload();
+
+		$_GET = array( 'sdcpb_scope' => 'own' );
+
+		ob_start();
+		Sdcpb_Admin::render();
+		$full = (string) ob_get_clean();
+
+		$_GET = array();
+
+		$this->assertSame( 3, substr_count( $full, 'sdcpb-file--yes' ) );
+		$this->assertSame( 0, substr_count( $full, 'sdcpb-file--no' ) );
+		$this->assertStringContainsString(
+			esc_html(
+				sprintf(
+					/* translators: 1: which part of the component, 2: "present" or "missing". */
+					__( '%1$s: %2$s', 'phoenixseo-page-builder' ),
+					__( 'Styles (CSS)', 'phoenixseo-page-builder' ),
+					__( 'present', 'phoenixseo-page-builder' )
+				)
+			),
+			$full
+		);
+	}
+
 	// Helpers.
 
 	/**
